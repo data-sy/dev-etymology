@@ -60,3 +60,17 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# 기존 내용 맨 아래에 추가
+
+# macOS
+.DS_Store
+
+# DerivedData
+DerivedData/
+
+# Xcode workspace settings
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+
