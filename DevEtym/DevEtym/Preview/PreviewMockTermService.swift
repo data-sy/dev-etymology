@@ -1,25 +1,17 @@
 #if DEBUG
 import Foundation
 
-/// Preview 및 단위 테스트용 TermServiceProtocol 목(Mock) 구현
-/// - 저장소가 아니므로 상태 변경을 메모리에만 반영
-/// - fetchResult, autocompleteResult 등을 주입하여 시나리오별 UI를 검증
+/// SwiftUI #Preview 전용 MockTermService
+///
+/// 실제 단위 테스트 Mock은 DevEtymTests/Mocks/MockTermService.swift 를 사용하세요.
+/// 이 파일은 Xcode Preview canvas에서 앱 타겟이 컴파일될 때만 포함됩니다.
 @MainActor
 final class MockTermService: TermServiceProtocol {
-    // MARK: - 주입 가능한 결과값
-
-    /// fetch(keyword:) 호출 시 반환할 결과. nil이면 기본 sample 반환
     var fetchResult: TermResult?
-    /// fetch가 throw할 에러 (테스트용)
     var fetchError: Error?
-    /// 자동완성 후보
     var autocompleteEntries: [TermEntry] = MockTermService.sampleEntries
-    /// 북마크된 Term 목록
     private var bookmarks: [Term] = []
-    /// 검색 히스토리
     private var histories: [SearchHistory] = []
-
-    // MARK: - 초기화
 
     init(
         fetchResult: TermResult? = nil,
@@ -37,8 +29,6 @@ final class MockTermService: TermServiceProtocol {
         self.histories = histories
     }
 
-    // MARK: - TermServiceProtocol
-
     func fetch(keyword: String) async throws -> TermResult {
         if let fetchError { throw fetchError }
         if let fetchResult { return fetchResult }
@@ -48,7 +38,6 @@ final class MockTermService: TermServiceProtocol {
             upsertHistory(keyword: normalized)
             return .found(hit)
         }
-        // 샘플 외에는 기본적으로 mutex 반환 (Preview 편의)
         upsertHistory(keyword: normalized)
         return .found(MockTermService.sampleEntries[0])
     }
@@ -84,8 +73,6 @@ final class MockTermService: TermServiceProtocol {
         histories.removeAll()
     }
 
-    // MARK: - 내부 헬퍼
-
     private func upsertHistory(keyword: String) {
         if let existing = histories.first(where: { $0.keyword == keyword }) {
             existing.searchedAt = .now
@@ -94,12 +81,11 @@ final class MockTermService: TermServiceProtocol {
         }
     }
 
-    // MARK: - 샘플 데이터
-
     static let sampleEntries: [TermEntry] = [
         TermEntry(
             keyword: "mutex",
             aliases: ["뮤텍스", "mutual exclusion"],
+            category: "동시성",
             summary: "동시 접근을 막는 잠금 장치",
             etymology: "라틴어 mutuus(상호의) + exclusio(배제) → Mutual Exclusion의 줄임말",
             namingReason: "두 스레드가 동시에 같은 자원에 접근하지 못하도록 서로(mutual) 차단(exclusion)하는 개념에서 유래"
@@ -107,6 +93,7 @@ final class MockTermService: TermServiceProtocol {
         TermEntry(
             keyword: "deadlock",
             aliases: ["데드락", "교착 상태"],
+            category: "동시성",
             summary: "서로가 서로의 자원을 기다려 아무도 진행하지 못하는 상태",
             etymology: "dead(죽은) + lock(잠금)",
             namingReason: "자원 획득 순서 순환으로 어느 쪽도 락을 놓지 못해 '죽은 잠금' 상태가 되는 현상"
@@ -114,6 +101,7 @@ final class MockTermService: TermServiceProtocol {
         TermEntry(
             keyword: "jpa",
             aliases: ["제이피에이", "java persistence api"],
+            category: "DB",
             summary: "자바 ORM 표준 명세",
             etymology: "Java Persistence API의 약자",
             namingReason: "자바 객체의 영속성(persistence)을 표준 API로 추상화한 데서 유래"
