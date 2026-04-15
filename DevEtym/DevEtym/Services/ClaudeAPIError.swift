@@ -1,13 +1,28 @@
 import Foundation
 
 /// Claude API 호출 중 발생할 수 있는 에러 케이스
-/// - Agent B(UI)가 분기 처리에 사용하는 타입을 먼저 분리하여 정의한다
-/// - Agent A(Services)가 ClaudeAPIService를 구현할 때 이 타입을 그대로 사용
-enum ClaudeAPIError: Error {
+/// - Service 레이어가 throw하고, ViewModel이 분기 처리에 사용
+enum ClaudeAPIError: Error, Equatable {
     case invalidAPIKey
     case timeout
     case networkError(Error)
     case invalidResponse
     case notDevTerm
     case possibleTypo(suggestion: String)
+
+    static func == (lhs: ClaudeAPIError, rhs: ClaudeAPIError) -> Bool {
+        switch (lhs, rhs) {
+        case (.invalidAPIKey, .invalidAPIKey),
+             (.timeout, .timeout),
+             (.invalidResponse, .invalidResponse),
+             (.notDevTerm, .notDevTerm):
+            return true
+        case let (.possibleTypo(a), .possibleTypo(b)):
+            return a == b
+        case let (.networkError(a), .networkError(b)):
+            return (a as NSError) == (b as NSError)
+        default:
+            return false
+        }
+    }
 }
