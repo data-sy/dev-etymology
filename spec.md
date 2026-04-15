@@ -15,10 +15,11 @@
 @Model
 class Term {
     #Unique<Term>([\.keyword])
-    #Index<Term>([\.isBookmarked], [\.createdAt])
+    #Index<Term>([\.isBookmarked], [\.createdAt], [\.category])
 
     var keyword: String        // 정규화된 용어 (영문 소문자)
     var aliases: [String]      // 대체 표기 (한글, 풀네임 등)
+    var category: String       // 카테고리 (동시성, 자료구조, 네트워크, DB, 패턴, 기타)
     var summary: String        // 한 줄 요약
     var etymology: String      // 어원 설명
     var namingReason: String   // 작명 이유
@@ -26,12 +27,13 @@ class Term {
     var isBookmarked: Bool
     var createdAt: Date
 
-    init(keyword: String, aliases: [String] = [],
+    init(keyword: String, aliases: [String] = [], category: String,
          summary: String, etymology: String, namingReason: String,
          source: String = "ai",
          isBookmarked: Bool = false) {
         self.keyword = keyword
         self.aliases = aliases
+        self.category = category
         self.summary = summary
         self.etymology = etymology
         self.namingReason = namingReason
@@ -44,11 +46,12 @@ class Term {
 // MARK: - TermEntry 변환
 
 extension Term {
-    /// TermEntry → Term 변환 (aliases 보존 필수)
+    /// TermEntry → Term 변환 (aliases + category 보존 필수)
     convenience init(from entry: TermEntry, source: String, isBookmarked: Bool = false) {
         self.init(
             keyword: entry.keyword.lowercased(),
             aliases: entry.aliases,
+            category: entry.category,
             summary: entry.summary,
             etymology: entry.etymology,
             namingReason: entry.namingReason,
@@ -62,6 +65,7 @@ extension Term {
         TermEntry(
             keyword: keyword,
             aliases: aliases,
+            category: category,
             summary: summary,
             etymology: etymology,
             namingReason: namingReason
@@ -69,6 +73,8 @@ extension Term {
     }
 }
 ```
+
+> **SwiftData 마이그레이션 주의:** 배포 전 개발 단계에서 `category` 필드를 추가할 경우, 기존 SwiftData 저장소와 스키마 불일치가 발생할 수 있음. 개발자는 앱 삭제 후 재설치 또는 시뮬레이터 데이터 리셋으로 대응. 릴리즈 이후 필드를 추가하는 경우엔 `VersionedSchema` + `MigrationPlan` 필요.
 
 **Models/SearchHistory.swift**
 ```swift
@@ -94,14 +100,19 @@ class SearchHistory {
 struct TermEntry: Codable {
     let keyword: String
     let aliases: [String]
+    let category: String
     let summary: String
     let etymology: String
     let namingReason: String
 }
 ```
 
-> **TermEntry ↔ Term 변환 시 aliases를 반드시 포함할 것**
+> **TermEntry ↔ Term 변환 시 aliases + category를 반드시 포함할 것**
 > 변환은 Term.init(from:source:isBookmarked:)와 Term.toEntry()만 사용
+
+**카테고리 값 (번들 DB·AI 응답 공통 고정 집합):**
+- `동시성` · `자료구조` · `네트워크` · `DB` · `패턴` · `기타`
+- 6개 외의 값을 허용하지 않음 (AI 응답 포함)
 
 **Models/TermResult.swift** — 검색 결과 분기
 ```swift
@@ -175,13 +186,14 @@ private class PlaceholderTermService: TermServiceProtocol {
   {
     "keyword": "mutex",
     "aliases": ["뮤텍스", "mutual exclusion"],
+    "category": "동시성",
     "summary": "동시 접근을 막는 잠금 장치",
     "etymology": "라틴어 mutuus(상호의) + exclusio(배제) → Mutual Exclusion의 줄임말",
     "namingReason": "두 스레드가 동시에 같은 자원에 접근하지 못하도록 서로(mutual) 차단(exclusion)하는 개념에서 유래"
   }
 ]
 ```
-스키마: keyword(필수), aliases(필수, 최소 1개), summary, etymology, namingReason
+스키마: keyword(필수), aliases(필수, 최소 1개), category(필수, 6개 값 중 하나), summary, etymology, namingReason
 
 ### 1-6. 앱 진입점
 
@@ -287,6 +299,7 @@ enum ClaudeAPIError: Error {
 {
   "keyword": "mutex",
   "aliases": ["뮤텍스", "mutual exclusion"],
+  "category": "동시성",
   "summary": "동시 접근을 막는 잠금 장치",
   "etymology": "라틴어 mutuus(상호의) + exclusio(배제)",
   "namingReason": "두 스레드가 동시에 접근하지 못하도록..."
@@ -301,6 +314,11 @@ enum ClaudeAPIError: Error {
 [엄격한 출력 제한]
 응답의 첫 글자는 반드시 '{'로 시작하고, 마지막 글자는 '}'로 끝나야 합니다
 어떠한 경우에도 마크다운 백틱(```)이나 부연 설명을 텍스트에 포함하지 마세요
+
+[카테고리 규칙]
+- category 필드는 반드시 다음 6개 값 중 하나여야 합니다: "동시성", "자료구조", "네트워크", "DB", "패턴", "기타"
+- 6개 분류에 애매하게 걸치는 경우 가장 핵심적인 분류를 선택하세요
+- 어느 분류에도 명확히 속하지 않으면 "기타"를 사용하세요
 
 [주의사항]
 - 어원이 불확실한 경우 "정확한 어원은 불분명하나"로 시작하여 알려진 설만 서술하세요
@@ -467,6 +485,43 @@ toggleBookmark(for entry) →
 **네비게이션:** NavigationStack + .navigationDestination(for:) 패턴
 **다크모드:** 시스템 설정 자동 대응, 커스텀 컬러는 Color asset 사용
 
+### 3-0-1. 디자인 시스템
+
+참고: `devetym-wireframe-v2.html` (레포 루트)
+
+**컬러 팔레트 (다크모드 우선, Asset Catalog에 등록):**
+- `bg` = `#0a0a0a` — 앱 배경
+- `surface` = `#111111` — 카드/섹션 배경
+- `surface2` = `#1a1a1a` — 입력창/검색 박스
+- `border` = `#222222` — 구분선
+- `accent` = `#c8f060` — 주요 강조(카테고리 태그, CTA, 활성 탭)
+- `accent2` = `#60c8f0` — 보조 강조(떠오르는 용어 등, P2)
+- `accentAI` = `#f0a060` — AI 생성 뱃지 전용
+- `text` = `#f0f0f0` — 본문
+- `textDim` = `#999999` — 2차 본문
+- `textMuted` = `#666666` — 라벨/캡션
+
+라이트모드 값은 Asset Catalog의 Appearances에서 별도 지정. 이번 버전에선 다크모드만 완성도 있게 맞추고, 라이트모드는 시스템 기본 팔레트로 fallback 허용.
+
+**폰트 (번들에 포함):**
+- `DM Sans` (Regular 400, Medium 500, Light 300) — 본문 기본
+- `DM Mono` (Regular 400, Medium 500, Light 300) — 코드·라벨·칩·탭라벨
+- `DM Serif Display` (Regular + Italic) — 용어명 large title, 섹션 타이틀
+
+Google Fonts에서 OFL 라이선스로 다운로드하여 `Resources/Fonts/`에 포함.
+`Info.plist`의 `UIAppFonts` 배열에 파일명 등록.
+사용은 `.font(.custom("DMSans-Regular", size: 13, relativeTo: .body))` 패턴으로 Dynamic Type 연계.
+
+**간격/반경 기본값:**
+- 기본 패딩: 14–18px
+- 카드 radius: 12–14px
+- pill radius: 5–20px (뱃지: 5px, 칩: 20px)
+
+**뱃지 스타일:**
+- 카테고리 태그: `accent` 컬러 + 8% opacity 배경 + 20% opacity 보더, radius 5px, DM Mono 9px, uppercase
+- AI 생성 뱃지: `accentAI` 컬러 동일 구조
+- 최근 검색 칩: `surface2` 배경 + border, radius 20px, DM Mono 10px
+
 ### 3-1. 탭바 구조
 
 **App/ContentView.swift**
@@ -514,10 +569,16 @@ TabView {
 
 `.found(TermEntry)`:
 - 용어명 (large title)
+- **카테고리 태그 배지** (accent 컬러 pill — 예: "동시성 · Concurrency")
+- **AI 생성 뱃지** (source가 "ai"인 경우에만, 오렌지 계열 accent pill — 예: "✦ AI 생성")
+  - 번들 DB 결과의 경우엔 표시하지 않음
+  - ViewModel이 DetailView에 TermEntry와 함께 source 값(또는 isAIGenerated Bool)을 전달
 - 한 줄 요약
 - 어원 블록 (좌측 accent 보더)
 - 작명 이유 본문 — **ScrollView로 감싸서 긴 텍스트 대응**
-- 북마크 버튼 (toolbar) → termService.toggleBookmark(for:) 호출
+- 액션 행: 북마크 버튼 + **공유 버튼(ShareLink)**
+  - 북마크: termService.toggleBookmark(for:) 호출
+  - 공유: ShareLink로 `"{keyword}\n\n{summary}\n\n— DevEtym"` 형식 텍스트 공유
 - 하단 고정: 오류 제보 버튼
 
 `.notDevTerm`:
@@ -571,6 +632,7 @@ TabView {
 - termService.bookmarkedTerms()로 목록 조회
 - `.onAppear`에서 목록 갱신
 - 빈 상태: 안내 문구
+- **각 항목은 keyword + 한 줄 미리보기(summary 또는 aliases 첫 요소)** 를 함께 표시
 - 항목 탭 → DetailView push
 - 스와이프 삭제 → termService.toggleBookmark(for:) 호출 → **직후 목록 다시 조회**
 
@@ -578,6 +640,8 @@ TabView {
 
 - termService.recentSearches(limit:)로 목록 조회
 - `.onAppear`에서 목록 갱신
+- **각 항목의 `searchedAt`은 상대 시간("방금 전", "1시간 전", "어제", "3일 전")으로 표시**
+  - `RelativeDateTimeFormatter`(단위 자동) 사용, 한국어 로케일
 - 항목 탭 → DetailView push
 - 스와이프 삭제 → termService.deleteSearchHistory(_:) → **직후 목록 다시 조회**
 - 상단 "전체 삭제" 버튼 → termService.clearAllSearchHistory() → **직후 목록 다시 조회**
@@ -603,10 +667,12 @@ TabView {
 
 ### 4-2. 접근성
 - 모든 이미지/아이콘에 accessibilityLabel 추가
-- Dynamic Type 지원 확인
+- Dynamic Type 지원 확인 — `.font(.custom(...))` 사용 시 `relativeTo:` 파라미터로 연계
+- 다크/라이트모드 전환 시 전 화면 렌더링 검증
 
 ### 4-3. 번들 DB 확장
 - 초기 20개 → Claude API 배치 생성 스크립트로 200개로 확장
+- 각 용어에 `category` 필드 필수, 값은 6개 고정 집합 중 하나
 - 기존 20개 용어를 반드시 포함 (keyword/aliases 변경 금지)
 - 스크립트: Scripts/generate_db.py
 - 각 용어에 aliases 포함 필수 (빈 배열 금지, 최소 1개)
