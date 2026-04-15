@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 /// 히스토리 탭 뷰 모델
