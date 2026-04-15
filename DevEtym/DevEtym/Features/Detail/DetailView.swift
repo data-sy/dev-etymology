@@ -2,6 +2,7 @@ import SwiftUI
 
 /// 상세 화면
 /// - keyword를 받아 TermResult에 따라 분기 표시
+/// - source(번들/AI)에 따라 AI 생성 뱃지를 노출
 /// - possibleTypo 시 추천 용어는 부모 NavigationStack의 path를 replace
 struct DetailView: View {
     let keyword: String
@@ -13,15 +14,19 @@ struct DetailView: View {
     @StateObject private var viewModel = DetailViewModel()
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .loading:
-                loadingView
-            case .loaded(let result):
-                loadedView(result)
+        ZStack {
+            Theme.Palette.bg.ignoresSafeArea()
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    loadingView
+                case .loaded(let result):
+                    loadedView(result)
+                }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Theme.Palette.surface, for: .navigationBar)
         .onAppear {
             viewModel.termService = termService
             viewModel.load(keyword: keyword)
@@ -49,13 +54,19 @@ struct DetailView: View {
     // MARK: - 상태별 View
 
     private var loadingView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
+            Text(keyword)
+                .font(Theme.mono(18, weight: .medium, relativeTo: .title3))
+                .foregroundStyle(Theme.Palette.accent)
             ProgressView()
+                .tint(Theme.Palette.accent)
             Text("어원을 분석하는 중...")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .font(Theme.mono(10, relativeTo: .footnote))
+                .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(keyword) 어원을 분석하는 중")
     }
 
     @ViewBuilder
@@ -73,66 +84,175 @@ struct DetailView: View {
     private func foundView(entry: TermEntry, source: String) -> some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(entry.keyword)
-                            .font(.largeTitle.bold())
-                        Text(entry.summary)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
+                VStack(alignment: .leading, spacing: 18) {
+                    headerBlock(entry: entry, source: source)
+                    Divider().background(Theme.Palette.border)
+                    sectionLabel("어원")
                     etymologyBlock(entry.etymology)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("작명 이유")
-                            .font(.headline)
-                        Text(entry.namingReason)
-                            .font(.body)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    sectionLabel("왜 이 이름인가")
+                    Text(entry.namingReason)
+                        .font(Theme.sans(13, relativeTo: .body))
+                        .foregroundStyle(Theme.Palette.textDim)
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
+                    actionRow(entry: entry)
                 }
-                .padding()
+                .padding(18)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             reportButton(entry: entry)
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    viewModel.toggleBookmark()
-                } label: {
-                    Image(systemName: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
+    }
+
+    private func headerBlock(entry: TermEntry, source: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(entry.keyword)
+                .font(Theme.serif(28, relativeTo: .largeTitle))
+                .foregroundStyle(Theme.Palette.text)
+            HStack(spacing: 6) {
+                categoryBadge(entry.category)
+                if source == "ai" {
+                    aiBadge
                 }
-                .accessibilityLabel(viewModel.isBookmarked ? "북마크 해제" : "북마크 추가")
+            }
+            if !entry.summary.isEmpty {
+                Text(entry.summary)
+                    .font(Theme.sans(13, relativeTo: .subheadline))
+                    .foregroundStyle(Theme.Palette.textDim)
+                    .padding(.top, 4)
             }
         }
     }
 
+    private func categoryBadge(_ category: String) -> some View {
+        Text(CategoryDisplay.formatted(category).uppercased())
+            .font(Theme.mono(9, relativeTo: .caption2))
+            .tracking(0.6)
+            .foregroundStyle(Theme.Palette.accent)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 3)
+            .background(
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(Theme.Palette.accent.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Theme.Palette.accent.opacity(0.2), lineWidth: 1)
+            )
+            .accessibilityLabel("카테고리 \(category)")
+    }
+
+    private var aiBadge: some View {
+        Text("✦ AI 생성")
+            .font(Theme.mono(9, relativeTo: .caption2))
+            .tracking(0.6)
+            .foregroundStyle(Theme.Palette.accentAI)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 3)
+            .background(
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(Theme.Palette.accentAI.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Theme.Palette.accentAI.opacity(0.25), lineWidth: 1)
+            )
+            .accessibilityLabel("이 설명은 AI가 생성한 결과입니다")
+    }
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text.uppercased())
+            .font(Theme.mono(9, relativeTo: .caption2))
+            .tracking(1.2)
+            .foregroundStyle(Theme.Palette.textMuted)
+    }
+
     private func etymologyBlock(_ text: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: 0) {
             Rectangle()
-                .fill(Color.accentColor)
-                .frame(width: 3)
-            VStack(alignment: .leading, spacing: 6) {
-                Text("어원")
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.secondary)
+                .fill(Theme.Palette.accent)
+                .frame(width: 2)
+            VStack(alignment: .leading, spacing: 0) {
                 Text(text)
-                    .font(.body)
+                    .font(Theme.sans(12, relativeTo: .body))
+                    .foregroundStyle(Theme.Palette.textDim)
+                    .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
             }
         }
-        .padding(.vertical, 4)
+        .background(Theme.Palette.surface2)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
+
+    private func actionRow(entry: TermEntry) -> some View {
+        HStack(spacing: 8) {
+            Button {
+                viewModel.toggleBookmark()
+            } label: {
+                Label(viewModel.isBookmarked ? "북마크 해제" : "북마크",
+                      systemImage: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
+                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(Theme.Palette.accent)
+            .background(Theme.Palette.surface2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Theme.Palette.accent.opacity(0.3), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .accessibilityLabel(viewModel.isBookmarked ? "북마크 해제" : "북마크 추가")
+
+            ShareLink(item: shareText(entry: entry)) {
+                Label("공유", systemImage: "square.and.arrow.up")
+                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+            }
+            .foregroundStyle(Theme.Palette.textDim)
+            .background(Theme.Palette.surface2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Theme.Palette.border, lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .accessibilityLabel("\(entry.keyword) 공유")
+        }
+        .padding(.top, 8)
+    }
+
+    private func shareText(entry: TermEntry) -> String {
+        "\(entry.keyword)\n\n\(entry.summary)\n\n— DevEtym"
+    }
+
+    // MARK: - 비-결과 상태
 
     private var notDevTermView: some View {
         VStack(spacing: 16) {
             Image(systemName: "questionmark.circle")
                 .font(.system(size: 48))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.Palette.textMuted)
+                .accessibilityHidden(true)
             Text("개발 용어를 검색해주세요")
-                .font(.headline)
-            Button("검색으로 돌아가기") { dismiss() }
-                .buttonStyle(.borderedProminent)
+                .font(Theme.sans(15, weight: .medium, relativeTo: .headline))
+                .foregroundStyle(Theme.Palette.text)
+            Button {
+                dismiss()
+            } label: {
+                Text("검색으로 돌아가기")
+                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
+                    .foregroundStyle(Theme.Palette.accent)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Theme.Palette.accent.opacity(0.3), lineWidth: 1)
+                    )
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
@@ -142,20 +262,28 @@ struct DetailView: View {
         VStack(spacing: 16) {
             Image(systemName: "lightbulb")
                 .font(.system(size: 48))
-                .foregroundStyle(.yellow)
+                .foregroundStyle(Theme.Palette.accent)
+                .accessibilityHidden(true)
             Text("\(suggestion)을(를) 찾으셨나요?")
-                .font(.headline)
+                .font(Theme.sans(15, weight: .medium, relativeTo: .headline))
+                .foregroundStyle(Theme.Palette.text)
             Button {
                 onSelectSuggestion?(suggestion)
             } label: {
                 Text(suggestion)
-                    .font(.body.bold())
-                    .padding(.horizontal, 20)
+                    .font(Theme.mono(13, weight: .medium, relativeTo: .body))
+                    .padding(.horizontal, 22)
                     .padding(.vertical, 10)
+                    .foregroundStyle(Theme.Palette.bg)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Theme.Palette.accent)
+                    )
             }
-            .buttonStyle(.borderedProminent)
+            .accessibilityLabel("추천 용어 \(suggestion) 검색")
             Button("아니요, 돌아가기") { dismiss() }
-                .buttonStyle(.bordered)
+                .font(Theme.mono(10, relativeTo: .footnote))
+                .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
@@ -165,18 +293,20 @@ struct DetailView: View {
 
     @ViewBuilder
     private func reportButton(entry: TermEntry) -> some View {
-        VStack {
-            Divider()
+        VStack(spacing: 0) {
+            Divider().background(Theme.Palette.border)
             if let url = reportMailtoURL(entry: entry) {
                 Link(destination: url) {
                     Label("이 설명이 잘못됐나요? 오류 제보하기", systemImage: "envelope")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .font(Theme.mono(10, relativeTo: .footnote))
+                        .foregroundStyle(Theme.Palette.textMuted)
                 }
                 .padding(.vertical, 12)
+                .accessibilityLabel("오류 제보 메일 보내기")
             }
         }
-        .background(Color(.systemBackground))
+        .frame(maxWidth: .infinity)
+        .background(Theme.Palette.surface)
     }
 
     private func reportMailtoURL(entry: TermEntry) -> URL? {
@@ -201,18 +331,28 @@ struct DetailView: View {
     }
 }
 
-#Preview("found") {
+#Preview("found · DB") {
     NavigationStack {
         DetailView(keyword: "mutex")
-            .environment(\.termService, MockTermService())
+            .environment(\.termService, PreviewTermService(defaultSource: "bundle"))
     }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("found · AI") {
+    NavigationStack {
+        DetailView(keyword: "harness")
+            .environment(\.termService, PreviewTermService(defaultSource: "ai"))
+    }
+    .preferredColorScheme(.dark)
 }
 
 #Preview("notDevTerm") {
     NavigationStack {
         DetailView(keyword: "hello")
-            .environment(\.termService, MockTermService(fetchResult: .notDevTerm))
+            .environment(\.termService, PreviewTermService(fetchResult: .notDevTerm))
     }
+    .preferredColorScheme(.dark)
 }
 
 #Preview("possibleTypo") {
@@ -220,7 +360,8 @@ struct DetailView: View {
         DetailView(keyword: "mutx")
             .environment(
                 \.termService,
-                MockTermService(fetchResult: .possibleTypo("mutex"))
+                PreviewTermService(fetchResult: .possibleTypo("mutex"))
             )
     }
+    .preferredColorScheme(.dark)
 }
