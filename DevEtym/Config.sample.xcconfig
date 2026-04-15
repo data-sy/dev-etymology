@@ -1,0 +1,7 @@
+// Config.sample.xcconfig
+// 복사본을 만든 뒤 파일명을 Config.xcconfig 로 바꾸고 실제 키를 넣으세요.
+// Config.xcconfig 는 .gitignore 에 의해 커밋에서 제외됩니다.
+
+// Anthropic Claude API 키 (https://console.anthropic.com 에서 발급)
+// '//' 는 xcconfig 에서 주석이므로, URL 등을 그대로 값에 넣지 마세요.
+CLAUDE_API_KEY =

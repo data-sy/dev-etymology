@@ -24,6 +24,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EB00C0FC00000000000C0001 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		EB00C0FC00000000000C0002 /* Config.sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.sample.xcconfig; sourceTree = "<group>"; };
 		EBE5637B2F8E7C580075247E /* DevEtym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevEtym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBE5638A2F8E7C5A0075247E /* DevEtymTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevEtymTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBE563942F8E7C5A0075247E /* DevEtymUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevEtymUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +90,8 @@
 		EBE563722F8E7C580075247E = {
 			isa = PBXGroup;
 			children = (
+				EB00C0FC00000000000C0001 /* Config.xcconfig */,
+				EB00C0FC00000000000C0002 /* Config.sample.xcconfig */,
 				EBE5637D2F8E7C580075247E /* DevEtym */,
 				EBE5638D2F8E7C5A0075247E /* DevEtymTests */,
 				EBE563972F8E7C5A0075247E /* DevEtymUITests */,
@@ -400,6 +404,7 @@
 		};
 		EBE5639F2F8E7C5A0075247E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB00C0FC00000000000C0001 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -445,6 +450,7 @@
 		};
 		EBE563A02F8E7C5A0075247E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB00C0FC00000000000C0001 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
