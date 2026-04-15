@@ -1,8 +1,8 @@
 # spec.md — DevEtym 구현 명세서 (Claude Code 전용)
 
-> 이 문서는 Claude Code가 참조하는 구현 명세입니다.
-> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 CHECKLIST.md를 참조하세요.
-> CLAUDE.md의 코딩 규칙을 반드시 준수하세요.
+> 이 문서는 Claude Code가 참조하는 구현 명세입니다
+> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 CHECKLIST.md를 참조하세요
+> CLAUDE.md의 코딩 규칙을 반드시 준수하세요
 
 ---
 
@@ -40,6 +40,34 @@ class Term {
         self.createdAt = .now
     }
 }
+
+// MARK: - TermEntry 변환
+
+extension Term {
+    /// TermEntry → Term 변환 (aliases 보존 필수)
+    convenience init(from entry: TermEntry, source: String, isBookmarked: Bool = false) {
+        self.init(
+            keyword: entry.keyword.lowercased(),
+            aliases: entry.aliases,
+            summary: entry.summary,
+            etymology: entry.etymology,
+            namingReason: entry.namingReason,
+            source: source,
+            isBookmarked: isBookmarked
+        )
+    }
+
+    /// Term → TermEntry 역변환
+    func toEntry() -> TermEntry {
+        TermEntry(
+            keyword: keyword,
+            aliases: aliases,
+            summary: summary,
+            etymology: etymology,
+            namingReason: namingReason
+        )
+    }
+}
 ```
 
 **Models/SearchHistory.swift**
@@ -72,8 +100,8 @@ struct TermEntry: Codable {
 }
 ```
 
-> **TermEntry ↔ Term 변환 시 aliases를 반드시 포함할 것.**
-> 번들 용어 북마크, AI 응답 캐시 모두 aliases가 보존되어야 함.
+> **TermEntry ↔ Term 변환 시 aliases를 반드시 포함할 것**
+> 변환은 Term.init(from:source:isBookmarked:)와 Term.toEntry()만 사용
 
 **Models/TermResult.swift** — 검색 결과 분기
 ```swift
@@ -98,14 +126,50 @@ struct AIErrorResponse: Codable {
 ```swift
 enum Constants {
     static let reportEmail = "devetym@gmail.com"
-    static let claudeModel = "claude-sonnet-4-5"
+    // Anthropic API 공식 모델 ID — 변경 시 https://docs.anthropic.com 확인
+    static let claudeModel = "claude-sonnet-4-5-20250514"
     static let apiTimeout: TimeInterval = 30
+    static let autocompleteDebounceMs: Int = 300
+    static let recentSearchLimit: Int = 5
 }
 ```
 
-### 1-4. 초기 번들 DB
+### 1-4. EnvironmentKey 정의
 
-**Resources/terms.json** — 20개 용어로 시작
+**Utils/EnvironmentKeys.swift**
+```swift
+import SwiftUI
+
+/// SwiftUI .environment()에 프로토콜 타입을 직접 전달하면 컴파일 오류 발생
+/// 반드시 커스텀 EnvironmentKey를 통해 TermServiceProtocol을 주입
+private struct TermServiceKey: EnvironmentKey {
+    static let defaultValue: any TermServiceProtocol = PlaceholderTermService()
+}
+
+extension EnvironmentValues {
+    var termService: any TermServiceProtocol {
+        get { self[TermServiceKey.self] }
+        set { self[TermServiceKey.self] = newValue }
+    }
+}
+
+/// 기본값용 더미 — 실제 사용 시 반드시 DevEtymApp에서 실제 TermService로 교체
+/// Preview에서는 MockTermService로 교체
+@MainActor
+private class PlaceholderTermService: TermServiceProtocol {
+    func fetch(keyword: String) async throws -> TermResult { .notDevTerm }
+    func autocomplete(prefix: String) -> [TermEntry] { [] }
+    func toggleBookmark(for entry: TermEntry) throws -> Bool { false }
+    func bookmarkedTerms() -> [Term] { [] }
+    func recentSearches(limit: Int) -> [SearchHistory] { [] }
+    func deleteSearchHistory(_ keyword: String) throws {}
+    func clearAllSearchHistory() throws {}
+}
+```
+
+### 1-5. 초기 번들 DB
+
+**Resources/terms.json** — 초기 20개 용어로 시작 (Phase 4에서 200개로 확장)
 ```json
 [
   {
@@ -117,9 +181,34 @@ enum Constants {
   }
 ]
 ```
-스키마: keyword(필수), aliases(필수, 빈 배열 허용), summary, etymology, namingReason
+스키마: keyword(필수), aliases(필수, 최소 1개), summary, etymology, namingReason
 
-✅ Phase 1 완료 조건: 모든 모델 파일 컴파일 오류 없음
+### 1-6. 앱 진입점
+
+**App/DevEtymApp.swift**
+```swift
+@main
+struct DevEtymApp: App {
+    let termService: TermService
+
+    init() {
+        let container = try! ModelContainer(for: Term.self, SearchHistory.self)
+        self.termService = TermService(modelContext: container.mainContext)
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environment(\.termService, termService)
+        }
+    }
+}
+```
+
+> `.environment(\.termService, ...)` — EnvironmentKey 기반 주입
+> ViewModel은 `@Environment(\.termService) var termService`로 수신
+
+✅ Phase 1 완료 조건: 모든 모델 파일 + EnvironmentKeys + DevEtymApp 컴파일 오류 없음
 
 ---
 
@@ -173,6 +262,10 @@ protocol ClaudeAPIServiceProtocol {
 - API 키: Info.plist의 CLAUDE_API_KEY (Bundle.main에서 읽기)
 - 타임아웃: Constants.apiTimeout
 
+**API 키 검증:**
+- Bundle.main에서 CLAUDE_API_KEY 읽기 실패 또는 빈 문자열 → .invalidAPIKey throw
+- 이 검증은 generate() 호출 시 매번 수행
+
 **에러 타입:**
 ```swift
 enum ClaudeAPIError: Error {
@@ -187,47 +280,81 @@ enum ClaudeAPIError: Error {
 
 **시스템 프롬프트:**
 ```
-당신은 개발 용어의 어원을 설명하는 전문가입니다.
-사용자가 입력한 개발 용어에 대해 반드시 아래 JSON 형식으로만 응답하세요.
-다른 텍스트, 마크다운 코드 블록, 설명을 절대 추가하지 마세요.
+당신은 개발 용어의 어원을 설명하는 사전 데이터 제공자입니다
+반드시 아래의 엄격한 JSON 형식으로만 응답해야 하며, 그 외의 어떤 텍스트나 마크다운(```)도 포함해서는 안 됩니다
 
-## 정상 응답 (개발 용어인 경우)
+[개발 용어인 경우의 응답 구조]
 {
-  "keyword": "정규화된 용어 (영문)",
-  "aliases": ["대체 표기 1", "대체 표기 2"],
-  "summary": "한 줄 요약 (한국어, 20자 이내)",
-  "etymology": "어원 설명 (한국어, 원어 표기 포함)",
-  "namingReason": "왜 이 이름이 붙었는지 설명 (한국어, 3-5문장)"
+  "keyword": "mutex",
+  "aliases": ["뮤텍스", "mutual exclusion"],
+  "summary": "동시 접근을 막는 잠금 장치",
+  "etymology": "라틴어 mutuus(상호의) + exclusio(배제)",
+  "namingReason": "두 스레드가 동시에 접근하지 못하도록..."
 }
 
-## 오류 응답
-- 개발 용어가 아닌 경우:
-  {"error": "NOT_DEV_TERM", "suggestion": null}
-- 오타로 추정되는 경우:
-  {"error": "POSSIBLE_TYPO", "suggestion": "올바른 용어"}
+[개발 용어가 아닌 경우의 응답 구조]
+{"error": "NOT_DEV_TERM", "suggestion": null}
+
+[개발 용어는 아니지만 오타로 추정되는 경우의 응답 구조]
+{"error": "POSSIBLE_TYPO", "suggestion": "올바른 용어"}
+
+주의사항:
+- 어원이 불확실한 경우 "정확한 어원은 불분명하나"로 시작하여 알려진 설만 서술하세요
+- 추측이나 민간어원(folk etymology)을 사실처럼 서술하지 마세요
+- 약어의 경우 반드시 각 글자가 무엇의 약자인지 명시하세요
 ```
 
 **응답 파싱 로직:**
-1. JSON 디코딩 시도
-2. "error" 키 존재 → AIErrorResponse로 디코딩
+1. content[0].text에서 앞뒤 공백 제거
+2. ```json ... ``` 또는 ``` ... ``` 마크다운 블록 감싸기가 있으면 정규식으로 제거
+3. 결과 문자열로 JSON 디코딩 시도
+4. "error" 키 존재 → AIErrorResponse로 디코딩
    - NOT_DEV_TERM → throw ClaudeAPIError.notDevTerm
    - POSSIBLE_TYPO → throw ClaudeAPIError.possibleTypo(suggestion:)
-3. "error" 키 없음 → TermEntry로 디코딩
+5. "error" 키 없음 → TermEntry로 디코딩
+6. 디코딩 실패 → throw ClaudeAPIError.invalidResponse
 
 ### 2-3. TermService (오케스트레이터)
 
 **Services/TermService.swift**
 
+> **@MainActor 필수**: SwiftData mainContext는 메인 스레드 전용
+> async 작업(AI API 호출) 후 modelContext 접근 시 @MainActor가 없으면 크래시
+
 ```swift
+@MainActor
 protocol TermServiceProtocol {
+    // 검색
     func fetch(keyword: String) async throws -> TermResult
     func autocomplete(prefix: String) -> [TermEntry]
+    // 북마크
+    func toggleBookmark(for entry: TermEntry) throws -> Bool
+    func bookmarkedTerms() -> [Term]
+    // 히스토리
+    func recentSearches(limit: Int) -> [SearchHistory]
+    func deleteSearchHistory(_ keyword: String) throws
+    func clearAllSearchHistory() throws
+}
+
+@MainActor
+class TermService: TermServiceProtocol {
+    private let modelContext: ModelContext
+    private let bundleDBService: BundleDBServiceProtocol
+    private let claudeAPIService: ClaudeAPIServiceProtocol
+
+    init(modelContext: ModelContext,
+         bundleDBService: BundleDBServiceProtocol = BundleDBService(),
+         claudeAPIService: ClaudeAPIServiceProtocol = ClaudeAPIService()) {
+        self.modelContext = modelContext
+        self.bundleDBService = bundleDBService
+        self.claudeAPIService = claudeAPIService
+    }
 }
 ```
 
-> **autocomplete도 TermServiceProtocol에 포함.**
-> UI 레이어는 TermServiceProtocol만 의존하며, BundleDBService를 직접 참조하지 않는다.
-> 이를 통해 멀티 에이전트 작업 시 UI 에이전트가 MockTermService 하나만 의존하면 된다.
+> **모든 ViewModel은 이 프로토콜에만 의존한다**
+> 검색, 자동완성, 북마크, 히스토리 CRUD 모두 이 프로토콜을 통해 호출
+> ViewModel은 modelContext, BundleDBService, ClaudeAPIService를 직접 참조하지 않음
 
 **입력 정규화:**
 ```swift
@@ -245,29 +372,41 @@ func autocomplete(prefix: String) -> [TermEntry] {
 }
 ```
 
-**오케스트레이션 순서:**
+**fetch 오케스트레이션 순서:**
 1. 입력 정규화
-2. BundleDBService.search(keyword) → 히트 시 `.found` 반환 + 히스토리 저장
-3. SwiftData에서 Term 조회 (keyword 매칭) → 히트 시 `.found` 반환 + 히스토리 저장
-4. ClaudeAPIService.generate(keyword) 호출
-   - 성공 → SwiftData에 Term 캐시 저장 (source: "ai", aliases 포함) + 히스토리 저장 + `.found` 반환
+2. 정규화 결과가 빈 문자열이면 즉시 `.notDevTerm` 반환 (API 호출 안 함)
+3. BundleDBService.search(keyword) → 히트 시 `.found` 반환 + 히스토리 upsert
+4. SwiftData에서 Term 조회 (keyword 매칭) → 히트 시 `.found` 반환 + 히스토리 upsert
+5. ClaudeAPIService.generate(keyword) 호출
+   - 성공 → SwiftData에 Term upsert (source: "ai", aliases 포함) + 히스토리 upsert + `.found` 반환
    - .notDevTerm → `.notDevTerm` 반환 (히스토리 저장 안 함)
    - .possibleTypo → `.possibleTypo(suggestion)` 반환 (히스토리 저장 안 함)
    - 기타 에러 → throw (히스토리 저장 안 함)
 
-**SwiftData 저장 시점 (lazy 전략):**
-- AI 응답 시 → Term으로 저장 (source: "ai", aliases 포함, isBookmarked: false)
-- 북마크 시 → ViewModel에서 처리
-  - SwiftData에 Term 존재 → isBookmarked = true
-  - 미존재 (번들 용어) → TermEntry → Term 변환 저장 (source: "bundle", aliases 포함, isBookmarked: true)
+**SwiftData upsert 정책:**
+- Term upsert: 동일 keyword 존재 시 필드 업데이트 (isBookmarked, source 보존), 없으면 insert
+- SearchHistory upsert: 동일 keyword 존재 시 searchedAt만 갱신, 없으면 insert
 
-**히스토리 저장:**
-- fetch 성공(.found) 시에만 SearchHistory 저장/갱신
-- #Unique로 동일 키워드는 searchedAt만 업데이트
+**북마크 토글 (toggleBookmark):**
+```
+toggleBookmark(for entry) →
+  SwiftData에 Term 존재? → isBookmarked 토글, 변경된 값 반환
+  미존재 (번들 용어)? → Term(from: entry, source: "bundle", isBookmarked: true) 저장, true 반환
+```
+
+**bookmarkedTerms:**
+- SwiftData에서 isBookmarked == true인 Term 목록 반환
+- createdAt 내림차순 정렬
+
+**히스토리 메서드:**
+- recentSearches(limit:) → searchedAt 내림차순, 상위 limit개 반환
+- deleteSearchHistory(keyword:) → 해당 keyword의 SearchHistory 삭제
+- clearAllSearchHistory() → 모든 SearchHistory 삭제
 
 ### 2-4. 테스트
 
 **Tests/TermServiceTests.swift**
+- test_fetch_emptyInput_returnsNotDevTerm
 - test_fetch_bundleHit_returnsImmediately
 - test_fetch_bundleAlias_returnsCorrectTerm
 - test_fetch_bundleMiss_callsClaudeAPI
@@ -277,7 +416,14 @@ func autocomplete(prefix: String) -> [TermEntry] {
 - test_fetch_possibleTypo_returnsSuggestion
 - test_fetch_success_savesHistory
 - test_fetch_failure_doesNotSaveHistory
+- test_fetch_existingTerm_updatesFieldsPreservesBookmark
 - test_autocomplete_delegatesToBundleDB
+- test_toggleBookmark_existingTerm_togglesValue
+- test_toggleBookmark_bundleTerm_createsTerm
+- test_bookmarkedTerms_returnsOnlyBookmarked
+- test_recentSearches_returnsInOrder
+- test_deleteSearchHistory_removesEntry
+- test_clearAllSearchHistory_removesAll
 
 **Tests/BundleDBServiceTests.swift**
 - test_search_exactKeyword_returnsEntry
@@ -293,12 +439,29 @@ func autocomplete(prefix: String) -> [TermEntry] {
 - test_generate_possibleTypo_throwsWithSuggestion
 - test_generate_timeout_throwsTimeout
 - test_generate_invalidJSON_throwsInvalidResponse
+- test_generate_markdownWrappedJSON_parsesCorrectly
+- test_generate_missingAPIKey_throwsInvalidAPIKey
 
 ✅ Phase 2 완료 조건: 모든 테스트 통과, Mock으로 API 호출 검증
 
 ---
 
 ## Phase 3 — UI 구현
+
+### 3-0. 공통 규칙
+
+> **모든 ViewModel은 TermServiceProtocol에만 의존한다**
+> `@Environment(\.termService)`로 주입받아 사용
+> modelContext, BundleDBService, ClaudeAPIService 직접 참조 금지
+> SwiftData @Query 직접 사용 금지
+> 모든 ViewModel은 @MainActor로 선언
+
+> **상태 동기화**: @Query를 사용하지 않으므로 데이터 변경 시 자동 반영되지 않음
+> 북마크 토글, 히스토리 삭제 등 변경 액션 직후 ViewModel이 조회 메서드를 다시 호출하여 배열 갱신
+> 모든 목록 View(Bookmark, History)는 `.onAppear`에서도 데이터 최신화
+
+**네비게이션:** NavigationStack + .navigationDestination(for:) 패턴
+**다크모드:** 시스템 설정 자동 대응, 커스텀 컬러는 Color asset 사용
 
 ### 3-1. 탭바 구조
 
@@ -316,19 +479,17 @@ TabView {
 
 ### 3-2. SearchView + SearchViewModel
 
-> **SearchViewModel은 TermServiceProtocol에만 의존한다.**
-> BundleDBService를 직접 참조하지 않는다.
-
 **상태:**
 - 검색어 입력 → 엔터/검색 버튼 → DetailView push
 - 검색창 하단 안내 문구: "영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)"
-- 타이핑 중 자동완성: TermServiceProtocol.autocomplete(prefix:) → 드롭다운 리스트
-- 최근 검색 칩: SearchHistory 최근 5개 표시
+- 타이핑 중 자동완성: termService.autocomplete(prefix:) → 드롭다운 리스트
+  - 디바운싱: 300ms (Task.sleep 또는 Combine debounce)
+  - 최소 입력 길이: 1자 이상
+- 최근 검색 칩: termService.recentSearches(limit: 5) 호출
 - 칩 탭 → 해당 용어로 DetailView push
+- `.onAppear`에서 최근 검색 목록 갱신
 
 ### 3-3. DetailView + DetailViewModel
-
-> **DetailViewModel은 TermServiceProtocol에만 의존한다.**
 
 **TermResult별 표시:**
 
@@ -337,7 +498,7 @@ TabView {
 - 한 줄 요약
 - 어원 블록 (좌측 accent 보더)
 - 작명 이유 본문 — **ScrollView로 감싸서 긴 텍스트 대응**
-- 북마크 버튼 (toolbar)
+- 북마크 버튼 (toolbar) → termService.toggleBookmark(for:) 호출
 - 하단 고정: 오류 제보 버튼
 
 `.notDevTerm`:
@@ -346,18 +507,11 @@ TabView {
 
 `.possibleTypo(suggestion)`:
 - "{suggestion}을(를) 찾으셨나요?" 안내
-- 추천 용어 탭 시 해당 용어로 재검색
+- 추천 용어 탭 시 → 같은 DetailView를 replace (NavigationStack path 교체)
 
 **로딩 상태:**
 - 번들 DB 히트: 로딩 없음
 - AI 생성 중: ProgressView + "어원을 분석하는 중..." 텍스트
-
-**북마크 로직 (ViewModel에서 처리):**
-```
-북마크 탭 →
-  SwiftData에 Term 존재? → isBookmarked 토글
-  미존재 (번들 용어)? → TermEntry → Term(source: "bundle", aliases 포함, isBookmarked: true) 저장
-```
 
 ### 3-4. 오류 제보 (mailto)
 
@@ -382,17 +536,19 @@ TabView {
 
 ### 3-5. BookmarkView + BookmarkViewModel
 
-- SwiftData Query: isBookmarked == true
+- termService.bookmarkedTerms()로 목록 조회
+- `.onAppear`에서 목록 갱신
 - 빈 상태: 안내 문구
 - 항목 탭 → DetailView push
-- 스와이프 삭제 → isBookmarked = false
+- 스와이프 삭제 → termService.toggleBookmark(for:) 호출 → **직후 목록 다시 조회**
 
 ### 3-6. HistoryView + HistoryViewModel
 
-- SearchHistory 최근 검색순 정렬 (searchedAt 내림차순)
+- termService.recentSearches(limit:)로 목록 조회
+- `.onAppear`에서 목록 갱신
 - 항목 탭 → DetailView push
-- 스와이프 삭제
-- 상단 "전체 삭제" 버튼
+- 스와이프 삭제 → termService.deleteSearchHistory(_:) → **직후 목록 다시 조회**
+- 상단 "전체 삭제" 버튼 → termService.clearAllSearchHistory() → **직후 목록 다시 조회**
 
 ### 3-7. OnboardingView
 
@@ -409,9 +565,11 @@ TabView {
 ## Phase 4 — 통합 및 마무리
 
 ### 4-1. 오류 처리 UI
-- API 타임아웃: "잠시 후 다시 시도해주세요" Alert
-- 네트워크 없음: "인터넷 연결을 확인해주세요" Alert
-- 알 수 없는 오류: "오류가 발생했습니다" + 제보 유도
+
+네트워크 오류 감지는 URLSession 에러의 URLError.code로 판별 (NWPathMonitor 미사용):
+- .notConnectedToInternet → "인터넷 연결을 확인해주세요" Alert
+- .timedOut → "잠시 후 다시 시도해주세요" Alert
+- 기타 → "오류가 발생했습니다" + 제보 유도
 
 ### 4-2. 접근성
 - 모든 이미지/아이콘에 accessibilityLabel 추가
@@ -419,8 +577,9 @@ TabView {
 
 ### 4-3. 번들 DB 확장
 - 초기 20개 → Claude API 배치 생성 스크립트로 200개로 확장
+- 기존 20개 용어를 반드시 포함 (keyword/aliases 변경 금지)
 - 스크립트: Scripts/generate_db.py
-- 각 용어에 aliases 포함 필수
+- 각 용어에 aliases 포함 필수 (빈 배열 금지, 최소 1개)
 - 생성 후 JSON 유효성 + aliases 존재 여부 검증
 
 ✅ Phase 4 완료 조건: 모든 Phase 1-3 기능 통합 동작, 오류 처리 완비
