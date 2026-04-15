@@ -10,18 +10,21 @@ struct SearchView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            content
-                .navigationTitle("개발 어원 사전")
-                .navigationDestination(for: String.self) { keyword in
-                    DetailView(
-                        keyword: keyword,
-                        onSelectSuggestion: { suggestion in
-                            // possibleTypo → replace (push 아닌 교체)
-                            if !path.isEmpty { path.removeLast() }
-                            path.append(suggestion)
-                        }
-                    )
-                }
+            ZStack {
+                Theme.Palette.bg.ignoresSafeArea()
+                content
+            }
+            .navigationTitle("")
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: String.self) { keyword in
+                DetailView(
+                    keyword: keyword,
+                    onSelectSuggestion: { suggestion in
+                        if !path.isEmpty { path.removeLast() }
+                        path.append(suggestion)
+                    }
+                )
+            }
         }
         .onAppear {
             viewModel.termService = termService
@@ -29,11 +32,12 @@ struct SearchView: View {
         }
     }
 
-    // MARK: - 하위 구성
+    // MARK: - 컨텐츠
 
     @ViewBuilder
     private var content: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 18) {
+            header
             searchField
             hintText
             if !viewModel.suggestions.isEmpty {
@@ -43,16 +47,32 @@ struct SearchView: View {
                 Spacer()
             }
         }
-        .padding(.horizontal)
-        .padding(.top, 8)
+        .padding(.horizontal, 18)
+        .padding(.top, 16)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("DevEtym")
+                .font(Theme.serif(20, relativeTo: .title2))
+                .foregroundStyle(Theme.Palette.text)
+            Text("// 개발 용어 어원 사전")
+                .font(Theme.mono(10, relativeTo: .footnote))
+                .tracking(0.6)
+                .foregroundStyle(Theme.Palette.textMuted)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("DevEtym 개발 용어 어원 사전")
     }
 
     private var searchField: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.Palette.textMuted)
                 .accessibilityHidden(true)
-            TextField("용어를 입력하세요", text: $viewModel.query)
+            TextField("", text: $viewModel.query, prompt: Text("mutex, semaphore, daemon...").foregroundColor(Theme.Palette.textMuted))
+                .font(Theme.mono(13, relativeTo: .body))
+                .foregroundStyle(Theme.Palette.text)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
@@ -60,75 +80,86 @@ struct SearchView: View {
                 .onChange(of: viewModel.query) { _, newValue in
                     viewModel.onQueryChanged(newValue)
                 }
+                .accessibilityLabel("용어 검색")
             if !viewModel.query.isEmpty {
                 Button {
                     viewModel.query = ""
                     viewModel.suggestions = []
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Theme.Palette.textMuted)
                 }
                 .accessibilityLabel("검색어 지우기")
             }
         }
-        .padding(12)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .background(Theme.Palette.surface2)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Theme.Palette.border, lineWidth: 1.5)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private var hintText: some View {
         Text("영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)")
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+            .font(Theme.mono(10, relativeTo: .footnote))
+            .foregroundStyle(Theme.Palette.textMuted)
     }
 
     private var suggestionList: some View {
-        List(viewModel.suggestions, id: \.keyword) { entry in
-            Button {
-                path.append(entry.keyword)
-            } label: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(entry.keyword).font(.body)
-                    Text(entry.summary)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
-            }
-        }
-        .listStyle(.plain)
-    }
-
-    private var recentSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("최근 검색")
-                .font(.subheadline.bold())
-                .foregroundStyle(.secondary)
-            if viewModel.recent.isEmpty {
-                Text("최근 검색한 용어가 없습니다")
-                    .font(.footnote)
-                    .foregroundStyle(.tertiary)
-                    .padding(.vertical, 4)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(viewModel.recent, id: \.keyword) { history in
-                            Button {
-                                path.append(history.keyword)
-                            } label: {
-                                Text(history.keyword)
-                                    .font(.footnote)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        Capsule().fill(Color(.secondarySystemBackground))
-                                    )
-                                    .foregroundStyle(.primary)
+        VStack(alignment: .leading, spacing: 0) {
+            sectionLabel("자동완성")
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.suggestions, id: \.keyword) { entry in
+                        Button {
+                            path.append(entry.keyword)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(entry.keyword)
+                                    .font(Theme.mono(13, weight: .medium, relativeTo: .body))
+                                    .foregroundStyle(Theme.Palette.text)
+                                Text(entry.summary)
+                                    .font(Theme.sans(11, relativeTo: .caption))
+                                    .foregroundStyle(Theme.Palette.textDim)
+                                    .lineLimit(1)
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 10)
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("\(entry.keyword) 검색")
+                        Divider().background(Theme.Palette.border)
                     }
                 }
             }
         }
+    }
+
+    private var recentSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionLabel("최근 검색")
+            if viewModel.recent.isEmpty {
+                Text("최근 검색한 용어가 없습니다")
+                    .font(Theme.mono(10, relativeTo: .footnote))
+                    .foregroundStyle(Theme.Palette.textMuted)
+            } else {
+                FlowChips(
+                    items: viewModel.recent.map(\.keyword),
+                    onTap: { keyword in path.append(keyword) }
+                )
+            }
+        }
+    }
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text.uppercased())
+            .font(Theme.mono(9, relativeTo: .caption2))
+            .tracking(1.5)
+            .foregroundStyle(Theme.Palette.textMuted)
+            .padding(.bottom, 8)
     }
 
     // MARK: - 액션
@@ -139,19 +170,54 @@ struct SearchView: View {
     }
 }
 
+/// 가로 배치 칩 — 줄 넘김 자동 처리
+private struct FlowChips: View {
+    let items: [String]
+    let onTap: (String) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(items, id: \.self) { item in
+                    Button {
+                        onTap(item)
+                    } label: {
+                        Text(item)
+                            .font(Theme.mono(10, relativeTo: .footnote))
+                            .foregroundStyle(Theme.Palette.textDim)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule().fill(Theme.Palette.surface2)
+                            )
+                            .overlay(
+                                Capsule().stroke(Theme.Palette.border, lineWidth: 1)
+                            )
+                    }
+                    .accessibilityLabel("\(item) 다시 검색")
+                }
+            }
+        }
+    }
+}
+
 #Preview("기본") {
     SearchView()
-        .environment(\.termService, MockTermService())
+        .environment(\.termService, PreviewTermService())
+        .preferredColorScheme(.dark)
 }
 
 #Preview("히스토리 있음") {
     SearchView()
         .environment(
             \.termService,
-            MockTermService(histories: [
+            PreviewTermService(histories: [
                 SearchHistory(keyword: "mutex"),
                 SearchHistory(keyword: "deadlock"),
-                SearchHistory(keyword: "jpa")
+                SearchHistory(keyword: "jpa"),
+                SearchHistory(keyword: "kernel"),
+                SearchHistory(keyword: "fork")
             ])
         )
+        .preferredColorScheme(.dark)
 }

@@ -57,7 +57,7 @@ final class DetailViewModel: ObservableObject {
     /// 북마크 토글 — 성공 시 isBookmarked 갱신
     func toggleBookmark() {
         guard let service = termService,
-              case .loaded(.found(let entry)) = state else { return }
+              case .loaded(.found(let entry, _)) = state else { return }
         do {
             isBookmarked = try service.toggleBookmark(for: entry)
         } catch {
@@ -96,7 +96,7 @@ final class DetailViewModel: ObservableObject {
         for result: TermResult,
         service: any TermServiceProtocol
     ) -> Bool {
-        guard case .found(let entry) = result else { return false }
+        guard case .found(let entry, _) = result else { return false }
         let keyword = entry.keyword.lowercased()
         return service.bookmarkedTerms().contains { $0.keyword == keyword }
     }

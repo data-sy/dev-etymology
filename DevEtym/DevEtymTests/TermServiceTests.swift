@@ -69,17 +69,28 @@ final class TermServiceTests: XCTestCase {
 
     func test_fetch_bundleHit_returnsImmediately() async throws {
         let result = try await service.fetch(keyword: "MUTEX")
-        guard case .found(let entry) = result else {
+        guard case .found(let entry, let source) = result else {
             XCTFail(".found 예상")
             return
         }
         XCTAssertEqual(entry.keyword, "mutex")
+        XCTAssertEqual(source, "bundle")
         XCTAssertTrue(apiMock.generateCalls.isEmpty)
+    }
+
+    func test_fetch_aiResult_sourceIsAI() async throws {
+        apiMock.result = .success(aiEntry())
+        let result = try await service.fetch(keyword: "goroutine")
+        guard case .found(_, let source) = result else {
+            XCTFail(".found 예상")
+            return
+        }
+        XCTAssertEqual(source, "ai")
     }
 
     func test_fetch_bundleAlias_returnsCorrectTerm() async throws {
         let result = try await service.fetch(keyword: "뮤텍스")
-        guard case .found(let entry) = result else {
+        guard case .found(let entry, _) = result else {
             XCTFail(".found 예상")
             return
         }

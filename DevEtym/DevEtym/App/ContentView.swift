@@ -9,11 +9,17 @@ struct ContentView: View {
         TabView {
             SearchView()
                 .tabItem { Label("검색", systemImage: "magnifyingglass") }
+                .accessibilityLabel("검색 탭")
             BookmarkView()
                 .tabItem { Label("북마크", systemImage: "bookmark") }
+                .accessibilityLabel("북마크 탭")
             HistoryView()
                 .tabItem { Label("히스토리", systemImage: "clock") }
+                .accessibilityLabel("히스토리 탭")
         }
+        .tint(Theme.Palette.accent)
+        .toolbarBackground(Theme.Palette.surface, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .fullScreenCover(isPresented: Binding(
             get: { !hasSeenOnboarding },
             set: { hasSeenOnboarding = !$0 }
@@ -25,5 +31,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environment(\.termService, MockTermService())
+        .environment(\.termService, PreviewTermService())
+        .preferredColorScheme(.dark)
 }
