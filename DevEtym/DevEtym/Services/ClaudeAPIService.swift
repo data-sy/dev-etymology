@@ -149,6 +149,7 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     {
       "keyword": "mutex",
       "aliases": ["뮤텍스", "mutual exclusion"],
+      "category": "동시성",
       "summary": "동시 접근을 막는 잠금 장치",
       "etymology": "라틴어 mutuus(상호의) + exclusio(배제)",
       "namingReason": "두 스레드가 동시에 접근하지 못하도록..."
@@ -163,6 +164,11 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     [엄격한 출력 제한]
     응답의 첫 글자는 반드시 '{'로 시작하고, 마지막 글자는 '}'로 끝나야 합니다.
     어떠한 경우에도 마크다운 백틱(```)이나 부연 설명을 텍스트에 포함하지 마세요.
+
+    [카테고리 규칙]
+    - category 필드는 반드시 다음 6개 값 중 하나여야 합니다: "동시성", "자료구조", "네트워크", "DB", "패턴", "기타"
+    - 6개 분류에 애매하게 걸치는 경우 가장 핵심적인 분류를 선택하세요.
+    - 어느 분류에도 명확히 속하지 않으면 "기타"를 사용하세요.
 
     [주의사항]
     - 어원이 불확실한 경우 "정확한 어원은 불분명하나"로 시작하여 알려진 설만 서술하세요.

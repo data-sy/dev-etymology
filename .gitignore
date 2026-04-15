@@ -73,4 +73,7 @@ DerivedData/
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 
+# 로컬 전용 비밀 설정 (Claude API 키 등)
+Config.xcconfig
+
 

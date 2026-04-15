@@ -21,6 +21,7 @@ final class TermServiceTests: XCTestCase {
             TermEntry(
                 keyword: "mutex",
                 aliases: ["뮤텍스", "mutual exclusion"],
+                category: "동시성",
                 summary: "요약",
                 etymology: "어원",
                 namingReason: "작명"
@@ -40,6 +41,7 @@ final class TermServiceTests: XCTestCase {
         TermEntry(
             keyword: keyword,
             aliases: ["고루틴"],
+            category: "동시성",
             summary: "s",
             etymology: "e",
             namingReason: "n"
@@ -164,6 +166,7 @@ final class TermServiceTests: XCTestCase {
         let existing = Term(
             keyword: "goroutine",
             aliases: ["예전"],
+            category: "기타",
             summary: "예전 요약",
             etymology: "예전 어원",
             namingReason: "예전 작명",
@@ -198,6 +201,7 @@ final class TermServiceTests: XCTestCase {
         let existing = Term(
             keyword: "goroutine",
             aliases: [],
+            category: "동시성",
             summary: "s",
             etymology: "e",
             namingReason: "n",
@@ -210,6 +214,7 @@ final class TermServiceTests: XCTestCase {
         let entry = TermEntry(
             keyword: "goroutine",
             aliases: [],
+            category: "동시성",
             summary: "s",
             etymology: "e",
             namingReason: "n"
@@ -223,6 +228,7 @@ final class TermServiceTests: XCTestCase {
         let entry = TermEntry(
             keyword: "mutex",
             aliases: ["뮤텍스"],
+            category: "동시성",
             summary: "s",
             etymology: "e",
             namingReason: "n"
@@ -238,12 +244,13 @@ final class TermServiceTests: XCTestCase {
         XCTAssertTrue(terms[0].isBookmarked)
         XCTAssertEqual(terms[0].source, "bundle")
         XCTAssertEqual(terms[0].aliases, ["뮤텍스"])
+        XCTAssertEqual(terms[0].category, "동시성")
     }
 
     func test_bookmarkedTerms_returnsOnlyBookmarked() throws {
-        context.insert(Term(keyword: "a", summary: "", etymology: "", namingReason: "", isBookmarked: true))
-        context.insert(Term(keyword: "b", summary: "", etymology: "", namingReason: "", isBookmarked: false))
-        context.insert(Term(keyword: "c", summary: "", etymology: "", namingReason: "", isBookmarked: true))
+        context.insert(Term(keyword: "a", category: "기타", summary: "", etymology: "", namingReason: "", isBookmarked: true))
+        context.insert(Term(keyword: "b", category: "기타", summary: "", etymology: "", namingReason: "", isBookmarked: false))
+        context.insert(Term(keyword: "c", category: "기타", summary: "", etymology: "", namingReason: "", isBookmarked: true))
         try context.save()
 
         let bookmarked = service.bookmarkedTerms()
@@ -260,6 +267,7 @@ final class TermServiceTests: XCTestCase {
         bundleMock.terms.append(TermEntry(
             keyword: "thread",
             aliases: ["스레드"],
+            category: "동시성",
             summary: "s", etymology: "e", namingReason: "n"
         ))
         _ = try await service.fetch(keyword: "thread")
@@ -270,7 +278,7 @@ final class TermServiceTests: XCTestCase {
 
     func test_recentSearches_respectsLimit() async throws {
         bundleMock.terms = ["a", "b", "c"].map {
-            TermEntry(keyword: $0, aliases: ["ko"], summary: "", etymology: "", namingReason: "")
+            TermEntry(keyword: $0, aliases: ["ko"], category: "기타", summary: "", etymology: "", namingReason: "")
         }
         for kw in ["a", "b", "c"] {
             _ = try await service.fetch(keyword: kw)
@@ -291,6 +299,7 @@ final class TermServiceTests: XCTestCase {
     func test_clearAllSearchHistory_removesAll() async throws {
         bundleMock.terms.append(TermEntry(
             keyword: "thread", aliases: ["스레드"],
+            category: "동시성",
             summary: "", etymology: "", namingReason: ""
         ))
         _ = try await service.fetch(keyword: "mutex")

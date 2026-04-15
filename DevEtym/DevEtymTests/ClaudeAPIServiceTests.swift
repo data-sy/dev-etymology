@@ -42,7 +42,7 @@ final class ClaudeAPIServiceTests: XCTestCase {
     func test_generate_validTerm_returnsTermEntry() async throws {
         let stub = StubHTTPClient()
         let json = """
-        {"keyword":"mutex","aliases":["뮤텍스"],"summary":"s","etymology":"e","namingReason":"n"}
+        {"keyword":"mutex","aliases":["뮤텍스"],"category":"동시성","summary":"s","etymology":"e","namingReason":"n"}
         """
         stub.responseFactory = { _ in (self.envelope(text: json), self.okResponse()) }
 
@@ -50,6 +50,7 @@ final class ClaudeAPIServiceTests: XCTestCase {
         let entry = try await service.generate(keyword: "mutex")
         XCTAssertEqual(entry.keyword, "mutex")
         XCTAssertEqual(entry.aliases, ["뮤텍스"])
+        XCTAssertEqual(entry.category, "동시성")
     }
 
     func test_generate_notDevTerm_throwsNotDevTerm() async {
@@ -114,7 +115,7 @@ final class ClaudeAPIServiceTests: XCTestCase {
         let stub = StubHTTPClient()
         let wrapped = """
         ```json
-        {"keyword":"mutex","aliases":["뮤텍스"],"summary":"s","etymology":"e","namingReason":"n"}
+        {"keyword":"mutex","aliases":["뮤텍스"],"category":"동시성","summary":"s","etymology":"e","namingReason":"n"}
         ```
         """
         stub.responseFactory = { _ in (self.envelope(text: wrapped), self.okResponse()) }
