@@ -36,10 +36,10 @@ final class MockTermService: TermServiceProtocol {
         if normalized.isEmpty { return .notDevTerm }
         if let hit = MockTermService.sampleEntries.first(where: { $0.keyword == normalized }) {
             upsertHistory(keyword: normalized)
-            return .found(hit)
+            return .found(hit, source: "bundle")
         }
         upsertHistory(keyword: normalized)
-        return .found(MockTermService.sampleEntries[0])
+        return .found(MockTermService.sampleEntries[0], source: "bundle")
     }
 
     func autocomplete(prefix: String) -> [TermEntry] {

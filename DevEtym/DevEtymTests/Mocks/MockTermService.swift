@@ -12,6 +12,8 @@ final class MockTermService: TermServiceProtocol {
     var fetchResult: TermResult?
     /// fetch가 throw할 에러 (테스트용)
     var fetchError: Error?
+    /// fetchResult가 nil일 때 .found에 함께 실어 보낼 source 문자열
+    var defaultSource: String = "bundle"
     /// 자동완성 후보
     var autocompleteEntries: [TermEntry] = MockTermService.sampleEntries
     /// 북마크된 Term 목록
@@ -24,12 +26,14 @@ final class MockTermService: TermServiceProtocol {
     init(
         fetchResult: TermResult? = nil,
         fetchError: Error? = nil,
+        defaultSource: String = "bundle",
         autocompleteEntries: [TermEntry]? = nil,
         bookmarks: [Term] = [],
         histories: [SearchHistory] = []
     ) {
         self.fetchResult = fetchResult
         self.fetchError = fetchError
+        self.defaultSource = defaultSource
         if let autocompleteEntries {
             self.autocompleteEntries = autocompleteEntries
         }
@@ -46,11 +50,11 @@ final class MockTermService: TermServiceProtocol {
         if normalized.isEmpty { return .notDevTerm }
         if let hit = MockTermService.sampleEntries.first(where: { $0.keyword == normalized }) {
             upsertHistory(keyword: normalized)
-            return .found(hit)
+            return .found(hit, source: defaultSource)
         }
         // 샘플 외에는 기본적으로 mutex 반환 (Preview 편의)
         upsertHistory(keyword: normalized)
-        return .found(MockTermService.sampleEntries[0])
+        return .found(MockTermService.sampleEntries[0], source: defaultSource)
     }
 
     func autocomplete(prefix: String) -> [TermEntry] {

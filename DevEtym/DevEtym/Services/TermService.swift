@@ -30,14 +30,14 @@ final class TermService: TermServiceProtocol {
         // 1) 번들 DB
         if let entry = bundleDBService.search(keyword: normalized) {
             try upsertSearchHistory(keyword: normalized)
-            return .found(entry)
+            return .found(entry, source: "bundle")
         }
 
         // 2) SwiftData 캐시 — AI 응답으로 저장된 항목만 캐시로 취급
         //    (source == "bundle"은 북마크 용도로만 저장된 번들 항목이므로 캐시에서 제외)
         if let cached = findTerm(keyword: normalized), cached.source == "ai" {
             try upsertSearchHistory(keyword: normalized)
-            return .found(cached.toEntry())
+            return .found(cached.toEntry(), source: "ai")
         }
 
         // 3) Claude AI
@@ -45,7 +45,7 @@ final class TermService: TermServiceProtocol {
             let entry = try await claudeAPIService.generate(keyword: normalized)
             upsertTerm(entry: entry, source: "ai")
             try upsertSearchHistory(keyword: normalized)
-            return .found(entry)
+            return .found(entry, source: "ai")
         } catch ClaudeAPIError.notDevTerm {
             return .notDevTerm
         } catch ClaudeAPIError.possibleTypo(let suggestion) {

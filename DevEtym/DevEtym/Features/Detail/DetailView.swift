@@ -61,8 +61,8 @@ struct DetailView: View {
     @ViewBuilder
     private func loadedView(_ result: TermResult) -> some View {
         switch result {
-        case .found(let entry):
-            foundView(entry: entry)
+        case .found(let entry, let source):
+            foundView(entry: entry, source: source)
         case .notDevTerm:
             notDevTermView
         case .possibleTypo(let suggestion):
@@ -70,7 +70,7 @@ struct DetailView: View {
         }
     }
 
-    private func foundView(entry: TermEntry) -> some View {
+    private func foundView(entry: TermEntry, source: String) -> some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
