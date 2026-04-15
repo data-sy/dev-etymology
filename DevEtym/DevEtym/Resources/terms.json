@@ -1,0 +1,142 @@
+[
+  {
+    "keyword": "mutex",
+    "aliases": ["뮤텍스", "mutual exclusion"],
+    "summary": "동시 접근을 막는 잠금 장치",
+    "etymology": "라틴어 mutuus(상호의) + exclusio(배제) → Mutual Exclusion의 줄임말",
+    "namingReason": "두 스레드가 동시에 같은 자원에 접근하지 못하도록 서로(mutual) 차단(exclusion)하는 개념에서 유래"
+  },
+  {
+    "keyword": "semaphore",
+    "aliases": ["세마포어", "세마포"],
+    "summary": "제한된 개수의 자원 접근을 제어하는 동기화 기법",
+    "etymology": "그리스어 sema(신호) + phoros(운반자) → 신호를 전달하는 장치",
+    "namingReason": "철도에서 열차 통행을 신호로 제어하던 세마포 장치에서 유래. 자원 접근 가능 여부를 신호처럼 알려준다는 점에서 이름이 붙음"
+  },
+  {
+    "keyword": "deadlock",
+    "aliases": ["데드락", "교착상태"],
+    "summary": "두 개 이상의 작업이 서로 자원을 기다리며 멈춘 상태",
+    "etymology": "영어 dead(죽은, 완전한) + lock(잠금) → 완전히 잠긴 상태",
+    "namingReason": "서로가 상대방이 가진 자원을 기다리느라 아무도 진행하지 못하고 완전히 잠겨버린 상태를 표현"
+  },
+  {
+    "keyword": "thread",
+    "aliases": ["스레드", "쓰레드"],
+    "summary": "프로세스 안에서 독립적으로 실행되는 흐름 단위",
+    "etymology": "고대 영어 þræd(실) → 실의 가닥",
+    "namingReason": "프로그램의 실행 흐름을 실 한 가닥에 비유. 여러 가닥의 실(스레드)이 하나의 천(프로세스)을 이루는 이미지"
+  },
+  {
+    "keyword": "stack",
+    "aliases": ["스택"],
+    "summary": "후입선출(LIFO) 방식의 자료구조",
+    "etymology": "중세 영어 stak(쌓아올린 더미) → 고대 노르드어 stakkr",
+    "namingReason": "책이나 접시처럼 위로 쌓아올리는 더미에서 유래. 가장 나중에 올린 것을 먼저 꺼내는 물리적 동작을 그대로 자료구조 이름에 반영"
+  },
+  {
+    "keyword": "queue",
+    "aliases": ["큐", "대기열"],
+    "summary": "선입선출(FIFO) 방식의 자료구조",
+    "etymology": "프랑스어 queue(꼬리) → 라틴어 cauda(꼬리)",
+    "namingReason": "줄을 서서 기다리는 대기열의 모습에서 유래. 먼저 온 사람이 먼저 처리되는 동작을 반영"
+  },
+  {
+    "keyword": "heap",
+    "aliases": ["힙", "더미"],
+    "summary": "부모-자식 관계를 유지하는 완전 이진 트리 기반 자료구조 또는 동적 할당 메모리 영역",
+    "etymology": "고대 영어 heap(더미, 무더기)",
+    "namingReason": "자료들이 쌓여있는 더미 형태라는 점에서 유래. 메모리 영역의 heap도 필요할 때마다 마구 쌓이는 더미처럼 할당된다는 이미지"
+  },
+  {
+    "keyword": "socket",
+    "aliases": ["소켓"],
+    "summary": "네트워크 통신의 양 끝점(endpoint)",
+    "etymology": "중세 영어 soket(작은 쟁기날 꽂이) → 고대 프랑스어 soc(쟁기날)",
+    "namingReason": "전기 플러그를 꽂는 콘센트(소켓)처럼 네트워크 연결의 양쪽 끝을 꽂아 연결한다는 은유에서 유래"
+  },
+  {
+    "keyword": "handshake",
+    "aliases": ["핸드셰이크", "악수"],
+    "summary": "통신 시작 전 양측이 통신 규약을 합의하는 절차",
+    "etymology": "영어 hand(손) + shake(흔들다) → 악수",
+    "namingReason": "사람이 처음 만났을 때 악수로 인사하듯, 통신 당사자끼리 인사를 나누고 연결을 확립한다는 은유"
+  },
+  {
+    "keyword": "payload",
+    "aliases": ["페이로드"],
+    "summary": "통신에서 실제로 전달하려는 데이터 본문",
+    "etymology": "영어 pay(지불) + load(적재물) → 운송 수익을 내는 화물",
+    "namingReason": "배나 비행기에서 운임을 받고 싣는 실제 화물을 가리키던 말. 네트워크 패킷에서 헤더 등 부가 정보를 제외한 실제 전달 목적의 데이터를 화물에 비유"
+  },
+  {
+    "keyword": "index",
+    "aliases": ["인덱스", "색인"],
+    "summary": "데이터 조회 속도를 높이기 위한 보조 자료구조",
+    "etymology": "라틴어 index(가리키는 것, 집게손가락) → indicare(가리키다)",
+    "namingReason": "책의 색인(index)이 특정 단어가 있는 페이지를 빠르게 가리켜주듯, DB 인덱스도 데이터 위치를 가리켜 조회를 빠르게 해준다는 점에서 유래"
+  },
+  {
+    "keyword": "transaction",
+    "aliases": ["트랜잭션", "거래"],
+    "summary": "전부 성공하거나 전부 실패해야 하는 작업 단위",
+    "etymology": "라틴어 trans(가로질러) + agere(행하다) → 완결된 거래 행위",
+    "namingReason": "은행 거래처럼 돈이 빠져나가고 들어오는 일이 모두 성공해야 의미가 있다는 점에서 유래. DB에서도 일련의 작업이 전부 성공 또는 전부 실패해야 한다"
+  },
+  {
+    "keyword": "cache",
+    "aliases": ["캐시"],
+    "summary": "빠른 접근을 위해 자주 쓰는 데이터를 임시 저장하는 공간",
+    "etymology": "프랑스어 cacher(숨기다) → 라틴어 coactare(밀어넣다)",
+    "namingReason": "원래는 사냥꾼이 음식을 숨겨두던 은닉처를 뜻함. 자주 쓸 데이터를 가까운 곳에 '숨겨두고' 빠르게 꺼내 쓴다는 이미지"
+  },
+  {
+    "keyword": "daemon",
+    "aliases": ["데몬"],
+    "summary": "백그라운드에서 계속 실행되는 프로세스",
+    "etymology": "그리스어 daimōn(초자연적 존재, 수호령)",
+    "namingReason": "MIT의 Project MAC에서 자동으로 작업을 수행하는 프로세스를, 그리스 신화에서 인간의 일을 대신 처리해주는 보이지 않는 수호령(daemon)에 비유해 이름 붙임"
+  },
+  {
+    "keyword": "bug",
+    "aliases": ["버그", "벌레"],
+    "summary": "프로그램의 결함이나 오작동",
+    "etymology": "영어 bug(벌레) — 1940년대 그레이스 호퍼가 Mark II 컴퓨터 회로에서 나방을 발견한 일화로 대중화",
+    "namingReason": "실제로 컴퓨터 내부에 들어간 나방이 오작동을 일으킨 사건에서 유래. 다만 '기계적 결함'을 bug라 부르는 표현은 그 이전 19세기 에디슨 시대부터 쓰였음"
+  },
+  {
+    "keyword": "debug",
+    "aliases": ["디버그", "디버깅"],
+    "summary": "프로그램의 오류를 찾아 제거하는 작업",
+    "etymology": "영어 de-(제거) + bug(벌레) → 벌레 잡기",
+    "namingReason": "bug(결함)를 제거한다는 조어. 위의 나방 일화에서 호퍼가 '시스템에서 벌레를 잡았다'고 적은 것이 직접적 계기"
+  },
+  {
+    "keyword": "compile",
+    "aliases": ["컴파일"],
+    "summary": "소스 코드를 기계어나 다른 언어로 변환하는 작업",
+    "etymology": "라틴어 com-(함께) + pilare(쌓다) → 여러 조각을 모아 하나로 엮다",
+    "namingReason": "여러 소스 파일과 라이브러리를 모아(compile) 실행 가능한 하나의 결과물로 엮는다는 점에서 유래. 영어에서 compile은 본래 '편찬하다'의 뜻"
+  },
+  {
+    "keyword": "singleton",
+    "aliases": ["싱글턴", "싱글톤"],
+    "summary": "애플리케이션 전체에서 인스턴스가 하나만 존재하도록 보장하는 패턴",
+    "etymology": "영어 single(하나의) + -ton(접미사, 집합·개체) → 단일 원소 집합",
+    "namingReason": "수학에서 원소가 하나뿐인 집합을 singleton이라 부르는 데서 유래. 디자인 패턴에서도 인스턴스가 오직 하나만 존재한다는 성질을 그대로 반영"
+  },
+  {
+    "keyword": "observer",
+    "aliases": ["옵저버", "관찰자"],
+    "summary": "주체의 상태 변화를 구독해 통지받는 객체 또는 패턴",
+    "etymology": "라틴어 observare(지켜보다) → ob-(향해) + servare(지키다)",
+    "namingReason": "어떤 대상을 지켜보고 변화가 있을 때 반응한다는 동작을 '관찰자'라는 역할 이름으로 직역"
+  },
+  {
+    "keyword": "schema",
+    "aliases": ["스키마"],
+    "summary": "데이터의 구조와 제약을 정의한 설계도",
+    "etymology": "그리스어 skhēma(형태, 외형) → 라틴어 schema(도형, 구조)",
+    "namingReason": "데이터가 어떤 형태로 구성되는지 그 '형태·구조'를 정의한다는 의미에서 그리스어 원형을 그대로 차용"
+  }
+]
