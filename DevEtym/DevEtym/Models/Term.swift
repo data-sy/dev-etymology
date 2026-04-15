@@ -5,10 +5,11 @@ import SwiftData
 @Model
 final class Term {
     #Unique<Term>([\.keyword])
-    #Index<Term>([\.isBookmarked], [\.createdAt])
+    #Index<Term>([\.isBookmarked], [\.createdAt], [\.category])
 
     var keyword: String
     var aliases: [String]
+    var category: String
     var summary: String
     var etymology: String
     var namingReason: String
@@ -20,6 +21,7 @@ final class Term {
     init(
         keyword: String,
         aliases: [String] = [],
+        category: String,
         summary: String,
         etymology: String,
         namingReason: String,
@@ -28,6 +30,7 @@ final class Term {
     ) {
         self.keyword = keyword
         self.aliases = aliases
+        self.category = category
         self.summary = summary
         self.etymology = etymology
         self.namingReason = namingReason
@@ -40,11 +43,12 @@ final class Term {
 // MARK: - TermEntry 변환
 
 extension Term {
-    /// TermEntry → Term 변환 (aliases 포함 필수)
+    /// TermEntry → Term 변환 (aliases + category 포함 필수)
     convenience init(from entry: TermEntry, source: String, isBookmarked: Bool = false) {
         self.init(
             keyword: entry.keyword.lowercased(),
             aliases: entry.aliases,
+            category: entry.category,
             summary: entry.summary,
             etymology: entry.etymology,
             namingReason: entry.namingReason,
@@ -58,6 +62,7 @@ extension Term {
         TermEntry(
             keyword: keyword,
             aliases: aliases,
+            category: category,
             summary: summary,
             etymology: etymology,
             namingReason: namingReason
