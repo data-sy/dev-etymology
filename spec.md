@@ -298,7 +298,11 @@ enum ClaudeAPIError: Error {
 [개발 용어는 아니지만 오타로 추정되는 경우의 응답 구조]
 {"error": "POSSIBLE_TYPO", "suggestion": "올바른 용어"}
 
-주의사항:
+[엄격한 출력 제한]
+응답의 첫 글자는 반드시 '{'로 시작하고, 마지막 글자는 '}'로 끝나야 합니다
+어떠한 경우에도 마크다운 백틱(```)이나 부연 설명을 텍스트에 포함하지 마세요
+
+[주의사항]
 - 어원이 불확실한 경우 "정확한 어원은 불분명하나"로 시작하여 알려진 설만 서술하세요
 - 추측이나 민간어원(folk etymology)을 사실처럼 서술하지 마세요
 - 약어의 경우 반드시 각 글자가 무엇의 약자인지 명시하세요
@@ -306,7 +310,7 @@ enum ClaudeAPIError: Error {
 
 **응답 파싱 로직:**
 1. content[0].text에서 앞뒤 공백 제거
-2. ```json ... ``` 또는 ``` ... ``` 마크다운 블록 감싸기가 있으면 정규식으로 제거
+2. ```json ... ``` 또는 ``` ... ``` 마크다운 블록 감싸기가 있으면 정규식으로 제거 (프롬프트로 금지했으나 방어적 전처리)
 3. 결과 문자열로 JSON 디코딩 시도
 4. "error" 키 존재 → AIErrorResponse로 디코딩
    - NOT_DEV_TERM → throw ClaudeAPIError.notDevTerm
@@ -479,6 +483,17 @@ TabView {
 
 ### 3-2. SearchView + SearchViewModel
 
+**네비게이션 상태 관리:**
+- SearchView가 `@State private var path = NavigationPath()`를 소유
+- NavigationStack(path: $path)으로 바인딩
+- DetailView push: `path.append(keyword)`
+- possibleTypo 재검색 시: `path.removeLast()` 후 새 keyword `path.append(suggestion)`
+
+**검색 Task 관리:**
+- SearchViewModel은 `private var currentSearchTask: Task<Void, Never>?` 프로퍼티를 보유
+- 새로운 검색 시작 시 기존 Task를 `currentSearchTask?.cancel()`로 취소 후 새 Task 할당
+- 연타/빠른 재검색 시 레이스 컨디션 방지
+
 **상태:**
 - 검색어 입력 → 엔터/검색 버튼 → DetailView push
 - 검색창 하단 안내 문구: "영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)"
@@ -490,6 +505,10 @@ TabView {
 - `.onAppear`에서 최근 검색 목록 갱신
 
 ### 3-3. DetailView + DetailViewModel
+
+**검색 Task 관리:**
+- DetailViewModel도 `currentSearchTask`를 보유하여 fetch 중복 호출 방지
+- View가 사라질 때(onDisappear) 진행 중인 Task 취소
 
 **TermResult별 표시:**
 
@@ -512,6 +531,19 @@ TabView {
 **로딩 상태:**
 - 번들 DB 히트: 로딩 없음
 - AI 생성 중: ProgressView + "어원을 분석하는 중..." 텍스트
+
+**에러 처리 (ViewModel에서 catch → 상태 변수로 Alert 표시):**
+- TermResult에 에러 케이스를 추가하지 않음 — 에러는 throw → ViewModel catch 패턴 유지
+- ViewModel은 `@Published var errorMessage: String?`로 에러 상태 관리
+- ClaudeAPIError 타입별 분기:
+  - .invalidAPIKey → "API 키 설정이 필요합니다"
+  - .timeout → "요청 시간이 초과되었습니다. 다시 시도해주세요"
+  - .networkError(let error) → URLError.code로 세분화:
+    - .notConnectedToInternet → "인터넷 연결을 확인해주세요"
+    - 기타 → "네트워크 연결이 불안정합니다. 다시 시도해주세요"
+  - .invalidResponse → "응답을 처리할 수 없습니다. 다시 시도해주세요"
+  - 기타 → "오류가 발생했습니다" + 제보 유도
+- Alert dismiss 후 검색 화면으로 돌아가기
 
 ### 3-4. 오류 제보 (mailto)
 
@@ -558,7 +590,7 @@ TabView {
   - "이 앱의 모든 설명은 AI가 생성합니다. 오류가 있을 수 있으니 제보해 주세요."
   - 시작하기 버튼
 
-✅ Phase 3 완료 조건: 모든 탭 화면 렌더링, 검색 → 결과 플로우 동작, 오류 제보 mailto 동작
+✅ Phase 3 완료 조건: 모든 탭 화면 렌더링, 검색 → 결과 플로우 동작, 에러 Alert 분기 동작, 오류 제보 mailto 동작
 
 ---
 
@@ -566,10 +598,8 @@ TabView {
 
 ### 4-1. 오류 처리 UI
 
-네트워크 오류 감지는 URLSession 에러의 URLError.code로 판별 (NWPathMonitor 미사용):
-- .notConnectedToInternet → "인터넷 연결을 확인해주세요" Alert
-- .timedOut → "잠시 후 다시 시도해주세요" Alert
-- 기타 → "오류가 발생했습니다" + 제보 유도
+> Phase 3-3에서 정의한 에러 분기가 통합 환경에서도 정상 동작하는지 확인
+> 네트워크 오류 감지는 URLError.code 기반 (NWPathMonitor 미사용)
 
 ### 4-2. 접근성
 - 모든 이미지/아이콘에 accessibilityLabel 추가

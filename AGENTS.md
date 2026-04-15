@@ -60,6 +60,7 @@ Agent C (Bundle DB) ← 독립 작업
 - Models/AIErrorResponse.swift
 - Utils/Constants.swift
 - Utils/EnvironmentKeys.swift
+- App/DevEtymApp.swift
 
 **작업 지시:**
 ```
@@ -78,8 +79,10 @@ async 작업(ClaudeAPIService 호출) 후 modelContext에 접근할 때
 1. BundleDBService: keyword + aliases 대소문자 무시 매칭 + autocomplete
 2. ClaudeAPIService:
    - API 키 검증 (Bundle.main에서 읽기 실패/빈 문자열 → .invalidAPIKey)
-   - 시스템 프롬프트에 error/suggestion 응답 구조 포함
+   - 시스템 프롬프트에 error/suggestion 응답 구조 + 엄격한 출력 제한 포함
    - 응답 파싱 전처리: ```json 마크다운 블록 제거 후 JSON 디코딩
+   - 선택적 개선: 텍스트 프롬프트 기반 JSON 파싱 대신, Anthropic API의 Tool Use(기능 호출)를 사용하여
+     TermEntry 스키마를 강제하는 방식도 고려하세요 (구조화된 출력 보장)
 3. TermService (@MainActor, TermServiceProtocol 전체 구현):
    - fetch: 오케스트레이션 (Bundle → SwiftData 캐시 → AI 폴백)
    - autocomplete: BundleDBService 위임
@@ -118,6 +121,10 @@ Phase 2 완료 조건을 충족하면 작업을 종료하세요
 ```
 spec.md의 Phase 3을 구현하세요
 
+⚠️ Phase 1 파일 보호:
+App/DevEtymApp.swift와 Utils/EnvironmentKeys.swift는 절대 수정하지 마세요 (Phase 1 유지)
+모든 View의 #Preview 안에서만 .environment(\.termService, MockTermService())를 주입하여 UI를 테스트하세요
+
 ⚠️ 핵심 의존성 규칙 (예외 없음):
 - 모든 ViewModel은 TermServiceProtocol에만 의존하세요
 - BundleDBService, ClaudeAPIService, modelContext를 직접 import하거나 참조하지 마세요
@@ -134,6 +141,11 @@ spec.md의 Phase 3을 구현하세요
 - 모든 목록 View(Bookmark, History, Search의 최근 검색 칩)는
   .onAppear 시점에도 데이터를 최신화
 
+⚠️ 검색 Task 관리:
+SearchViewModel과 DetailViewModel은 private var currentSearchTask: Task<Void, Never>? 보유
+새로운 검색 시작 시 기존 Task를 cancel() 처리 후 새 Task 할당
+연타/빠른 재검색 시 레이스 컨디션 방지
+
 MockTermService 구현 (Tests/Mocks/MockTermService.swift):
 - @MainActor로 선언
 - TermServiceProtocol 전체를 준수
@@ -147,6 +159,9 @@ MockTermService 구현 (Tests/Mocks/MockTermService.swift):
 
 주요 구현 사항:
 1. SearchView
+   - 네비게이션: @State private var path = NavigationPath() 소유
+   - NavigationStack(path: $path)으로 바인딩
+   - possibleTypo 재검색: path.removeLast() 후 새 keyword append
    - 검색창 하단 안내 문구: "영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)"
    - 타이핑 중 자동완성 (termService.autocomplete 사용, 300ms 디바운스, 최소 1자)
    - 최근 검색 칩 (termService.recentSearches(limit: 5)), .onAppear에서 갱신
@@ -156,6 +171,12 @@ MockTermService 구현 (Tests/Mocks/MockTermService.swift):
    - .possibleTypo 시 추천 용어 탭으로 재검색 (NavigationStack path 교체, push 아닌 replace)
    - 북마크 버튼 → termService.toggleBookmark(for:) 호출
    - 하단 오류 제보 mailto (용어 정보 자동 채움)
+   - 에러 처리: ViewModel이 catch → @Published var errorMessage로 Alert 표시
+     - .invalidAPIKey → "API 키 설정이 필요합니다"
+     - .timeout → "요청 시간이 초과되었습니다. 다시 시도해주세요"
+     - .networkError → URLError.code 세분화 (.notConnectedToInternet 등)
+     - .invalidResponse → "응답을 처리할 수 없습니다"
+     - 기타 → "오류가 발생했습니다" + 제보 유도
 3. BookmarkView
    - termService.bookmarkedTerms()로 목록 조회, .onAppear에서 갱신
    - 스와이프 → termService.toggleBookmark(for:) 호출 → 직후 목록 다시 조회
@@ -222,15 +243,14 @@ git merge feat/services
 # 2. 번들 DB 머지 (충돌 없음)
 git merge feat/bundle-db
 
-# 3. UI 레이어 머지 (Mock → 실제 Service로 교체)
+# 3. UI 레이어 머지
 git merge feat/ui
-# 이후 MockTermService 참조를 실제 TermService로 교체
 ```
 
 ### 머지 후 확인 사항
-- [ ] MockTermService import를 실제 TermService로 교체
-- [ ] ViewModel @Environment(\.termService) 주입이 실제 TermService 타입과 호환되는지 확인
-- [ ] DevEtymApp.swift의 ModelContainer 설정에 Term, SearchHistory 등록 확인
+- [ ] DevEtymApp.swift가 Phase 1 원본 상태 유지 확인 (Agent B가 수정하지 않았는지)
+- [ ] ViewModel이 @Environment(\.termService)로 실제 TermService를 정상 수신하는지 확인
+- [ ] Preview에서만 MockTermService 사용, 실제 앱에서는 TermService 사용 확인
 - [ ] terms.json 200개 버전이 Resources/에 정상 포함 확인
 - [ ] 전체 빌드 + 테스트 통과 확인
 - [ ] 실제 기기에서 E2E 테스트: 번들 DB 검색 → AI 폴백 → 결과 표시 → 북마크 → 히스토리
