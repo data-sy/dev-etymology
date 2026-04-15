@@ -1,6 +1,7 @@
 import Foundation
 @testable import DevEtym
 
+@MainActor
 final class MockBundleDBService: BundleDBServiceProtocol {
     var terms: [TermEntry]
     var searchCalls: [String] = []

@@ -1,6 +1,7 @@
 import Foundation
 @testable import DevEtym
 
+@MainActor
 final class MockClaudeAPIService: ClaudeAPIServiceProtocol {
     var result: Result<TermEntry, Error> = .failure(ClaudeAPIError.invalidResponse)
     var generateCalls: [String] = []

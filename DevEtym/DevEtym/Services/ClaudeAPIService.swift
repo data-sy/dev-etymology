@@ -26,25 +26,27 @@ enum ClaudeAPIError: Error, Equatable {
     }
 }
 
+@MainActor
 protocol ClaudeAPIServiceProtocol {
     func generate(keyword: String) async throws -> TermEntry
 }
 
 /// URLSession 추상화 (테스트 주입용)
-protocol HTTPClient {
+protocol HTTPClient: Sendable {
     func data(for request: URLRequest) async throws -> (Data, URLResponse)
 }
 
 extension URLSession: HTTPClient {}
 
+@MainActor
 final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     private let httpClient: HTTPClient
     private let apiKeyProvider: () -> String?
     private let endpoint = URL(string: "https://api.anthropic.com/v1/messages")!
 
-    init(
+    nonisolated init(
         httpClient: HTTPClient = URLSession.shared,
-        apiKeyProvider: @escaping () -> String? = {
+        apiKeyProvider: @escaping @Sendable () -> String? = {
             Bundle.main.object(forInfoDictionaryKey: "CLAUDE_API_KEY") as? String
         }
     ) {

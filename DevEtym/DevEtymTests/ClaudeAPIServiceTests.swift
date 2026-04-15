@@ -1,6 +1,7 @@
 import XCTest
 @testable import DevEtym
 
+@MainActor
 final class ClaudeAPIServiceTests: XCTestCase {
 
     // MARK: - HTTP Stub

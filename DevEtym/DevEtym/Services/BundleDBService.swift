@@ -2,17 +2,19 @@ import Foundation
 
 /// 앱 번들에 내장된 terms.json을 메모리에 캐싱하여
 /// 로컬 용어 검색과 자동완성을 제공하는 서비스
+@MainActor
 protocol BundleDBServiceProtocol {
     func search(keyword: String) -> TermEntry?
     func autocomplete(prefix: String) -> [TermEntry]
 }
 
+@MainActor
 final class BundleDBService: BundleDBServiceProtocol {
     private let terms: [TermEntry]
 
     /// 앱 시작 시 1회 로드, 메모리 캐시
     /// 번들에서 파일을 찾지 못하거나 디코딩에 실패하면 빈 배열로 초기화
-    init(bundle: Bundle = .main, resourceName: String = "terms", resourceExtension: String = "json") {
+    nonisolated init(bundle: Bundle = .main, resourceName: String = "terms", resourceExtension: String = "json") {
         guard
             let url = bundle.url(forResource: resourceName, withExtension: resourceExtension),
             let data = try? Data(contentsOf: url),
@@ -25,7 +27,7 @@ final class BundleDBService: BundleDBServiceProtocol {
     }
 
     /// 테스트/Preview용 주입 이니셜라이저
-    init(terms: [TermEntry]) {
+    nonisolated init(terms: [TermEntry]) {
         self.terms = terms
     }
 
