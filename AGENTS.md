@@ -257,30 +257,34 @@ git merge feat/ui
 
 ---
 
-## 마무리 단계 — Agent D, E
+## 마무리 단계 — Agent D, E (순차)
 
-A/B/C 머지 후 남은 작업을 2명이 병렬로 처리. D와 E는 서로 다른 영역을 건드려 충돌이 없다.
+A/B/C 머지 후 와이어프레임(`devetym-wireframe-v2.html`) 기반 디자인 확장 + 마무리 배선 + 접근성까지 두 에이전트가 **순차**로 처리.
+
+병렬로 쪼갤 수도 있으나, E의 UI 작업이 D의 데이터 모델 변경(카테고리 필드 추가)에 의존하므로 **D 머지 후 E 시작**이 깔끔하다.
 
 ### worktree 세팅
 
+**Agent D 착수 시점:**
 ```bash
-git worktree add ../devetym-finishing -b feat/finishing-touches
-git worktree add ../devetym-a11y      -b feat/accessibility
+git worktree add ../devetym-data -b feat/data-extension-and-wiring
 ```
 
-### 의존성 규칙
-
+**Agent E 착수 시점 (D 머지 후 main에서 분기):**
+```bash
+git checkout main && git pull
+git worktree add ../devetym-ui-v2 -b feat/ui-design-and-a11y
 ```
-Agent D (마무리 배선)  ← 설정 파일과 테스트 타겟 정리
-Agent E (접근성)       ← Features/*/View.swift만 수정
-```
 
-> D와 E는 건드리는 파일군이 완전히 분리됨 (D: 설정/Info.plist/Tests 폴더, E: UI View 파일).
-> 같은 시점에 병렬로 진행 가능하며, 어느 쪽이 먼저 머지돼도 충돌 없음.
-
-### Agent D — 마무리 배선 (feat/finishing-touches)
+### Agent D — 데이터 확장 & 마무리 배선 (feat/data-extension-and-wiring)
 
 **담당 파일:**
+- `DevEtym/DevEtym/Models/TermEntry.swift` — `category` 필드 추가
+- `DevEtym/DevEtym/Models/Term.swift` — `category` 필드 추가, 변환 메서드 갱신, `#Index<Term>([\.category])` 추가
+- `DevEtym/DevEtym/Services/ClaudeAPIService.swift` — 시스템 프롬프트에 category 규칙 추가
+- `DevEtym/DevEtym/Resources/terms.json` — 기존 200개에 category 필드 채우기
+- `Scripts/generate_db.py` — 프롬프트 & 검증 로직에 category 반영
+- `DevEtym/DevEtym/Services/BundleDBService.swift` — Codable 디코딩 자동 반영되나 테스트/목업 업데이트 필요
 - `DevEtym/DevEtymTests/Mocks/MockTermService.swift` (이동 대상)
 - `DevEtym/DevEtym/Tests/` (삭제 대상 — 빈 폴더)
 - `DevEtym/DevEtym/Info.plist`
@@ -288,65 +292,138 @@ Agent E (접근성)       ← Features/*/View.swift만 수정
 - `Config.xcconfig` (신규, `.gitignore` 처리)
 - `Config.sample.xcconfig` (신규, 커밋)
 - `.gitignore`
+- 기존 테스트 파일들 — 생성자/DTO 시그니처 변경 반영
 
 **작업 지시:**
 ```
-A/B/C 머지 후 남은 마무리 배선 두 가지를 처리한다
+spec.md와 CLAUDE.md를 읽은 뒤, 이번 버전에 추가된 카테고리 필드 도입과 마무리 배선을 처리한다
 
-1. MockTermService 위치 수정
-- 현재 `DevEtym/DevEtym/Tests/Mocks/MockTermService.swift`에 잘못 생성되어 앱 타겟에 포함된 상태
-- `DevEtym/DevEtymTests/Mocks/MockTermService.swift`로 이동 (테스트 타겟)
+1. TermEntry에 category 필드 추가
+- struct TermEntry에 `let category: String` 추가
+- 카테고리 값은 6개 고정 집합: "동시성", "자료구조", "네트워크", "DB", "패턴", "기타"
+
+2. Term(@Model)에 category 필드 추가
+- `var category: String` 추가, init 파라미터에도 포함
+- `#Index<Term>([\.isBookmarked], [\.createdAt], [\.category])`로 인덱스 확장
+- convenience init(from:source:isBookmarked:)에서 entry.category 전달
+- toEntry()에서 category 포함
+- SwiftData 마이그레이션 주의: 배포 전 개발 단계이므로 앱 삭제/시뮬레이터 데이터 리셋으로 충분. VersionedSchema는 이번엔 도입하지 않음 (spec 1-1의 주의 참고)
+
+3. ClaudeAPIService 시스템 프롬프트 갱신
+- 응답 JSON에 category 필드 필수 명시
+- 6개 고정 카테고리 값만 허용한다는 규칙 추가
+- 6개에 애매하면 가장 핵심 분류, 어디에도 안 맞으면 "기타" 규칙 추가
+- 프롬프트 본문은 spec.md Phase 2-2를 그대로 반영
+
+4. terms.json 200개에 category 채우기
+- 기존 용어들을 6개 카테고리 중 하나로 분류하여 필드 추가
+- spec AGENTS.md의 카테고리별 분배(동시성/자료구조/네트워크/DB/패턴/기타)를 그대로 준용
+- 기존 keyword와 aliases는 변경하지 말 것 (하위 호환)
+
+5. generate_db.py 업데이트
+- 프롬프트에 category 요구 포함
+- 검증 규칙에 "category 필드 존재 + 6개 값 중 하나" 추가
+- 검증 실패 시 에러 로그 후 종료
+
+6. MockTermService 위치 수정
+- `DevEtym/DevEtym/Tests/Mocks/MockTermService.swift` → `DevEtym/DevEtymTests/Mocks/MockTermService.swift`로 이동
 - 빈 `DevEtym/DevEtym/Tests/` 폴더 제거
-- 이동 후 기존 MockTermService 참조(Preview 등)가 여전히 유효한지 확인
+- Mock도 category 필드 반영되도록 기본값 포함
 
-2. Claude API 키 실제 주입 배선
+7. Claude API 키 xcconfig 배선
 - `Config.xcconfig` 생성 (실제 키 담는 파일, `.gitignore` 처리)
-  예: `CLAUDE_API_KEY = sk-ant-xxxxx`
-- `Config.sample.xcconfig` 생성 (빈 키, 커밋 대상) — 다른 개발자용 가이드
+- `Config.sample.xcconfig` 생성 (빈 키, 커밋 대상)
 - Xcode 빌드 설정의 Configurations에 xcconfig 연결 (Debug/Release 모두)
-- `Info.plist`의 `CLAUDE_API_KEY` 값을 `$(CLAUDE_API_KEY)` 변수로 치환
-- `.gitignore`에 `Config.xcconfig` 추가
-- ClaudeAPIService가 Bundle.main에서 읽는 코드는 이미 있음 — 수정 불필요
+- Info.plist의 CLAUDE_API_KEY 값을 `$(CLAUDE_API_KEY)`로 치환
+- .gitignore에 Config.xcconfig 추가
+- 런타임에 Bundle.main.infoDictionary["CLAUDE_API_KEY"]가 읽히는지 확인
+
+8. 기존 테스트 갱신
+- TermEntry/Term 생성자 호출부에 category 추가
+- MockClaudeAPIService/MockBundleDBService 반환값도 category 포함
+- 기존 테스트가 깨지지 않도록 sample TermEntry 헬퍼가 있으면 거기부터 수정
+
+⚠️ 건드리지 말 것:
+- Features/*/View.swift (E 담당)
+- 다크모드 컬러/폰트 (E 담당)
+- Phase 1 원본 구조 (App/DevEtymApp.swift는 xcconfig 연결을 위한 빌드 설정 변경만 허용)
 
 검증:
-- xcconfig 연결 후 실제 키를 넣고 빌드해서 Bundle.main.infoDictionary["CLAUDE_API_KEY"]가 읽히는지 런타임 확인
-- Config.xcconfig가 git에 커밋되지 않음을 확인
+- 빌드 통과
+- 단위 테스트 통과 (카테고리 필드 반영된 상태로)
+- Config.xcconfig가 git에 커밋되지 않음 확인
 
 논리 단위로 Conventional Commits 커밋. push/PR은 하지 마. 커밋까지만.
 ```
 
-### Agent E — 접근성 (feat/accessibility)
+### Agent E — UI 디자인 & 기능 & 접근성 (feat/ui-design-and-a11y)
+
+**선행 조건:** Agent D가 머지되어 main에 category 필드가 반영된 상태. E는 main에서 분기.
 
 **담당 파일:**
 - `DevEtym/DevEtym/Features/Search/SearchView.swift`
 - `DevEtym/DevEtym/Features/Detail/DetailView.swift`
+- `DevEtym/DevEtym/Features/Detail/DetailViewModel.swift` — source(AI 여부) 전달
 - `DevEtym/DevEtym/Features/Bookmark/BookmarkView.swift`
+- `DevEtym/DevEtym/Features/Bookmark/BookmarkViewModel.swift`
 - `DevEtym/DevEtym/Features/History/HistoryView.swift`
+- `DevEtym/DevEtym/Features/History/HistoryViewModel.swift`
 - `DevEtym/DevEtym/Features/Onboarding/OnboardingView.swift`
-- `DevEtym/DevEtym/App/ContentView.swift` (TabView 라벨 접근성)
+- `DevEtym/DevEtym/App/ContentView.swift`
+- `DevEtym/DevEtym/Resources/Assets.xcassets/` — 팔레트 컬러 추가
+- `DevEtym/DevEtym/Resources/Fonts/` — DM Sans/Mono/Serif Display 파일 (Google Fonts OFL)
+- `DevEtym/DevEtym/Info.plist` — UIAppFonts 배열
 
 **작업 지시:**
 ```
-spec.md Phase 4-2 접근성 작업과 CLAUDE.md의 다크모드 대응 검증을 수행한다
+spec.md(특히 Phase 3-0-1 디자인 시스템, 3-3, 3-5, 3-6, 4-2)와 devetym-wireframe-v2.html을 참고해
+와이어프레임에 정의된 디자인을 UI에 반영하고 접근성을 마무리한다
 
-1. 접근성 라벨 추가
-- 모든 Image/SF Symbol에 `accessibilityLabel("...")` 추가
-- 북마크 버튼, 삭제 스와이프, 제보 버튼 등 의미 있는 상호작용 요소에 라벨
-- 아이콘만 있는 탭바 아이템에 라벨 보강
+1. 디자인 시스템 도입 (컬러)
+- Asset Catalog에 다음 컬러를 추가 (다크모드 우선, 라이트모드는 적당한 대응값):
+  bg, surface, surface2, border, accent(#c8f060), accent2(#60c8f0), accentAI(#f0a060),
+  text, textDim, textMuted
+- 모든 View에서 하드코딩된 .white/.black 제거, 위 컬러 참조로 교체
+- 시스템 다크모드 전환 시 정상 렌더링 확인
 
-2. Dynamic Type 지원
-- 모든 텍스트에 `.font(.body)`, `.font(.title2)` 등 시스템 폰트 스타일 사용 확인
-- 고정 `.font(.system(size: 16))` 같은 표현 있으면 Dynamic Type 지원 스타일로 교체
-- 큰 텍스트 크기에서 레이아웃 깨지지 않는지 확인 (accessibility inspector 또는 시뮬레이터 환경설정)
+2. 디자인 시스템 도입 (폰트)
+- Google Fonts에서 DM Sans, DM Mono, DM Serif Display를 OFL 라이선스로 다운로드
+- Resources/Fonts/에 포함, Info.plist UIAppFonts 배열에 등록
+- 사용 시 .font(.custom("DMSans-Regular", size: 13, relativeTo: .body)) 패턴으로 Dynamic Type 연계
+- 본문: DM Sans, 코드·라벨·칩: DM Mono, 용어명·섹션 타이틀: DM Serif Display
 
-3. 다크모드 검증
-- 시스템 다크모드로 전환 시 모든 화면이 정상 렌더링되는지 확인
-- 커스텀 컬러가 있다면 Color asset 또는 `.init(light:dark:)` 사용 확인
-- 하드코딩된 `.white`, `.black` 없는지 확인
+3. DetailView 기능 추가
+- 카테고리 태그 배지 (accent, 5px radius, DM Mono 9px uppercase)
+  예: "동시성 · Concurrency" 형태. 영문 표기는 간단한 매핑 상수 사용(동시성→Concurrency 등)
+- AI 생성 뱃지 (accentAI) — source == "ai" 인 경우에만 표시
+  → ViewModel에서 DetailView로 TermEntry와 함께 isAIGenerated Bool 전달
+  → TermService의 결과 흐름에서 Term.source를 조회해 전달하는 경로 추가
+  → 단, ViewModel은 여전히 TermServiceProtocol에만 의존해야 하므로, fetch 결과에 source를 포함하는 방식 필요
+    · 옵션 1(권장): TermResult.found의 연관값을 (TermEntry, source: String)으로 확장
+    · 옵션 2: 별도 presentation 구조체 도입
+  → 옵션 1을 채택하는 경우 Services 측 변경도 수반되므로 사전에 허용 범위(TermResult 시그니처 변경)만 소폭 확장
+- 공유 버튼: ShareLink로 "{keyword}\n\n{summary}\n\n— DevEtym" 공유
+- 북마크 버튼과 공유 버튼을 action-row로 나란히 배치
 
-⚠️ 건드리지 말 것:
-- Services/, Models/, Utils/, Resources/, App/DevEtymApp.swift
-- 로직/데이터 흐름 변경 금지 — 오직 UI 접근성 보강만
+4. HistoryView 상대 시간
+- RelativeDateTimeFormatter(unitsStyle: .full), 한국어 로케일
+- "방금 전", "1시간 전", "어제", "3일 전" 같은 표시
+
+5. BookmarkView 미리보기
+- 각 항목에 keyword 아래로 summary 한 줄(또는 aliases 첫 요소)을 미리보기로 추가
+- DM Mono 13px 용어 + 본문 텍스트 10px 미리보기
+
+6. 접근성 (Phase 4-2)
+- 모든 Image/SF Symbol에 accessibilityLabel
+- 탭바 아이템, 북마크/공유/삭제 스와이프, 제보 버튼 등 상호작용 요소 라벨
+- Dynamic Type 연계 확인 (.font(.custom(..., relativeTo: .body)))
+- 큰 텍스트 크기에서 레이아웃 깨지지 않는지 확인
+
+⚠️ 주의:
+- TermResult 시그니처 확장(옵션 1 채택 시)은 Services/TermService.swift와 TermServiceProtocol.swift 수정을 동반함.
+  이는 예외적으로 허용. 단, 테스트와 MockTermService 갱신 필수.
+- Models/Term.swift, TermEntry.swift는 이미 D가 갱신한 상태 — 추가 수정 금지
+- 로직/데이터 흐름 변경은 "source 전달 경로 확장"과 "공유 문구 구성"만. 나머지 로직 변경 금지
 
 논리 단위로 Conventional Commits 커밋. push/PR은 하지 마. 커밋까지만.
 ```
@@ -354,12 +431,15 @@ spec.md Phase 4-2 접근성 작업과 CLAUDE.md의 다크모드 대응 검증을
 ### D/E 병합 순서
 
 ```bash
-# 순서 무관 (충돌 없음)
-git merge feat/finishing-touches
-git merge feat/accessibility
+# D를 먼저 머지 (데이터 모델 변경이 main에 들어간 상태에서 E 시작)
+git merge feat/data-extension-and-wiring
+
+# D 머지 후 main에서 E 브랜치 생성하여 작업
+# E 머지
+git merge feat/ui-design-and-a11y
 ```
 
 ### D/E 머지 후 남은 작업
 
-- **E2E 통합 테스트** (Task 3): 시뮬레이터에서 검색 → 번들 히트 → AI 폴백 → 결과 → 북마크 → 히스토리 풀 플로우 검증. 발견되는 버그는 유형별로 별도 브랜치(예: `fix/<area>`)에서 수정
+- **E2E 통합 테스트**: 시뮬레이터에서 검색 → 번들 히트 → AI 폴백 → 결과(카테고리 태그/AI 뱃지 포함) → 북마크 → 히스토리 풀 플로우 검증. 다크모드 전환 검증. 발견되는 버그는 유형별로 별도 브랜치(예: `fix/<area>`)에서 수정
 - **배포 단계** (spec 밖): 앱 아이콘, 스크린샷, App Store Connect 등록

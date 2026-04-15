@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEtym — UX 플로우 목업 v2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #222222;
+    --accent: #c8f060;
+    --accent2: #60c8f0;
+    --accent-ai: #f0a060;
+    --text: #f0f0f0;
+    --text-muted: #666666;
+    --text-dim: #999999;
+    --tabbar-h: 64px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 60px 40px;
+  }
+
+  h1 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .flow-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .flow-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 56px;
+  }
+
+  /* ── 섹션 구분 ── */
+  .section-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .section-header span {
+    color: var(--text-muted);
+    margin-left: 8px;
+  }
+
+  .phones-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+    align-items: flex-start;
+  }
+
+  /* ── 화살표 연결선 ── */
+  .arrow {
+    display: flex;
+    align-items: center;
+    padding-top: 36px;
+    color: var(--text-muted);
+    font-size: 20px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* ── 폰 프레임 ── */
+  .phone-wrapper {
+    position: relative;
+    padding-top: 32px;
+    flex-shrink: 0;
+  }
+
+  .screen-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .phone {
+    width: 300px;
+    height: 640px;
+    background: var(--surface);
+    border-radius: 44px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 32px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .notch {
+    width: 90px;
+    height: 22px;
+    background: var(--bg);
+    border-radius: 0 0 16px 16px;
+    margin: 0 auto;
+    flex-shrink: 0;
+  }
+
+  .screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 18px 0;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* ── 탭바 ── */
+  .tabbar {
+    height: var(--tabbar-h);
+    background: rgba(17,17,17,0.95);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px 8px;
+    flex-shrink: 0;
+  }
+
+  .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 16px;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .tab-icon {
+    font-size: 18px;
+    line-height: 1;
+    opacity: 0.3;
+  }
+
+  .tab-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .tab.active .tab-icon { opacity: 1; }
+  .tab.active .tab-label { color: var(--accent); }
+
+  /* ── 앱 헤더 ── */
+  .app-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .app-subtitle {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    margin-bottom: 18px;
+  }
+
+  /* ── 검색창 ── */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 14px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 40px 11px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+  }
+
+  .search-input::placeholder { color: var(--text-muted); }
+
+  .search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* ── 레이블 ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* ── 칩 ── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* ── 떠오르는 용어 카드 ── */
+  .rising-card {
+    background: linear-gradient(135deg, rgba(200,240,96,0.06), rgba(96,200,240,0.04));
+    border: 1px solid rgba(200,240,96,0.2);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .rising-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(200,240,96,0.1);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .rising-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--accent2);
+    margin-bottom: 2px;
+  }
+
+  .rising-preview {
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .suggest-arrow { color: var(--text-muted); font-size: 16px; }
+
+  /* ── 결과 화면 ── */
+  .back-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .result-term {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .result-term em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .result-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .result-tag {
+    display: inline-block;
+    background: rgba(200,240,96,0.08);
+    border: 1px solid rgba(200,240,96,0.2);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ai-badge {
+    display: inline-block;
+    background: rgba(240,160,96,0.08);
+    border: 1px solid rgba(240,160,96,0.25);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent-ai);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+
+  .etymology-block {
+    background: var(--surface2);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+
+  .etymology-lang {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    margin-bottom: 3px;
+    letter-spacing: 0.06em;
+  }
+
+  .etymology-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .explanation {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+  }
+
+  .explanation strong { color: var(--text); font-weight: 500; }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .action-btn {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .action-btn.primary {
+    border-color: rgba(200,240,96,0.3);
+    color: var(--accent);
+  }
+
+  /* ── 로딩 ── */
+  .loading-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .loading-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  .loading-dots { display: flex; gap: 6px; }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  .loading-msg {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── 북마크 탭 ── */
+  .list-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0.4;
+  }
+
+  .list-empty-icon { font-size: 32px; }
+
+  .list-empty-msg {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .bookmark-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .bookmark-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .bookmark-preview {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .bookmark-arrow { color: var(--text-muted); font-size: 14px; }
+
+  /* ── 히스토리 탭 ── */
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .history-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .history-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+  }
+
+  .clear-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    margin-bottom: 12px;
+    display: inline-block;
+    cursor: pointer;
+    float: right;
+  }
+</style>
+</head>
+<body>
+
+<h1>DevEtym · UX Flow Wireframe</h1>
+<div class="flow-title">화면 구성 및 UX 플로우</div>
+<div class="flow-desc">v2.0 — 탭바 구조 반영 · 2026-04-07</div>
+
+<!-- ────────────────────────────────────────── -->
+<!-- FLOW 1: 검색 플로우 -->
+<!-- ────────────────────────────────────────── -->
+<div class="section-header">Flow 1 — 검색 <span>검색 탭 → 로딩 → 결과</span></div>
+<div class="phones-row">
+
+  <!-- View 1: 검색 홈 -->
+  <div class="phone-wrapper">
+    <span class="screen-label">1-A · 검색 홈</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="app-title">DevEtym</div>
+        <div class="app-subtitle">// 개발 용어 어원 사전</div>
+
+        <div class="search-wrap">
+          <input class="search-input" type="text" placeholder="mutex, semaphore, daemon...">
+          <span class="search-icon">⌕</span>
+        </div>
+
+        <div class="section-label">최근 검색</div>
+        <div class="chips">
+          <div class="chip">mutex</div>
+          <div class="chip">kernel</div>
+          <div class="chip">daemon</div>
+          <div class="chip">fork</div>
+        </div>
+
+        <div class="section-label">떠오르는 용어 <span style="color:#444;font-size:8px;margin-left:4px;">P2</span></div>
+        <div class="rising-card">
+          <div>
+            <div class="rising-badge">↑ 이번 주</div>
+            <div class="rising-term">harness engineering</div>
+            <div class="rising-preview">테스트 자동화 구조를<br>감싸는 프레임워크</div>
+          </div>
+          <div class="suggest-arrow">›</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab active">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">→</div>
+
+  <!-- View 2: 로딩 -->
+  <div class="phone-wrapper">
+    <span class="screen-label">1-B · AI 폴백 로딩</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="back-btn">‹ 검색으로</div>
+        <div class="loading-screen">
+          <div class="loading-term">mutex</div>
+          <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="loading-msg">어원을 분석하는 중...</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab active">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">→</div>
+
+  <!-- View 3: 결과 (큐레이션 DB) -->
+  <div class="phone-wrapper">
+    <span class="screen-label">1-C · 결과 (DB)</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="back-btn">‹ 검색으로</div>
+
+        <div>
+          <div class="result-term"><em>mu</em>tex</div>
+          <div class="result-tags">
+            <div class="result-tag">동시성 · Concurrency</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-label">어원</div>
+        <div class="etymology-block">
+          <div class="etymology-lang">라틴어</div>
+          <div class="etymology-text">
+            <strong>mut</strong>uus (상호의) + <strong>ex</strong>clusio (배제)<br>
+            → <em>Mutual Exclusion</em>의 줄임말
+          </div>
+        </div>
+
+        <div class="section-label">왜 이 이름인가</div>
+        <div class="explanation">
+          <strong>mutex</strong>는 두 스레드가 동시에 같은 자원에 접근하지 못하도록 <strong>상호 배제</strong>하는 잠금 장치. 라틴어 mutuus(서로)와 exclusio(차단)에서 왔으며, 한 스레드가 잠그면 다른 스레드는 기다려야 한다.
+        </div>
+
+        <div class="action-row">
+          <div class="action-btn primary">◇ 북마크</div>
+          <div class="action-btn">↗ 공유</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab active">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">→</div>
+
+  <!-- View 4: 결과 (AI 생성) -->
+  <div class="phone-wrapper">
+    <span class="screen-label">1-D · 결과 (AI 생성)</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="back-btn">‹ 검색으로</div>
+
+        <div>
+          <div class="result-term"><em>harness</em></div>
+          <div class="result-tags">
+            <div class="result-tag">테스트</div>
+            <div class="ai-badge">✦ AI 생성</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-label">어원</div>
+        <div class="etymology-block">
+          <div class="etymology-lang">고대 프랑스어</div>
+          <div class="etymology-text">
+            <strong>harneis</strong> (말 장구, 마구)<br>
+            → 제어하기 위해 <em>묶고 연결하는</em> 도구
+          </div>
+        </div>
+
+        <div class="section-label">왜 이 이름인가</div>
+        <div class="explanation">
+          말에 마구를 채워 제어하듯, <strong>test harness</strong>는 테스트 대상 코드를 <strong>외부에서 통제</strong>하고 실행하기 위한 프레임워크 구조를 의미한다. '묶어서 다룬다'는 원래 뜻이 그대로 살아있다.
+        </div>
+
+        <div class="action-row">
+          <div class="action-btn primary">◇ 북마크</div>
+          <div class="action-btn">↗ 공유</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab active">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ────────────────────────────────────────── -->
+<!-- FLOW 2: 북마크 / 히스토리 탭 -->
+<!-- ────────────────────────────────────────── -->
+<div class="section-header">Flow 2 — 북마크 & 히스토리 탭 <span>탭바 전환</span></div>
+<div class="phones-row">
+
+  <!-- 북마크: 비어있음 -->
+  <div class="phone-wrapper">
+    <span class="screen-label">2-A · 북마크 (비어있음)</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="app-title">북마크</div>
+        <div class="app-subtitle">// 저장한 용어</div>
+        <div class="list-empty">
+          <div class="list-empty-icon">◇</div>
+          <div class="list-empty-msg">아직 저장한 용어가 없어요.<br>용어 검색 후 북마크해보세요.</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab active">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">→</div>
+
+  <!-- 북마크: 항목 있음 -->
+  <div class="phone-wrapper">
+    <span class="screen-label">2-B · 북마크 (항목 있음)</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="app-title">북마크</div>
+        <div class="app-subtitle">// 저장한 용어</div>
+        <div class="bookmark-item">
+          <div>
+            <div class="bookmark-term">mutex</div>
+            <div class="bookmark-preview">mutual exclusion · 상호 배제</div>
+          </div>
+          <div class="bookmark-arrow">›</div>
+        </div>
+        <div class="bookmark-item">
+          <div>
+            <div class="bookmark-term">semaphore</div>
+            <div class="bookmark-preview">그리스어 σῆμα · 신호 운반자</div>
+          </div>
+          <div class="bookmark-arrow">›</div>
+        </div>
+        <div class="bookmark-item">
+          <div>
+            <div class="bookmark-term">daemon</div>
+            <div class="bookmark-preview">그리스어 δαίμων · 수호 정령</div>
+          </div>
+          <div class="bookmark-arrow">›</div>
+        </div>
+        <div class="bookmark-item">
+          <div>
+            <div class="bookmark-term">kernel</div>
+            <div class="bookmark-preview">고대 영어 cyrnel · 씨앗, 핵</div>
+          </div>
+          <div class="bookmark-arrow">›</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab active">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow" style="opacity:0.2">·</div>
+
+  <!-- 히스토리 탭 -->
+  <div class="phone-wrapper">
+    <span class="screen-label">2-C · 히스토리</span>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;">
+          <div class="app-title">히스토리</div>
+          <div class="clear-btn">전체 삭제</div>
+        </div>
+        <div class="app-subtitle">// 최근 검색 기록</div>
+        <div class="history-item">
+          <div class="history-term">harness engineering</div>
+          <div class="history-time">방금 전</div>
+        </div>
+        <div class="history-item">
+          <div class="history-term">mutex</div>
+          <div class="history-time">1시간 전</div>
+        </div>
+        <div class="history-item">
+          <div class="history-term">semaphore</div>
+          <div class="history-time">어제</div>
+        </div>
+        <div class="history-item">
+          <div class="history-term">daemon</div>
+          <div class="history-time">어제</div>
+        </div>
+        <div class="history-item">
+          <div class="history-term">kernel</div>
+          <div class="history-time">3일 전</div>
+        </div>
+        <div class="history-item">
+          <div class="history-term">fork</div>
+          <div class="history-time">3일 전</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab">
+          <div class="tab-icon">⌕</div>
+          <div class="tab-label">검색</div>
+        </div>
+        <div class="tab">
+          <div class="tab-icon">◇</div>
+          <div class="tab-label">북마크</div>
+        </div>
+        <div class="tab active">
+          <div class="tab-icon">◷</div>
+          <div class="tab-label">히스토리</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
