@@ -11,6 +11,7 @@ final class BundleDBServiceTests: XCTestCase {
             TermEntry(
                 keyword: "mutex",
                 aliases: ["뮤텍스", "mutual exclusion"],
+                category: "동시성",
                 summary: "요약",
                 etymology: "어원",
                 namingReason: "작명"
@@ -18,6 +19,7 @@ final class BundleDBServiceTests: XCTestCase {
             TermEntry(
                 keyword: "mutation",
                 aliases: ["뮤테이션"],
+                category: "기타",
                 summary: "요약",
                 etymology: "어원",
                 namingReason: "작명"
@@ -25,6 +27,7 @@ final class BundleDBServiceTests: XCTestCase {
             TermEntry(
                 keyword: "stack",
                 aliases: ["스택"],
+                category: "자료구조",
                 summary: "요약",
                 etymology: "어원",
                 namingReason: "작명"
