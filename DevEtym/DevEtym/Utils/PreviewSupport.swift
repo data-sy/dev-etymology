@@ -1,27 +1,31 @@
 #if DEBUG
 import Foundation
 
-/// SwiftUI #Preview 전용 MockTermService
+/// SwiftUI #Preview 캔버스 전용 TermServiceProtocol 구현
 ///
-/// 실제 단위 테스트 Mock은 DevEtymTests/Mocks/MockTermService.swift 를 사용하세요.
-/// 이 파일은 Xcode Preview canvas에서 앱 타겟이 컴파일될 때만 포함됩니다.
+/// 단위 테스트는 DevEtymTests 타겟의 MockTermService를 사용한다.
+/// 본 파일은 메인 앱 타겟에서 Preview 컴파일 시에만 포함된다 (#if DEBUG).
+/// Preview용 샘플 데이터 팩토리도 함께 제공한다.
 @MainActor
-final class MockTermService: TermServiceProtocol {
+final class PreviewTermService: TermServiceProtocol {
     var fetchResult: TermResult?
     var fetchError: Error?
-    var autocompleteEntries: [TermEntry] = MockTermService.sampleEntries
+    var defaultSource: String = "bundle"
+    var autocompleteEntries: [TermEntry] = PreviewSamples.entries
     private var bookmarks: [Term] = []
     private var histories: [SearchHistory] = []
 
     init(
         fetchResult: TermResult? = nil,
         fetchError: Error? = nil,
+        defaultSource: String = "bundle",
         autocompleteEntries: [TermEntry]? = nil,
         bookmarks: [Term] = [],
         histories: [SearchHistory] = []
     ) {
         self.fetchResult = fetchResult
         self.fetchError = fetchError
+        self.defaultSource = defaultSource
         if let autocompleteEntries {
             self.autocompleteEntries = autocompleteEntries
         }
@@ -34,12 +38,12 @@ final class MockTermService: TermServiceProtocol {
         if let fetchResult { return fetchResult }
         let normalized = keyword.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if normalized.isEmpty { return .notDevTerm }
-        if let hit = MockTermService.sampleEntries.first(where: { $0.keyword == normalized }) {
+        if let hit = PreviewSamples.entries.first(where: { $0.keyword == normalized }) {
             upsertHistory(keyword: normalized)
-            return .found(hit, source: "bundle")
+            return .found(hit, source: defaultSource)
         }
         upsertHistory(keyword: normalized)
-        return .found(MockTermService.sampleEntries[0], source: "bundle")
+        return .found(PreviewSamples.entries[0], source: defaultSource)
     }
 
     func autocomplete(prefix: String) -> [TermEntry] {
@@ -80,8 +84,11 @@ final class MockTermService: TermServiceProtocol {
             histories.append(SearchHistory(keyword: keyword))
         }
     }
+}
 
-    static let sampleEntries: [TermEntry] = [
+/// Preview에서 사용하는 샘플 TermEntry 팩토리
+enum PreviewSamples {
+    static let entries: [TermEntry] = [
         TermEntry(
             keyword: "mutex",
             aliases: ["뮤텍스", "mutual exclusion"],
@@ -97,6 +104,14 @@ final class MockTermService: TermServiceProtocol {
             summary: "서로가 서로의 자원을 기다려 아무도 진행하지 못하는 상태",
             etymology: "dead(죽은) + lock(잠금)",
             namingReason: "자원 획득 순서 순환으로 어느 쪽도 락을 놓지 못해 '죽은 잠금' 상태가 되는 현상"
+        ),
+        TermEntry(
+            keyword: "harness",
+            aliases: ["하네스"],
+            category: "기타",
+            summary: "테스트 대상 코드를 외부에서 통제하고 실행하기 위한 프레임워크",
+            etymology: "고대 프랑스어 harneis(말 장구, 마구) — 제어를 위해 묶고 연결하는 도구",
+            namingReason: "말에 마구를 채워 제어하듯, test harness는 테스트 대상 코드를 외부에서 통제하고 실행하기 위한 구조를 의미한다"
         ),
         TermEntry(
             keyword: "jpa",
