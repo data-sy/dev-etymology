@@ -1,31 +1,5 @@
 import Foundation
 
-/// Claude API 호출 중 발생 가능한 에러
-enum ClaudeAPIError: Error, Equatable {
-    case invalidAPIKey
-    case timeout
-    case networkError(Error)
-    case invalidResponse
-    case notDevTerm
-    case possibleTypo(suggestion: String)
-
-    static func == (lhs: ClaudeAPIError, rhs: ClaudeAPIError) -> Bool {
-        switch (lhs, rhs) {
-        case (.invalidAPIKey, .invalidAPIKey),
-             (.timeout, .timeout),
-             (.invalidResponse, .invalidResponse),
-             (.notDevTerm, .notDevTerm):
-            return true
-        case let (.possibleTypo(a), .possibleTypo(b)):
-            return a == b
-        case let (.networkError(a), .networkError(b)):
-            return (a as NSError) == (b as NSError)
-        default:
-            return false
-        }
-    }
-}
-
 @MainActor
 protocol ClaudeAPIServiceProtocol {
     func generate(keyword: String) async throws -> TermEntry
