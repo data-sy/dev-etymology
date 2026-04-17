@@ -4,7 +4,7 @@ import SwiftUI
 /// 최초 실행 시 OnboardingView를 fullScreenCover로 표시
 struct ContentView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
-    @AppStorage("appearanceMode") private var appearanceMode: Int = 0
+    @AppStorage("appearanceMode") private var appearanceMode: Int = 2
 
     private var colorScheme: ColorScheme? {
         switch appearanceMode {

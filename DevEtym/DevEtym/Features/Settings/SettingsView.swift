@@ -2,7 +2,7 @@ import SwiftUI
 import StoreKit
 
 struct SettingsView: View {
-    @AppStorage("appearanceMode") private var appearanceMode: Int = 0
+    @AppStorage("appearanceMode") private var appearanceMode: Int = 2
     @Environment(\.requestReview) private var requestReview
 
     private var appVersion: String {
