@@ -38,7 +38,9 @@
       "Bash(curl -fsSL --max-time 30 \"https://api.github.com/repos/googlefonts/dm-mono/contents/source\")",
       "Bash(curl -fsSL --max-time 30 -o OFL-DMMono.txt \"https://raw.githubusercontent.com/google/fonts/main/ofl/dmmono/OFL.txt\")",
       "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme DevEtym -destination 'platform=iOS Simulator,name=iPhone 17' -quiet build)",
-      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme DevEtym -destination 'platform=iOS Simulator,name=iPhone 17' build)"
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme DevEtym -destination 'platform=iOS Simulator,name=iPhone 17' build)",
+      "Bash(xcodebuild -scheme DevEtym -destination 'platform=iOS Simulator,name=iPhone 16' build)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
