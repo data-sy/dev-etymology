@@ -120,6 +120,10 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
             throw ClaudeAPIError.invalidResponse
         }
 
+        #if DEBUG
+        print("🤖 [ClaudeAPI] 원본 응답 텍스트:\n\(jsonText)")
+        #endif
+
         if let errorResponse = try? JSONDecoder().decode(AIErrorResponse.self, from: data),
            !errorResponse.error.isEmpty {
             switch errorResponse.error {
@@ -135,6 +139,10 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
         do {
             return try JSONDecoder().decode(TermEntry.self, from: data)
         } catch {
+            #if DEBUG
+            print("❌ [ClaudeAPI] TermEntry 디코딩 실패: \(error)")
+            print("   JSON 원본: \(jsonText)")
+            #endif
             throw ClaudeAPIError.invalidResponse
         }
     }
