@@ -34,10 +34,6 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
             throw ClaudeAPIError.invalidAPIKey
         }
 
-        #if DEBUG
-        print("🌐 [ClaudeAPI] 요청 시작: keyword='\(keyword)', model=\(Constants.claudeModel)")
-        #endif
-
         let request = try makeRequest(apiKey: apiKey, keyword: keyword)
 
         let data: Data
@@ -45,29 +41,14 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
         do {
             (data, response) = try await httpClient.data(for: request)
         } catch let urlError as URLError where urlError.code == .timedOut {
-            #if DEBUG
-            print("❌ [ClaudeAPI] 타임아웃")
-            #endif
             throw ClaudeAPIError.timeout
         } catch {
-            #if DEBUG
-            print("❌ [ClaudeAPI] 네트워크 에러: \(error)")
-            #endif
             throw ClaudeAPIError.networkError(error)
         }
 
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            #if DEBUG
-            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-            let body = String(data: data, encoding: .utf8) ?? "(디코딩 불가)"
-            print("❌ [ClaudeAPI] HTTP \(statusCode) 에러 응답:\n\(body)")
-            #endif
             throw ClaudeAPIError.invalidResponse
         }
-
-        #if DEBUG
-        print("✅ [ClaudeAPI] HTTP 200 수신, 본문 크기: \(data.count) bytes")
-        #endif
 
         let text = try extractText(from: data)
         let cleaned = Self.stripMarkdownFence(from: text)
@@ -139,10 +120,6 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
             throw ClaudeAPIError.invalidResponse
         }
 
-        #if DEBUG
-        print("🤖 [ClaudeAPI] 원본 응답 텍스트:\n\(jsonText)")
-        #endif
-
         if let errorResponse = try? JSONDecoder().decode(AIErrorResponse.self, from: data),
            !errorResponse.error.isEmpty {
             switch errorResponse.error {
@@ -158,10 +135,6 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
         do {
             return try JSONDecoder().decode(TermEntry.self, from: data)
         } catch {
-            #if DEBUG
-            print("❌ [ClaudeAPI] TermEntry 디코딩 실패: \(error)")
-            print("   JSON 원본: \(jsonText)")
-            #endif
             throw ClaudeAPIError.invalidResponse
         }
     }
