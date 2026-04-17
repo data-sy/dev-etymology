@@ -219,7 +219,7 @@ aliases 규칙:
 - 기타 핵심: bug, cache, compile, debug, daemon 등 (50개)
 
 Scripts/generate_db.py는 Claude API를 호출해 배치 생성하는 스크립트입니다
-모델: Constants와 동일하게 claude-sonnet-4-5-20250514 사용
+모델: Constants와 동일하게 claude-sonnet-4-6 사용
 
 생성 후 검증 규칙 (generate_db.py에 포함):
 1. 모든 용어에 aliases 배열 존재 (빈 배열 금지, 최소 1개 이상)

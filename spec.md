@@ -138,7 +138,7 @@ struct AIErrorResponse: Codable {
 enum Constants {
     static let reportEmail = "devetym@gmail.com"
     // Anthropic API 공식 모델 ID — 변경 시 https://docs.anthropic.com 확인
-    static let claudeModel = "claude-sonnet-4-5-20250514"
+    static let claudeModel = "claude-sonnet-4-6"
     static let apiTimeout: TimeInterval = 30
     static let autocompleteDebounceMs: Int = 300
     static let recentSearchLimit: Int = 5
