@@ -43,7 +43,7 @@ try:
 except ImportError:  # pragma: no cover
     sys.exit("urllib is required")
 
-CLAUDE_MODEL = "claude-sonnet-4-5-20250514"
+CLAUDE_MODEL = "claude-sonnet-4-6"
 API_URL = "https://api.anthropic.com/v1/messages"
 API_VERSION = "2023-06-01"
 
