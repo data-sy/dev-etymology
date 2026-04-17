@@ -36,8 +36,10 @@ DevEtym/
 │   ├── History/
 │   │   ├── HistoryView.swift
 │   │   └── HistoryViewModel.swift
-│   └── Onboarding/
-│       └── OnboardingView.swift
+│   ├── Onboarding/
+│   │   └── OnboardingView.swift
+│   └── Settings/
+│       └── SettingsView.swift
 ├── Models/
 │   ├── Term.swift              # SwiftData @Model (캐시 + 북마크, aliases 포함)
 │   ├── TermEntry.swift         # 번들 DB + AI 응답 공통 DTO

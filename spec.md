@@ -533,6 +533,8 @@ TabView {
         .tabItem { Label("북마크", systemImage: "bookmark") }
     HistoryView()
         .tabItem { Label("히스토리", systemImage: "clock") }
+    SettingsView()
+        .tabItem { Label("설정", systemImage: "gearshape") }
 }
 ```
 
@@ -654,7 +656,53 @@ TabView {
   - "이 앱의 모든 설명은 AI가 생성합니다. 오류가 있을 수 있으니 제보해 주세요."
   - 시작하기 버튼
 
-✅ Phase 3 완료 조건: 모든 탭 화면 렌더링, 검색 → 결과 플로우 동작, 에러 Alert 분기 동작, 오류 제보 mailto 동작
+### 3-8. SettingsView
+
+**Features/Settings/SettingsView.swift**
+
+ViewModel 불필요 (로직 없음, 순수 UI + 시스템 API 호출만).
+
+**화면 구성 (List + Section 패턴):**
+
+```
+외관
+  ├ 화면 모드: 시스템 / 라이트 / 다크 (Picker)
+
+앱 정보
+  ├ 앱 버전: Bundle.main 값 표시 (CFBundleShortVersionString)
+  ├ 빌드 번호: (CFBundleVersion)
+
+지원
+  ├ 개발자에게 문의 → mailto (Constants.reportEmail)
+  ├ 앱 평가하기 → StoreKit requestReview 또는 App Store URL
+  ├ 오류 제보 → mailto (Constants.reportEmail)
+
+법적 고지
+  ├ 오픈소스 라이선스 (DM Fonts — OFL)
+  ├ AI 생성 고지: "이 앱의 모든 어원 설명은 AI가 생성합니다"
+  ├ 개인정보 처리방침 → 외부 URL (추후 등록)
+```
+
+**화면 모드 구현:**
+- `@AppStorage("appearanceMode") var appearanceMode: Int = 0`
+  - 0: 시스템, 1: 라이트, 2: 다크
+- 앱 루트(ContentView 또는 DevEtymApp)에서 `.preferredColorScheme()` 적용
+  - 0 → nil (시스템 따라감), 1 → .light, 2 → .dark
+
+**앱 평가하기:**
+- iOS 16+: `@Environment(\.requestReview)` 사용
+- 또는 App Store URL: `https://apps.apple.com/app/id{APP_ID}?action=write-review`
+- 앱 출시 전에는 requestReview만 사용 (URL은 APP_ID 필요)
+
+**#Preview:**
+```swift
+#Preview {
+    SettingsView()
+        .preferredColorScheme(.dark)
+}
+```
+
+✅ Phase 3 완료 조건: 모든 탭 화면 렌더링, 검색 → 결과 플로우 동작, 에러 Alert 분기 동작, 오류 제보 mailto 동작, 설정 화면에서 외관 전환 동작
 
 ---
 

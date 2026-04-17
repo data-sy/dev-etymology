@@ -439,7 +439,81 @@ git merge feat/data-extension-and-wiring
 git merge feat/ui-design-and-a11y
 ```
 
-### D/E 머지 후 남은 작업
+### D/E 머지 후 — Agent F
 
-- **E2E 통합 테스트**: 시뮬레이터에서 검색 → 번들 히트 → AI 폴백 → 결과(카테고리 태그/AI 뱃지 포함) → 북마크 → 히스토리 풀 플로우 검증. 다크모드 전환 검증. 발견되는 버그는 유형별로 별도 브랜치(예: `fix/<area>`)에서 수정
-- **배포 단계** (spec 밖): 앱 아이콘, 스크린샷, App Store Connect 등록
+---
+
+## 설정 화면 — Agent F
+
+D/E 머지 후, E2E 검증 중 발견된 부재 기능: 다크/라이트 외관 전환 UI, 앱 정보, 법적 고지 등을 한데 모은 설정 탭.
+
+### Agent F — 설정 화면 (feat/settings)
+
+**선행 조건:** Agent D/E 머지 완료. main에서 분기.
+
+**담당 파일:**
+- `DevEtym/DevEtym/Features/Settings/SettingsView.swift` (신규)
+- `DevEtym/DevEtym/App/ContentView.swift` — TabView에 설정 탭 추가
+- `DevEtym/DevEtym/App/DevEtymApp.swift` 또는 `ContentView.swift` — preferredColorScheme 바인딩
+
+**작업 지시:**
+```
+spec.md의 Phase 3-8 SettingsView 섹션과 CLAUDE.md를 읽고 설정 화면을 구현한다
+
+1. SettingsView 구현 (Features/Settings/SettingsView.swift)
+- ViewModel 불필요 — 순수 UI + 시스템 API 호출
+- List + Section 패턴으로 구성
+
+[외관 섹션]
+- 화면 모드 Picker: 시스템 / 라이트 / 다크
+  · @AppStorage("appearanceMode") var appearanceMode: Int = 0
+  · 0: 시스템, 1: 라이트, 2: 다크
+
+[앱 정보 섹션]
+- 앱 버전: Bundle.main의 CFBundleShortVersionString
+- 빌드 번호: Bundle.main의 CFBundleVersion
+
+[지원 섹션]
+- "개발자에게 문의" → mailto:Constants.reportEmail
+- "앱 평가하기" → @Environment(\.requestReview)
+- "오류 제보" → mailto:Constants.reportEmail (제목: "[오류제보] 일반")
+
+[법적 고지 섹션]
+- "오픈소스 라이선스" → NavigationLink로 하위 화면, DM Fonts OFL 라이선스 텍스트
+- "AI 생성 고지" → "이 앱의 모든 어원 설명은 AI(Claude)가 생성합니다. 부정확한 내용이 포함될 수 있습니다."
+- "개인정보 처리방침" → 외부 URL (Link, 아직 URL 미정이면 placeholder)
+
+2. ContentView TabView에 설정 탭 추가
+- .tabItem { Label("설정", systemImage: "gearshape") }
+- 네 번째 탭으로 배치
+
+3. 외관 모드 적용
+- ContentView 또는 DevEtymApp의 WindowGroup 레벨에서 .preferredColorScheme() 적용
+  · appearanceMode == 0 → nil (시스템)
+  · appearanceMode == 1 → .light
+  · appearanceMode == 2 → .dark
+- @AppStorage("appearanceMode")를 읽어서 바인딩
+- 변경 즉시 앱 전체에 반영
+
+4. 디자인 시스템 준수
+- Theme.Palette 컬러, Theme.mono/sans/serif 폰트 사용
+- List 배경은 Theme.Palette.bg
+- 셀/텍스트 스타일은 기존 View들과 일관성 유지
+
+5. 접근성
+- 모든 버튼/링크에 accessibilityLabel
+- Dynamic Type 연계
+
+⚠️ 건드리지 말 것:
+- Services/, Models/, Resources/terms.json
+- 기존 Features/Search, Detail, Bookmark, History, Onboarding의 로직 (import만 OK)
+
+#Preview 매크로 포함 (PreviewTermService 사용)
+논리 단위로 Conventional Commits 커밋. push/PR은 하지 마. 커밋까지만.
+빌드 통과 확인.
+```
+
+### F 머지 후 남은 작업
+
+- **E2E 통합 테스트 완료**: 설정 화면 포함 전체 플로우 재검증
+- **배포 단계** (spec 밖): 앱 아이콘, 스크린샷, App Store Connect 등록, 개인정보 처리방침 페이지
