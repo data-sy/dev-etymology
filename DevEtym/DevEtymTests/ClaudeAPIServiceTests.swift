@@ -15,10 +15,16 @@ final class ClaudeAPIServiceTests: XCTestCase {
         }
     }
 
-    private func envelope(text: String) -> Data {
+    /// tool_use 블록 하나만 담은 Claude messages API 응답 봉투
+    private func toolUseEnvelope(name: String, input: [String: Any]) -> Data {
         let payload: [String: Any] = [
             "content": [
-                ["type": "text", "text": text]
+                [
+                    "type": "tool_use",
+                    "id": "toolu_test",
+                    "name": name,
+                    "input": input
+                ]
             ]
         ]
         return try! JSONSerialization.data(withJSONObject: payload)
@@ -37,26 +43,34 @@ final class ClaudeAPIServiceTests: XCTestCase {
         ClaudeAPIService(httpClient: stub, apiKeyProvider: { apiKey })
     }
 
-    // MARK: - 테스트
+    private func validTermInput() -> [String: Any] {
+        [
+            "keyword": "mutex",
+            "aliases": ["뮤텍스"],
+            "category": "동시성",
+            "summary": "s",
+            "etymology": "e",
+            "namingReason": "n"
+        ]
+    }
 
-    func test_generate_validTerm_returnsTermEntry() async throws {
+    // MARK: - 응답 분기 (tool_use 기반)
+
+    func test_generate_termEntryTool_returnsTermEntry() async throws {
         let stub = StubHTTPClient()
-        let json = """
-        {"keyword":"mutex","aliases":["뮤텍스"],"category":"동시성","summary":"s","etymology":"e","namingReason":"n"}
-        """
-        stub.responseFactory = { _ in (self.envelope(text: json), self.okResponse()) }
+        let data = toolUseEnvelope(name: "return_term_entry", input: validTermInput())
+        stub.responseFactory = { _ in (data, self.okResponse()) }
 
-        let service = makeService(stub: stub)
-        let entry = try await service.generate(keyword: "mutex")
+        let entry = try await makeService(stub: stub).generate(keyword: "mutex")
         XCTAssertEqual(entry.keyword, "mutex")
         XCTAssertEqual(entry.aliases, ["뮤텍스"])
         XCTAssertEqual(entry.category, "동시성")
     }
 
-    func test_generate_notDevTerm_throwsNotDevTerm() async {
+    func test_generate_notDevTermTool_throwsNotDevTerm() async {
         let stub = StubHTTPClient()
-        let json = #"{"error":"NOT_DEV_TERM","suggestion":null}"#
-        stub.responseFactory = { _ in (self.envelope(text: json), self.okResponse()) }
+        let data = toolUseEnvelope(name: "return_not_dev_term", input: [:])
+        stub.responseFactory = { _ in (data, self.okResponse()) }
 
         do {
             _ = try await makeService(stub: stub).generate(keyword: "사과")
@@ -68,10 +82,10 @@ final class ClaudeAPIServiceTests: XCTestCase {
         }
     }
 
-    func test_generate_possibleTypo_throwsWithSuggestion() async {
+    func test_generate_possibleTypoTool_throwsWithSuggestion() async {
         let stub = StubHTTPClient()
-        let json = #"{"error":"POSSIBLE_TYPO","suggestion":"mutex"}"#
-        stub.responseFactory = { _ in (self.envelope(text: json), self.okResponse()) }
+        let data = toolUseEnvelope(name: "return_possible_typo", input: ["suggestion": "mutex"])
+        stub.responseFactory = { _ in (data, self.okResponse()) }
 
         do {
             _ = try await makeService(stub: stub).generate(keyword: "mutx")
@@ -82,6 +96,61 @@ final class ClaudeAPIServiceTests: XCTestCase {
             XCTFail("예상치 못한 에러: \(error)")
         }
     }
+
+    func test_generate_unknownToolName_throwsInvalidResponse() async {
+        let stub = StubHTTPClient()
+        let data = toolUseEnvelope(name: "return_something_else", input: [:])
+        stub.responseFactory = { _ in (data, self.okResponse()) }
+
+        do {
+            _ = try await makeService(stub: stub).generate(keyword: "mutex")
+            XCTFail("에러가 throw되어야 함")
+        } catch let error as ClaudeAPIError {
+            XCTAssertEqual(error, .invalidResponse)
+        } catch {
+            XCTFail("예상치 못한 에러: \(error)")
+        }
+    }
+
+    func test_generate_noToolUseBlock_throwsInvalidResponse() async {
+        let stub = StubHTTPClient()
+        // content에 text만 있고 tool_use가 없는 비정상 응답 (tool_choice: any 하에서는 일어나지 않아야 함)
+        let payload: [String: Any] = [
+            "content": [
+                ["type": "text", "text": "plain text, no tool call"]
+            ]
+        ]
+        let data = try! JSONSerialization.data(withJSONObject: payload)
+        stub.responseFactory = { _ in (data, self.okResponse()) }
+
+        do {
+            _ = try await makeService(stub: stub).generate(keyword: "mutex")
+            XCTFail("에러가 throw되어야 함")
+        } catch let error as ClaudeAPIError {
+            XCTAssertEqual(error, .invalidResponse)
+        } catch {
+            XCTFail("예상치 못한 에러: \(error)")
+        }
+    }
+
+    func test_generate_termEntryToolWithMissingFields_throwsInvalidResponse() async {
+        let stub = StubHTTPClient()
+        // API가 input_schema를 강제하지만, 방어적으로 필수 필드 누락 시 파싱 실패 확인
+        let incomplete: [String: Any] = ["keyword": "mutex", "aliases": ["뮤텍스"]]
+        let data = toolUseEnvelope(name: "return_term_entry", input: incomplete)
+        stub.responseFactory = { _ in (data, self.okResponse()) }
+
+        do {
+            _ = try await makeService(stub: stub).generate(keyword: "mutex")
+            XCTFail("에러가 throw되어야 함")
+        } catch let error as ClaudeAPIError {
+            XCTAssertEqual(error, .invalidResponse)
+        } catch {
+            XCTFail("예상치 못한 에러: \(error)")
+        }
+    }
+
+    // MARK: - 전송/네트워크 계층
 
     func test_generate_timeout_throwsTimeout() async {
         let stub = StubHTTPClient()
@@ -95,33 +164,6 @@ final class ClaudeAPIServiceTests: XCTestCase {
         } catch {
             XCTFail("예상치 못한 에러: \(error)")
         }
-    }
-
-    func test_generate_invalidJSON_throwsInvalidResponse() async {
-        let stub = StubHTTPClient()
-        stub.responseFactory = { _ in (self.envelope(text: "not json at all"), self.okResponse()) }
-
-        do {
-            _ = try await makeService(stub: stub).generate(keyword: "mutex")
-            XCTFail("에러가 throw되어야 함")
-        } catch let error as ClaudeAPIError {
-            XCTAssertEqual(error, .invalidResponse)
-        } catch {
-            XCTFail("예상치 못한 에러: \(error)")
-        }
-    }
-
-    func test_generate_markdownWrappedJSON_parsesCorrectly() async throws {
-        let stub = StubHTTPClient()
-        let wrapped = """
-        ```json
-        {"keyword":"mutex","aliases":["뮤텍스"],"category":"동시성","summary":"s","etymology":"e","namingReason":"n"}
-        ```
-        """
-        stub.responseFactory = { _ in (self.envelope(text: wrapped), self.okResponse()) }
-
-        let entry = try await makeService(stub: stub).generate(keyword: "mutex")
-        XCTAssertEqual(entry.keyword, "mutex")
     }
 
     func test_generate_missingAPIKey_throwsInvalidAPIKey() async {
@@ -152,20 +194,100 @@ final class ClaudeAPIServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - stripMarkdownFence 단위 테스트
+    // MARK: - 요청 body 검증
 
-    func test_stripMarkdownFence_plainJSON_unchanged() {
-        let input = #"{"a":1}"#
-        XCTAssertEqual(ClaudeAPIService.stripMarkdownFence(from: input), input)
+    func test_generate_requestBody_includesThinkingConfig() async throws {
+        let stub = StubHTTPClient()
+        var capturedBody: [String: Any]?
+        let data = toolUseEnvelope(name: "return_term_entry", input: validTermInput())
+        stub.responseFactory = { request in
+            if let body = request.httpBody {
+                capturedBody = try JSONSerialization.jsonObject(with: body) as? [String: Any]
+            }
+            return (data, self.okResponse())
+        }
+
+        _ = try await makeService(stub: stub).generate(keyword: "mutex")
+
+        let thinking = capturedBody?["thinking"] as? [String: Any]
+        XCTAssertEqual(thinking?["type"] as? String, "enabled")
+        XCTAssertEqual(thinking?["budget_tokens"] as? Int, 2000)
+        XCTAssertGreaterThan(capturedBody?["max_tokens"] as? Int ?? 0, 2000)
     }
 
-    func test_stripMarkdownFence_jsonLangTag_stripped() {
-        let input = "```json\n{\"a\":1}\n```"
-        XCTAssertEqual(ClaudeAPIService.stripMarkdownFence(from: input), #"{"a":1}"#)
+    func test_generate_requestBody_systemBlockHasCacheControl() async throws {
+        let stub = StubHTTPClient()
+        var capturedBody: [String: Any]?
+        let data = toolUseEnvelope(name: "return_term_entry", input: validTermInput())
+        stub.responseFactory = { request in
+            if let body = request.httpBody {
+                capturedBody = try JSONSerialization.jsonObject(with: body) as? [String: Any]
+            }
+            return (data, self.okResponse())
+        }
+
+        _ = try await makeService(stub: stub).generate(keyword: "mutex")
+
+        // system은 프롬프트 캐싱을 위해 cache_control이 붙은 블록 배열이어야 함
+        let systemBlocks = capturedBody?["system"] as? [[String: Any]]
+        XCTAssertEqual(systemBlocks?.count, 1)
+        let first = systemBlocks?.first
+        XCTAssertEqual(first?["type"] as? String, "text")
+        XCTAssertFalse((first?["text"] as? String ?? "").isEmpty)
+        let cacheControl = first?["cache_control"] as? [String: Any]
+        XCTAssertEqual(cacheControl?["type"] as? String, "ephemeral")
     }
 
-    func test_stripMarkdownFence_noLangTag_stripped() {
-        let input = "```\n{\"a\":1}\n```"
-        XCTAssertEqual(ClaudeAPIService.stripMarkdownFence(from: input), #"{"a":1}"#)
+    func test_generate_requestBody_includesToolsAndToolChoice() async throws {
+        let stub = StubHTTPClient()
+        var capturedBody: [String: Any]?
+        let data = toolUseEnvelope(name: "return_term_entry", input: validTermInput())
+        stub.responseFactory = { request in
+            if let body = request.httpBody {
+                capturedBody = try JSONSerialization.jsonObject(with: body) as? [String: Any]
+            }
+            return (data, self.okResponse())
+        }
+
+        _ = try await makeService(stub: stub).generate(keyword: "mutex")
+
+        let tools = capturedBody?["tools"] as? [[String: Any]]
+        XCTAssertEqual(tools?.count, 3)
+        let toolNames = Set(tools?.compactMap { $0["name"] as? String } ?? [])
+        XCTAssertEqual(toolNames, ["return_term_entry", "return_not_dev_term", "return_possible_typo"])
+
+        let toolChoice = capturedBody?["tool_choice"] as? [String: Any]
+        // extended thinking과 공존하려면 auto여야 함 (any/tool은 thinking과 충돌)
+        XCTAssertEqual(toolChoice?["type"] as? String, "auto")
+    }
+
+    func test_generate_responseWithThinkingBlock_findsToolUse() async throws {
+        let stub = StubHTTPClient()
+        // 실제 extended thinking + tool_use 응답 형태: thinking 블록이 tool_use 앞에 옴
+        let payload: [String: Any] = [
+            "content": [
+                ["type": "thinking", "thinking": "mutex는 상호 배제..."],
+                [
+                    "type": "tool_use",
+                    "id": "toolu_test",
+                    "name": "return_term_entry",
+                    "input": validTermInput()
+                ]
+            ]
+        ]
+        let data = try JSONSerialization.data(withJSONObject: payload)
+        stub.responseFactory = { _ in (data, self.okResponse()) }
+
+        let entry = try await makeService(stub: stub).generate(keyword: "mutex")
+        XCTAssertEqual(entry.keyword, "mutex")
+    }
+
+    // MARK: - systemPrompt sanity check
+
+    func test_systemPrompt_containsFewShotExamples() {
+        let prompt = ClaudeAPIService.systemPrompt
+        XCTAssertTrue(prompt.contains("mutex"), "mutex 예시가 프롬프트에 포함되어야 함")
+        XCTAssertTrue(prompt.contains("jpa") || prompt.contains("JPA"), "JPA 예시가 프롬프트에 포함되어야 함")
+        XCTAssertTrue(prompt.contains("daemon"), "daemon 예시가 프롬프트에 포함되어야 함")
     }
 }
