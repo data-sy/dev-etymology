@@ -3,7 +3,7 @@
 ## 메타
 
 - **목표 합계**: 300개 (현재 200개 → 500개로 확장)
-- **카테고리 배분**: 동시성 40, 자료구조 50, 네트워크 50, DB 50, 패턴 50, 기타 60
+- **카테고리 배분**: 동시성 40, 자료구조 50, 네트워크 46, DB 50, 패턴 50, 기타 64
 - **현황**: 큐레이션만 완료. terms.json 갱신·API 호출은 Phase 2에서.
 - **다음 단계 안내**: 이 파일을 입력으로 `Scripts/generate_db.py --keywords` 호출.
 
@@ -57,7 +57,7 @@ print('내부 중복:', [k for k in new_kw if new_kw.count(k) > 1])
 - dining-philosophers — 식사하는 철학자, Dining Philosophers
 - worker — 워커, 작업자
 - continuation — 컨티뉴에이션, 연속
-- dispatch — 디스패치, 디스패처
+- goroutine — 고루틴, Goroutine
 - lock-free — 락 프리, Lock-Free
 - wait-free — 웨이트 프리, Wait-Free
 - nonblocking — 논블로킹, Non-blocking
@@ -129,7 +129,7 @@ print('내부 중복:', [k for k in new_kw if new_kw.count(k) > 1])
 - perfect-hash — 퍼펙트 해시, Perfect Hash
 - b-plus-tree — B+ 트리, B-Plus Tree
 
-## 네트워크 (50개)
+## 네트워크 (46개)
 
 - reverse-proxy — 리버스 프록시, Reverse Proxy
 - forward-proxy — 포워드 프록시, Forward Proxy
@@ -167,10 +167,6 @@ print('내부 중복:', [k for k in new_kw if new_kw.count(k) > 1])
 - imap — 아이맵, Internet Message Access Protocol
 - graphql — 그래프큐엘, GraphQL
 - soap — 소프, Simple Object Access Protocol
-- xml — 엑스엠엘, eXtensible Markup Language
-- json — 제이슨, JavaScript Object Notation
-- yaml — 야믈, YAML Ain't Markup Language
-- protobuf — 프로토버프, Protocol Buffers
 - http2 — 에이치티티피2, HTTP/2
 - http3 — 에이치티티피3, HTTP/3
 - quic — 큑, QUIC
@@ -190,7 +186,7 @@ print('내부 중복:', [k for k in new_kw if new_kw.count(k) > 1])
 - unique-constraint — 유니크 제약, Unique Constraint
 - check-constraint — 체크 제약, Check Constraint
 - not-null — 낫 널, NOT NULL Constraint
-- default-value — 기본값, Default Value
+- raft — 래프트, Raft Consensus Algorithm
 - having — 해빙, HAVING Clause
 - group-by — 그룹 바이, GROUP BY
 - order-by — 오더 바이, ORDER BY
@@ -288,7 +284,7 @@ print('내부 중복:', [k for k in new_kw if new_kw.count(k) > 1])
 - dependency-inversion — 의존성 역전, Dependency Inversion Principle
 - coupling — 결합도, Coupling
 
-## 기타 (60개)
+## 기타 (64개)
 
 - linter — 린터, Linter
 - formatter — 포매터, Formatter
@@ -350,3 +346,7 @@ print('내부 중복:', [k for k in new_kw if new_kw.count(k) > 1])
 - namespace — 네임스페이스, Namespace
 - cgroup — 씨그룹, Control Group
 - syscall — 시스콜, System Call
+- xml — 엑스엠엘, eXtensible Markup Language
+- json — 제이슨, JavaScript Object Notation
+- yaml — 야믈, YAML Ain't Markup Language
+- protobuf — 프로토버프, Protocol Buffers
