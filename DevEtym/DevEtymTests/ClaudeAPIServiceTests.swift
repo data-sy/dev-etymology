@@ -177,4 +177,44 @@ final class ClaudeAPIServiceTests: XCTestCase {
         XCTAssertTrue(prompt.contains("jpa") || prompt.contains("JPA"), "JPA 예시가 프롬프트에 포함되어야 함")
         XCTAssertTrue(prompt.contains("daemon"), "daemon 예시가 프롬프트에 포함되어야 함")
     }
+
+    // MARK: - Extended thinking
+
+    func test_generate_requestBody_includesThinkingConfig() async throws {
+        let stub = StubHTTPClient()
+        var capturedBody: [String: Any]?
+        let json = """
+        {"keyword":"mutex","aliases":["뮤텍스"],"category":"동시성","summary":"s","etymology":"e","namingReason":"n"}
+        """
+        stub.responseFactory = { request in
+            if let data = request.httpBody {
+                capturedBody = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            }
+            return (self.envelope(text: json), self.okResponse())
+        }
+
+        _ = try await makeService(stub: stub).generate(keyword: "mutex")
+
+        let thinking = capturedBody?["thinking"] as? [String: Any]
+        XCTAssertEqual(thinking?["type"] as? String, "enabled")
+        XCTAssertEqual(thinking?["budget_tokens"] as? Int, 2000)
+        // thinking 토큰 + 응답 토큰을 모두 담을 수 있어야 함
+        XCTAssertGreaterThan(capturedBody?["max_tokens"] as? Int ?? 0, 2000)
+    }
+
+    func test_generate_responseWithThinkingBlock_extractsTextCorrectly() async throws {
+        let stub = StubHTTPClient()
+        // 실제 extended thinking 응답: content 배열에 thinking 블록이 text 블록보다 앞에 옴
+        let payload: [String: Any] = [
+            "content": [
+                ["type": "thinking", "thinking": "mutex는 상호 배제를 뜻하는..."],
+                ["type": "text", "text": #"{"keyword":"mutex","aliases":["뮤텍스"],"category":"동시성","summary":"s","etymology":"e","namingReason":"n"}"#]
+            ]
+        ]
+        let data = try JSONSerialization.data(withJSONObject: payload)
+        stub.responseFactory = { _ in (data, self.okResponse()) }
+
+        let entry = try await makeService(stub: stub).generate(keyword: "mutex")
+        XCTAssertEqual(entry.keyword, "mutex")
+    }
 }

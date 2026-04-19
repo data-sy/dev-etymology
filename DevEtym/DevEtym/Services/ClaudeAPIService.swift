@@ -67,7 +67,11 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
 
         let body: [String: Any] = [
             "model": Constants.claudeModel,
-            "max_tokens": 2048,
+            "max_tokens": 4096,
+            "thinking": [
+                "type": "enabled",
+                "budget_tokens": 2000
+            ],
             "system": Self.systemPrompt,
             "messages": [
                 ["role": "user", "content": keyword]
