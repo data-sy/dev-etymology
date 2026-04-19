@@ -215,6 +215,29 @@ final class ClaudeAPIServiceTests: XCTestCase {
         XCTAssertGreaterThan(capturedBody?["max_tokens"] as? Int ?? 0, 2000)
     }
 
+    func test_generate_requestBody_systemBlockHasCacheControl() async throws {
+        let stub = StubHTTPClient()
+        var capturedBody: [String: Any]?
+        let data = toolUseEnvelope(name: "return_term_entry", input: validTermInput())
+        stub.responseFactory = { request in
+            if let body = request.httpBody {
+                capturedBody = try JSONSerialization.jsonObject(with: body) as? [String: Any]
+            }
+            return (data, self.okResponse())
+        }
+
+        _ = try await makeService(stub: stub).generate(keyword: "mutex")
+
+        // system은 프롬프트 캐싱을 위해 cache_control이 붙은 블록 배열이어야 함
+        let systemBlocks = capturedBody?["system"] as? [[String: Any]]
+        XCTAssertEqual(systemBlocks?.count, 1)
+        let first = systemBlocks?.first
+        XCTAssertEqual(first?["type"] as? String, "text")
+        XCTAssertFalse((first?["text"] as? String ?? "").isEmpty)
+        let cacheControl = first?["cache_control"] as? [String: Any]
+        XCTAssertEqual(cacheControl?["type"] as? String, "ephemeral")
+    }
+
     func test_generate_requestBody_includesToolsAndToolChoice() async throws {
         let stub = StubHTTPClient()
         var capturedBody: [String: Any]?

@@ -70,7 +70,13 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
                 "type": "enabled",
                 "budget_tokens": 2000
             ],
-            "system": Self.systemPrompt,
+            "system": [
+                [
+                    "type": "text",
+                    "text": Self.systemPrompt,
+                    "cache_control": ["type": "ephemeral"]
+                ]
+            ],
             "tools": Self.tools,
             "tool_choice": ["type": "any"],
             "messages": [
