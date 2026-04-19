@@ -257,7 +257,8 @@ final class ClaudeAPIServiceTests: XCTestCase {
         XCTAssertEqual(toolNames, ["return_term_entry", "return_not_dev_term", "return_possible_typo"])
 
         let toolChoice = capturedBody?["tool_choice"] as? [String: Any]
-        XCTAssertEqual(toolChoice?["type"] as? String, "any")
+        // extended thinking과 공존하려면 auto여야 함 (any/tool은 thinking과 충돌)
+        XCTAssertEqual(toolChoice?["type"] as? String, "auto")
     }
 
     func test_generate_responseWithThinkingBlock_findsToolUse() async throws {

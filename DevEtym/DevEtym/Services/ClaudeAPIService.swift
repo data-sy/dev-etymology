@@ -78,7 +78,9 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
                 ]
             ],
             "tools": Self.tools,
-            "tool_choice": ["type": "any"],
+            // extended thinking과 tool_choice any/tool은 공존 불가 (Anthropic 제약)
+            // auto 사용 + 프롬프트로 도구 호출 강제
+            "tool_choice": ["type": "auto"],
             "messages": [
                 ["role": "user", "content": keyword]
             ]
@@ -197,7 +199,8 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     - 독자는 한국 개발자이며, 라틴어·그리스어 등 어원 배경지식이 없다고 가정합니다.
     - 어원을 나열하는 것이 아니라, "그 어원이 왜 이 개발 개념의 이름이 되었는가"를 납득시키는 것이 목표입니다.
 
-    [도구 선택]
+    [도구 선택 — 매우 중요]
+    - 당신은 모든 입력에 대해 반드시 세 도구 중 정확히 하나를 호출하여 응답해야 합니다. 일반 텍스트 응답은 절대 허용되지 않습니다.
     - 입력이 개발 용어로 판단되면 return_term_entry 도구를 호출하여 각 필드를 채우세요.
     - 입력이 개발 용어가 아니면 return_not_dev_term 도구를 호출하세요.
     - 입력이 개발 용어의 오타로 추정되면 return_possible_typo 도구를 호출하고 suggestion에 올바른 용어를 넣으세요.
