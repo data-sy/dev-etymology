@@ -168,4 +168,13 @@ final class ClaudeAPIServiceTests: XCTestCase {
         let input = "```\n{\"a\":1}\n```"
         XCTAssertEqual(ClaudeAPIService.stripMarkdownFence(from: input), #"{"a":1}"#)
     }
+
+    // MARK: - systemPrompt sanity check
+
+    func test_systemPrompt_containsFewShotExamples() {
+        let prompt = ClaudeAPIService.systemPrompt
+        XCTAssertTrue(prompt.contains("mutex"), "mutex 예시가 프롬프트에 포함되어야 함")
+        XCTAssertTrue(prompt.contains("jpa") || prompt.contains("JPA"), "JPA 예시가 프롬프트에 포함되어야 함")
+        XCTAssertTrue(prompt.contains("daemon"), "daemon 예시가 프롬프트에 포함되어야 함")
+    }
 }
