@@ -143,6 +143,22 @@ def call_claude(api_key: str, batch: list[str]) -> list[dict[str, Any]]:
     return json.loads(text)
 
 
+def call_claude_with_retry(api_key: str, batch: list[str], retries: int = 1) -> list[dict[str, Any]]:
+    """JSONDecodeError에 한해 재시도. 그 외 에러는 즉시 전파."""
+    last_error: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            return call_claude(api_key, batch)
+        except json.JSONDecodeError as e:
+            last_error = e
+            if attempt < retries:
+                print(f"  JSON 파싱 실패 (시도 {attempt + 1}/{retries + 1}), 재시도: {e}")
+                time.sleep(2.0)
+                continue
+            raise
+    raise last_error  # unreachable
+
+
 def validate(terms: list[dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     seen: set[str] = set()
@@ -196,18 +212,36 @@ def main() -> int:
         requested = read_keywords(args.keywords)
         pending = [k for k in requested if k not in existing_keys]
         print(f"기존 {len(existing)}개 + 신규 {len(pending)}개 요청")
-        for batch in chunked(pending, args.batch_size):
-            print(f"  배치 생성: {batch}")
+        skipped_batches: list[list[str]] = []
+        for batch_idx, batch in enumerate(chunked(pending, args.batch_size), 1):
+            total_batches = (len(pending) + args.batch_size - 1) // args.batch_size
+            print(f"  [{batch_idx}/{total_batches}] 배치 생성: {batch}")
             try:
-                generated = call_claude(api_key, batch)
-            except (urllib.error.URLError, json.JSONDecodeError, KeyError) as e:
-                sys.exit(f"API 호출 실패: {e}")
+                generated = call_claude_with_retry(api_key, batch, retries=1)
+            except json.JSONDecodeError as e:
+                print(f"  ⚠️ JSON 파싱 재시도도 실패 — 배치 스킵: {e}", file=sys.stderr)
+                skipped_batches.append(batch)
+                continue
+            except (urllib.error.URLError, KeyError) as e:
+                # 네트워크·응답 구조 에러는 중단 (재시도 의미 없음)
+                print(f"API 호출 실패 (중단): {e}", file=sys.stderr)
+                break
             for t in generated:
                 if t.get("keyword") in existing_keys:
                     continue
                 merged.append(t)
                 existing_keys.add(t["keyword"])
+            # 점진적 저장 — 매 배치 후 파일 쓰기 (중간 실패 대비)
+            args.output.write_text(
+                json.dumps(merged, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
             time.sleep(args.sleep)
+
+        if skipped_batches:
+            print("\n⚠️ 스킵된 배치 — 수동 재실행 필요:", file=sys.stderr)
+            for b in skipped_batches:
+                print(f"  - {b}", file=sys.stderr)
 
     errors = validate(merged)
     if errors:
