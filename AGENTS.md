@@ -188,21 +188,6 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 
 ---
 
-## 진행 중
-
-### ai 에이전트 — AI 응답 품질 개편 (`feat/ai-quality`)
-
-ROI 순 4단계. 각 단계 논리 단위 커밋.
-
-1. **프롬프트 전면 개편** — few-shot 예시 3개(mutex/JPA/daemon), 품질 기준(독자·길이·톤), `max_tokens` 1024→2048
-2. **Extended thinking** — `thinking: {type: "enabled", budget_tokens: 2000}`
-3. **Tool Use** — structured output 강제, `stripMarkdownFence`/`parse` 단순화, 관련 테스트 재작성
-4. **Prompt caching** — system 블록 `cache_control: {type: "ephemeral"}`
-
-각 단계 완료 후 커밋만 하고 push/PR은 허브 세션에서 확인 후 진행.
-
----
-
 ## 머지 전 확인
 
 - [ ] 빌드 통과
