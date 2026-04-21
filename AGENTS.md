@@ -188,6 +188,34 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 
 ---
 
+## 미완 작업 / Backlog
+
+### data — 기존 200개 품질 재생성 (옵션 C 잔여 + 옵션 A)
+
+번들 DB 확장(`feat/bundle-db-expansion`, PR #12)에서 신규 300개는 개선된 프롬프트로 생성했으나, 기존 200개는 구 프롬프트 결과가 그대로 남아있음. 전체 일관성을 위해 기존분도 재생성 고려.
+
+**중단 사유:** Anthropic API 크레딧 소진 (2026-04-21). 충전 후 재개.
+
+**절차:**
+1. 기존 200개 중 10~15개 샘플을 뽑아 재생성 → before/after 비교 (~$0.20)
+2. 개선 체감되면 전체 200개 재생성 (~$2)
+3. 미미하면 스킵하고 현 상태 유지
+
+샘플 후보: `deadlock`, `binary-tree`, `tcp`, `crud`, `singleton`, `debug`, `hash`, `cursor`, `decorator`, `kernel` (few-shot 예시인 mutex/jpa/daemon은 공정 비교 불가라 제외).
+
+### analytics — 검색 키워드 수집 (services 주도, settings 협업)
+
+출시 후 실제로 어떤 용어가 검색되는지 파악하여 번들 DB 확장 우선순위에 반영.
+
+**설계 방향 (확정 아님):**
+- services: `TermService.fetch()`에 옵트인 트래킹 호출, SDK 초기화(Firebase/PostHog 등 미정)
+- settings: 외관 섹션과 동급으로 "데이터 수집" 섹션 추가, opt-in 토글
+- 법적 고지: 개인정보 처리방침 갱신 (현재 플레이스홀더 상태)
+
+**착수 시점:** ai·data 머지 후 별도 사이클. SDK 선택·프라이버시 정책 먼저 결정.
+
+---
+
 ## 머지 전 확인
 
 - [ ] 빌드 통과

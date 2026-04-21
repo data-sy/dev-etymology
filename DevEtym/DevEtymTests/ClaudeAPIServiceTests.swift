@@ -289,5 +289,42 @@ final class ClaudeAPIServiceTests: XCTestCase {
         XCTAssertTrue(prompt.contains("mutex"), "mutex 예시가 프롬프트에 포함되어야 함")
         XCTAssertTrue(prompt.contains("jpa") || prompt.contains("JPA"), "JPA 예시가 프롬프트에 포함되어야 함")
         XCTAssertTrue(prompt.contains("daemon"), "daemon 예시가 프롬프트에 포함되어야 함")
+        XCTAssertTrue(prompt.contains("bug"), "bug 예시가 프롬프트에 포함되어야 함")
+    }
+
+    // MARK: - 프롬프트 ↔ tool schema drift 방지
+
+    func test_fieldLengthConstraints_matchBetweenPromptAndToolSchema() {
+        let prompt = ClaudeAPIService.systemPrompt
+        guard let tool = ClaudeAPIService.tools.first(where: { ($0["name"] as? String) == "return_term_entry" }),
+              let schema = tool["input_schema"] as? [String: Any],
+              let properties = schema["properties"] as? [String: Any] else {
+            XCTFail("return_term_entry tool schema를 찾을 수 없음")
+            return
+        }
+
+        for field in ["summary", "etymology", "namingReason"] {
+            let promptRange = extractLengthRange(from: prompt, pattern: "\(field): (\\d+~\\d+)자")
+            guard let fieldDef = properties[field] as? [String: Any],
+                  let description = fieldDef["description"] as? String else {
+                XCTFail("\(field) 필드 description을 찾을 수 없음")
+                continue
+            }
+            let schemaRange = extractLengthRange(from: description, pattern: "(\\d+~\\d+)자")
+            XCTAssertEqual(
+                promptRange,
+                schemaRange,
+                "\(field) 길이 기준 drift — prompt=\(promptRange ?? "nil"), schema=\(schemaRange ?? "nil"). 한쪽만 수정했다면 다른 쪽도 동일하게 맞춰야 함."
+            )
+        }
+    }
+
+    private func extractLengthRange(from text: String, pattern: String) -> String? {
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
+        let range = NSRange(text.startIndex..., in: text)
+        guard let match = regex.firstMatch(in: text, range: range),
+              match.numberOfRanges >= 2,
+              let captured = Range(match.range(at: 1), in: text) else { return nil }
+        return String(text[captured])
     }
 }
