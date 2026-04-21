@@ -203,16 +203,39 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 
 샘플 후보: `deadlock`, `binary-tree`, `tcp`, `crud`, `singleton`, `debug`, `hash`, `cursor`, `decorator`, `kernel` (few-shot 예시인 mutex/jpa/daemon은 공정 비교 불가라 제외).
 
-### analytics — 검색 키워드 수집 (services 주도, settings 협업)
+### analytics — 검색 키워드 수집 (services → settings 순차)
 
 출시 후 실제로 어떤 용어가 검색되는지 파악하여 번들 DB 확장 우선순위에 반영.
 
-**설계 방향 (확정 아님):**
-- services: `TermService.fetch()`에 옵트인 트래킹 호출, SDK 초기화(Firebase/PostHog 등 미정)
-- settings: 외관 섹션과 동급으로 "데이터 수집" 섹션 추가, opt-in 토글
-- 법적 고지: 개인정보 처리방침 갱신 (현재 플레이스홀더 상태)
+**확정 사항 (2026-04-21):**
+- **백엔드**: Firebase Analytics (SDK는 Swift Package Manager로 추가)
+- **수집 범위**: 검색 키워드, 시각, 결과 종류(번들/AI/notDevTerm/possibleTypo), 오류 종류, Firebase App Instance ID(익명)
+- **옵트인 전략**: 첫 실행 시 다이얼로그로 명시 동의 — 한국 PIPA 준수
+- **개인정보 처리방침 초안**: `docs/privacy-policy.md`
 
-**착수 시점:** ai·data 머지 후 별도 사이클. SDK 선택·프라이버시 정책 먼저 결정.
+**services 담당 (선행 — `feat/analytics-infra`)**
+- `DevEtym/DevEtym/Services/AnalyticsService.swift` (신규) + `AnalyticsServiceProtocol.swift` — `@MainActor` 준수
+- `DevEtym/DevEtym/App/DevEtymApp.swift` — `FirebaseApp.configure()` 호출, EnvironmentKey 주입
+- `DevEtym/DevEtym/Services/TermService.swift` — `fetch()` 결과별 트래킹 이벤트 송신
+- `DevEtym/DevEtym/Utils/EnvironmentKeys.swift` — AnalyticsService 주입 키 추가
+- `DevEtym/DevEtym/Utils/Constants.swift` — 동의 `UserDefaults` 키 상수(예: `analyticsConsentKey`)
+- `DevEtym/DevEtymTests/AnalyticsServiceTests.swift` + `Mocks/MockAnalyticsService.swift`
+- Xcode Package Dependencies에 `firebase-ios-sdk` 추가 (수동 GUI 작업, 에이전트 대신 사용자 수행)
+
+**settings 담당 (후속 — `feat/analytics-consent-ui`)**
+- `DevEtym/DevEtym/Features/Onboarding/OnboardingView.swift` — 첫 실행 시 "데이터 수집 동의" 화면 추가 (기존 온보딩에 이어서)
+- `DevEtym/DevEtym/Features/Settings/SettingsView.swift` — "데이터 수집" 섹션 (토글 + "내 식별자 보기" 링크 + "처리방침" 링크)
+- 처리방침 텍스트를 앱 내에서 표시할지 외부 URL로 링크할지 결정 (배포 전 GitHub Pages 등에 호스팅하는 방향 권장)
+
+**사용자 수동 전제 조건 (에이전트가 못 하는 부분)**
+- Firebase Console에서 iOS 앱 등록 → `GoogleService-Info.plist` 다운로드 → Xcode 프로젝트에 추가
+- Xcode에서 `firebase-ios-sdk` Swift Package 추가 (File → Add Package Dependencies)
+- `docs/privacy-policy.md` 내용을 최종 URL에 호스팅 (GitHub Pages, Notion, 자체 사이트 등)
+
+**머지 순서**
+1. services 에이전트 작업 → PR → main 머지
+2. 사용자 수동 작업 (Firebase 콘솔, Xcode 패키지)
+3. settings 에이전트 작업 → PR → main 머지
 
 ---
 
