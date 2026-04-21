@@ -160,7 +160,7 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
                     ],
                     "namingReason": [
                         "type": "string",
-                        "description": "150~300자 분량. 어원상 의미와 개발 현장에서의 실제 쓰임 사이에 다리를 놓는 설명."
+                        "description": "150~270자 분량. 어원상 의미와 개발 현장에서의 실제 쓰임 사이에 다리를 놓는 설명."
                     ]
                 ],
                 "required": ["keyword", "aliases", "category", "summary", "etymology", "namingReason"]
@@ -206,9 +206,15 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     - 입력이 개발 용어의 오타로 추정되면 return_possible_typo 도구를 호출하고 suggestion에 올바른 용어를 넣으세요.
 
     [필드별 작성 기준 — return_term_entry]
+    - aliases: 동일 개념을 지칭하는 대체 표기의 배열. 허용:
+      (1) 한글 음차 (예: "뮤텍스", "데몬")
+      (2) 약어의 풀네임 (예: "Java Persistence API")
+      (3) 철자 변이 (예: "demon")
+      정의·번역·상위 개념은 포함하지 않는다 (예: "소프트웨어 결함"은 alias가 아님).
+      보통 1~3개. 적절한 대체 표기가 없으면 빈 배열을 반환한다.
     - summary: 20~30자. 개념을 한 줄로 요약. "무엇을 하는/무엇인" 수준.
     - etymology: 60~120자. 원어(언어·원형)와 그 뜻, 구성 요소(어근·접두사)를 서술.
-    - namingReason: 150~300자. 반드시 "어원상의 의미 → 개발 현장에서의 실제 쓰임"으로 다리를 놓을 것. 최초 등장 시점·명명자 등 역사적 맥락이 있으면 함께 기술.
+    - namingReason: 150~270자. 반드시 "어원상의 의미 → 개발 현장에서의 실제 쓰임"으로 다리를 놓을 것. 최초 등장 시점·명명자 등 역사적 맥락이 있으면 함께 기술.
     - 톤: 건조하고 정확하게. "~이다", "~을 뜻한다" 같은 서술형. 감탄사·과장된 형용사·수식어 남발 금지.
 
     [정확성 원칙]
@@ -235,5 +241,10 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     입력: daemon
     return_term_entry input:
     {"keyword":"daemon","aliases":["데몬","demon"],"category":"기타","summary":"백그라운드에서 지속 실행되는 프로세스","etymology":"그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 사람 눈에 보이지 않으면서 일을 대신 처리하는 존재를 가리켰다.","namingReason":"1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 사용자 상호작용 없이 시스템 뒤편에서 스스로 작업을 처리하는 프로세스를 '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. Unix 관습에 따라 프로세스 이름 끝에 'd'를 붙인다(httpd, sshd)."}
+
+    [모범 답안 예시 4 — 어원이 불확실한 경우]
+    입력: bug
+    return_term_entry input:
+    {"keyword":"bug","aliases":["버그"],"category":"기타","summary":"프로그램의 의도치 않은 오작동이나 결함","etymology":"정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.","namingReason":"1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 붙여진 'first actual case of bug being found'라는 일화가 유명하나, 이는 기존 은유를 문자 그대로 실행한 농담에 가깝고 용어의 기원 자체는 아니다. 기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다."}
     """
 }

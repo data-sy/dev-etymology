@@ -289,5 +289,6 @@ final class ClaudeAPIServiceTests: XCTestCase {
         XCTAssertTrue(prompt.contains("mutex"), "mutex 예시가 프롬프트에 포함되어야 함")
         XCTAssertTrue(prompt.contains("jpa") || prompt.contains("JPA"), "JPA 예시가 프롬프트에 포함되어야 함")
         XCTAssertTrue(prompt.contains("daemon"), "daemon 예시가 프롬프트에 포함되어야 함")
+        XCTAssertTrue(prompt.contains("bug"), "bug 예시가 프롬프트에 포함되어야 함")
     }
 }
