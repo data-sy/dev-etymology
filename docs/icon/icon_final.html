@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevEtym — 아이콘 최종안 · 개발어원 사전</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #fafafa;
+    color: #0a0a0a;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding: 56px 32px 80px; }
+  .container { max-width: 1080px; margin: 0 auto; }
+
+  header.brief { margin-bottom: 48px; }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: "Times New Roman", Georgia, serif;
+    font-weight: 400;
+    font-size: 36px;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .lede {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.65;
+    max-width: 760px;
+  }
+  .lede b { color: #0a0a0a; font-weight: 600; }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 32px;
+    background: #ececec;
+    border-radius: 28px;
+    margin-bottom: 40px;
+  }
+  .hero .main-icon {
+    width: 320px; height: 320px;
+    border-radius: 72px;
+    box-shadow:
+      0 18px 48px rgba(0,0,0,0.18),
+      0 2px 4px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .hero .main-icon svg { display: block; width: 100%; height: 100%; }
+  .hero-title {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+  .hero-sub {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 0.06em;
+  }
+
+  /* Size strip */
+  .sizes {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 18px;
+    padding: 36px 24px 28px;
+    margin-bottom: 28px;
+  }
+  .sizes h2 {
+    font-family: "Times New Roman", Georgia, serif;
+    font-weight: 400;
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  .sizes-note {
+    font-size: 12.5px;
+    color: #666;
+    line-height: 1.55;
+    margin-bottom: 24px;
+  }
+  .size-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    padding: 16px 0 8px;
+  }
+  .size-block { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .size-pv {
+    box-shadow: 0 3px 10px rgba(0,0,0,0.14);
+    overflow: hidden;
+  }
+  .size-pv svg { display: block; width: 100%; height: 100%; }
+  .size-180 { width: 180px; height: 180px; border-radius: 40px; }
+  .size-120 { width: 120px; height: 120px; border-radius: 27px; }
+  .size-80  { width: 80px;  height: 80px;  border-radius: 18px; }
+  .size-60  { width: 60px;  height: 60px;  border-radius: 14px; }
+  .size-40  { width: 40px;  height: 40px;  border-radius: 9px;  }
+  .size-28  { width: 28px;  height: 28px;  border-radius: 7px;  }
+  .size-label {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: #666;
+    letter-spacing: 0.06em;
+  }
+  .size-label b { color: #0a0a0a; }
+
+  /* Context strip (light bg + dark bg) */
+  .contexts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .ctx-card {
+    padding: 36px 24px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .ctx-light { background: #fafafa; border: 1px solid #e4e4e4; }
+  .ctx-dark  { background: #0a0a0a; }
+  .ctx-dark .ctx-label { color: #999; }
+  .ctx-icon {
+    width: 140px; height: 140px;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.16);
+  }
+  .ctx-icon svg { display: block; width: 100%; height: 100%; }
+  .ctx-label {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 0.08em;
+  }
+
+  /* Design rationale */
+  .design-card {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 18px;
+    padding: 32px 32px 28px;
+    margin-bottom: 24px;
+  }
+  .design-card h2 {
+    font-family: "Times New Roman", Georgia, serif;
+    font-weight: 400;
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  dl.spec { font-size: 13px; line-height: 1.65; }
+  dl.spec dt {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    margin-top: 14px;
+    margin-bottom: 4px;
+  }
+  dl.spec dt:first-child { margin-top: 0; }
+  dl.spec dd { color: #333; }
+  dl.spec dd code {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    background: #f1f1f1;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* Alt color suggestion */
+  .alt-colors {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 18px;
+    padding: 28px 32px 24px;
+    margin-bottom: 24px;
+  }
+  .alt-colors h2 {
+    font-family: "Times New Roman", Georgia, serif;
+    font-weight: 400;
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .alt-note {
+    font-size: 12.5px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .alt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+  }
+  .alt-card {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 14px;
+    background: #fafafa;
+    border-radius: 12px;
+  }
+  .alt-swatch {
+    width: 100px; height: 100px;
+    border-radius: 22px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+  .alt-swatch svg { display: block; width: 100%; height: 100%; }
+  .alt-name {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: #333;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .alt-hex {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: #888;
+  }
+  .alt-current {
+    outline: 2px solid #2E5D3A;
+    outline-offset: 3px;
+  }
+
+  .footer-note {
+    padding: 16px 20px;
+    background: #f1f1f1;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.6;
+  }
+  .footer-note b { color: #0a0a0a; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="brief">
+  <div class="eyebrow">// devetym · icon · final pick</div>
+  <h1>개발어원 · 사전 <span style="color:#2E5D3A">·</span> 최종안</h1>
+  <p class="lede">
+    v2 Card 04 기반. 영문 "DEV ETYM"을 제거하고 <b>한글 "개발어원"</b>에 모든 시선을 몰았다.
+    색상은 <b>#2E5D3A</b>(딥 그린) — 네이버 사전·고전 영한사전 표지의 계열로,
+    한국 사용자에게 "사전·학습 도구" 카테고리를 이미지 해석 없이 즉시 발사한다.
+    크림색 이중 테두리 + 상·하 장식 라인 + "사전" 라벨 박스는 고전 사전 장정의 관용 장치.
+  </p>
+</header>
+
+<!-- ============================================================
+     HERO — 큰 메인 아이콘
+     ============================================================ -->
+<section class="hero">
+  <div class="main-icon">
+    <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1024" height="1024" fill="#2E5D3A"/>
+
+      <!-- 이중 테두리 -->
+      <rect x="70" y="70" width="884" height="884" rx="24"
+            fill="none" stroke="#F7E8D0" stroke-width="18"/>
+      <rect x="110" y="110" width="804" height="804" rx="18"
+            fill="none" stroke="#F7E8D0" stroke-width="5"/>
+
+      <!-- 상단 장식 라인 -->
+      <line x1="200" y1="242" x2="824" y2="242" stroke="#F7E8D0" stroke-width="6"/>
+      <line x1="260" y1="268" x2="764" y2="268" stroke="#F7E8D0" stroke-width="3"/>
+
+      <!-- 개발 -->
+      <text x="512" y="490" text-anchor="middle"
+            font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+            font-weight="900" font-size="260"
+            fill="#F7E8D0"
+            letter-spacing="24">개발</text>
+      <!-- 어원 -->
+      <text x="512" y="740" text-anchor="middle"
+            font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+            font-weight="900" font-size="260"
+            fill="#F7E8D0"
+            letter-spacing="24">어원</text>
+
+      <!-- 하단 장식 라인 -->
+      <line x1="260" y1="778" x2="764" y2="778" stroke="#F7E8D0" stroke-width="3"/>
+      <line x1="200" y1="802" x2="824" y2="802" stroke="#F7E8D0" stroke-width="6"/>
+
+      <!-- 하단 "사전" 라벨 박스 -->
+      <rect x="408" y="840" width="208" height="86" rx="4" fill="#F7E8D0"/>
+      <text x="512" y="904" text-anchor="middle"
+            font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', sans-serif"
+            font-weight="900" font-size="60"
+            fill="#2E5D3A"
+            letter-spacing="14">사전</text>
+    </svg>
+  </div>
+  <div class="hero-title">개발어원 · 사전</div>
+  <div class="hero-sub">deep green #2E5D3A · cream #F7E8D0</div>
+</section>
+
+<!-- ============================================================
+     SIZES — 실사용 사이즈 검증
+     ============================================================ -->
+<section class="sizes">
+  <div class="eyebrow" style="margin-bottom:6px">// size audit</div>
+  <h2>사이즈별 가독성</h2>
+  <p class="sizes-note">
+    iOS 아이콘 실사용 사이즈. 180px는 앱 스토어, 120px는 iPad 홈, 60–80px는 iPhone 홈,
+    40px는 설정·스포트라이트, 28px는 알림·검색 결과.
+    모든 사이즈에서 "개발어원" 네 글자가 살아남도록 설계 — 28px에서도 한글 덩어리는 유지된다.
+  </p>
+  <div class="size-row">
+
+    <div class="size-block">
+      <div class="size-pv size-180">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="18"/>
+          <rect x="110" y="110" width="804" height="804" rx="18" fill="none" stroke="#F7E8D0" stroke-width="5"/>
+          <line x1="200" y1="242" x2="824" y2="242" stroke="#F7E8D0" stroke-width="6"/>
+          <line x1="260" y1="268" x2="764" y2="268" stroke="#F7E8D0" stroke-width="3"/>
+          <text x="512" y="490" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="260" fill="#F7E8D0" letter-spacing="24">개발</text>
+          <text x="512" y="740" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="260" fill="#F7E8D0" letter-spacing="24">어원</text>
+          <line x1="260" y1="778" x2="764" y2="778" stroke="#F7E8D0" stroke-width="3"/>
+          <line x1="200" y1="802" x2="824" y2="802" stroke="#F7E8D0" stroke-width="6"/>
+          <rect x="408" y="840" width="208" height="86" rx="4" fill="#F7E8D0"/>
+          <text x="512" y="904" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="60" fill="#2E5D3A" letter-spacing="14">사전</text>
+        </svg>
+      </div>
+      <span class="size-label"><b>180</b> · App Store</span>
+    </div>
+
+    <div class="size-block">
+      <div class="size-pv size-120">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="22"/>
+          <rect x="110" y="110" width="804" height="804" rx="18" fill="none" stroke="#F7E8D0" stroke-width="6"/>
+          <text x="512" y="490" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="280" fill="#F7E8D0" letter-spacing="20">개발</text>
+          <text x="512" y="760" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="280" fill="#F7E8D0" letter-spacing="20">어원</text>
+          <rect x="400" y="860" width="224" height="94" rx="4" fill="#F7E8D0"/>
+          <text x="512" y="926" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="64" fill="#2E5D3A" letter-spacing="14">사전</text>
+        </svg>
+      </div>
+      <span class="size-label"><b>120</b> · iPad home</span>
+    </div>
+
+    <div class="size-block">
+      <div class="size-pv size-80">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="28"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+          <text x="512" y="820" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+        </svg>
+      </div>
+      <span class="size-label"><b>80</b> · iPhone spotlight</span>
+    </div>
+
+    <div class="size-block">
+      <div class="size-pv size-60">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="32"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="340" fill="#F7E8D0" letter-spacing="12">개발</text>
+          <text x="512" y="840" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="340" fill="#F7E8D0" letter-spacing="12">어원</text>
+        </svg>
+      </div>
+      <span class="size-label"><b>60</b> · iPhone home</span>
+    </div>
+
+    <div class="size-block">
+      <div class="size-pv size-40">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <text x="512" y="520" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="420" fill="#F7E8D0" letter-spacing="-10">개발</text>
+          <text x="512" y="900" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="420" fill="#F7E8D0" letter-spacing="-10">어원</text>
+        </svg>
+      </div>
+      <span class="size-label"><b>40</b> · Settings</span>
+    </div>
+
+    <div class="size-block">
+      <div class="size-pv size-28">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <text x="512" y="550" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="520" fill="#F7E8D0" letter-spacing="-30">개발</text>
+          <text x="512" y="960" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="520" fill="#F7E8D0" letter-spacing="-30">어원</text>
+        </svg>
+      </div>
+      <span class="size-label"><b>28</b> · Notification</span>
+    </div>
+
+  </div>
+  <p class="sizes-note" style="margin-top:18px;margin-bottom:0">
+    <b>사이즈별 최적화 전략:</b> 큰 사이즈(120+)에는 이중 테두리·장식 라인·사전 라벨을 모두 노출,
+    중간 사이즈(60–80)에서는 테두리 한 겹만 유지하고 장식·라벨은 제거,
+    작은 사이즈(28–40)에서는 "개발/어원" 타이포만 남기고 모든 장식 제거 — 딥 그린 풀배경 + 크림 한글이 핵심 앵커.
+  </p>
+</section>
+
+<!-- ============================================================
+     CONTEXTS — 실제 홈스크린 배경에서
+     ============================================================ -->
+<section class="contexts">
+  <div class="ctx-card ctx-light">
+    <div class="ctx-icon">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#2E5D3A"/>
+        <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="22"/>
+        <rect x="110" y="110" width="804" height="804" rx="18" fill="none" stroke="#F7E8D0" stroke-width="6"/>
+        <text x="512" y="490" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="280" fill="#F7E8D0" letter-spacing="20">개발</text>
+        <text x="512" y="760" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="280" fill="#F7E8D0" letter-spacing="20">어원</text>
+        <rect x="400" y="860" width="224" height="94" rx="4" fill="#F7E8D0"/>
+        <text x="512" y="926" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="64" fill="#2E5D3A" letter-spacing="14">사전</text>
+      </svg>
+    </div>
+    <div class="ctx-label">// 라이트 배경</div>
+  </div>
+
+  <div class="ctx-card ctx-dark">
+    <div class="ctx-icon">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#2E5D3A"/>
+        <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="22"/>
+        <rect x="110" y="110" width="804" height="804" rx="18" fill="none" stroke="#F7E8D0" stroke-width="6"/>
+        <text x="512" y="490" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="280" fill="#F7E8D0" letter-spacing="20">개발</text>
+        <text x="512" y="760" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="280" fill="#F7E8D0" letter-spacing="20">어원</text>
+        <rect x="400" y="860" width="224" height="94" rx="4" fill="#F7E8D0"/>
+        <text x="512" y="926" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="64" fill="#2E5D3A" letter-spacing="14">사전</text>
+      </svg>
+    </div>
+    <div class="ctx-label">// 다크 배경</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DESIGN RATIONALE
+     ============================================================ -->
+<section class="design-card">
+  <div class="eyebrow" style="margin-bottom:6px">// spec</div>
+  <h2>디자인 스펙</h2>
+  <dl class="spec">
+    <dt>배경</dt>
+    <dd><code>#2E5D3A</code> (딥 그린). 네이버 사전·고전 영한사전 표지 계열. 크림과의 WCAG 대비비 6.46:1 (AA 통과).</dd>
+    <dt>타이포</dt>
+    <dd>Apple SD Gothic Neo / Noto Sans CJK KR / Pretendard 900(Black). "개발 / 어원" 2행 배치, letter-spacing 24로 한글 정사각 밸런스 유지. "사전" 라벨은 Black 60pt, letter-spacing 14.</dd>
+    <dt>컬러 요소</dt>
+    <dd>메인 타이포 + 테두리 + 장식 라인 모두 <code>#F7E8D0</code>(크림). "사전" 박스만 반전: 크림 배경 + 딥 그린 글자.</dd>
+    <dt>프레임 장식</dt>
+    <dd>이중 테두리(외곽 18px, 내부 5px 크림) + 상·하 장식 라인 2쌍 — 고전 사전 표지 장정의 관용 형태.</dd>
+    <dt>사이즈 대응</dt>
+    <dd>120px↑ 완전형 / 60–80px 테두리만 / 40px↓ 타이포만. 28px에서도 딥 그린+크림 대비와 한글 덩어리로 식별.</dd>
+    <dt>라이트·다크 공용</dt>
+    <dd>iOS 18 기본 아이콘은 컬러 고정. 라이트/다크 두 배경 모두에서 딥 그린의 저명도가 경계 역할을 해 자동으로 대비 확보.</dd>
+    <dt>팔레트 확장 근거</dt>
+    <dd>앱 기존 accent(<code>#3F7A00</code>)과 같은 계열(그린)이지만 더 짙고 블루 쪽으로 기울어, 아이콘을 앱 내부와 구별되는 "표지"로 자리매김함. 즉, 앱 = 책 내용, 아이콘 = 책 표지라는 위계가 자연스럽게 형성.</dd>
+  </dl>
+</section>
+
+<!-- ============================================================
+     ALT COLORS — 참고 옵션
+     ============================================================ -->
+<section class="alt-colors">
+  <div class="eyebrow" style="margin-bottom:6px">// alternative palettes (reference)</div>
+  <h2>참고 · 검토한 다른 색</h2>
+  <p class="alt-note">
+    최종 픽은 딥 그린. 아래는 검토했던 다른 사전 톤들 — 나중에 분위기를 바꿔야 할 때 참조용.
+  </p>
+  <div class="alt-grid">
+
+    <div class="alt-card alt-current">
+      <div class="alt-swatch">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#2E5D3A"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="28"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+          <text x="512" y="820" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+        </svg>
+      </div>
+      <div class="alt-name"><b>딥 그린 (현재)</b><br>네이버 사전 · 고전 영한</div>
+      <div class="alt-hex">#2E5D3A</div>
+    </div>
+
+    <div class="alt-card">
+      <div class="alt-swatch">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#A35A10"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="28"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+          <text x="512" y="820" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+        </svg>
+      </div>
+      <div class="alt-name">카퍼<br>accentAI · 팔레트 일치</div>
+      <div class="alt-hex">#A35A10</div>
+    </div>
+
+    <div class="alt-card">
+      <div class="alt-swatch">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#6B4423"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="28"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+          <text x="512" y="820" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+        </svg>
+      </div>
+      <div class="alt-name">다크 브라운<br>국어대사전 가죽</div>
+      <div class="alt-hex">#6B4423</div>
+    </div>
+
+    <div class="alt-card">
+      <div class="alt-swatch">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#8B1A1A"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="28"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+          <text x="512" y="820" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+        </svg>
+      </div>
+      <div class="alt-name">옥스퍼드 레드<br>Oxford · Merriam-W</div>
+      <div class="alt-hex">#8B1A1A</div>
+    </div>
+
+    <div class="alt-card">
+      <div class="alt-swatch">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#B8860B"/>
+          <rect x="70" y="70" width="884" height="884" rx="24" fill="none" stroke="#F7E8D0" stroke-width="28"/>
+          <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+          <text x="512" y="820" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+        </svg>
+      </div>
+      <div class="alt-name">머스터드 황토<br>참고서 표지</div>
+      <div class="alt-hex">#B8860B</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="footer-note">
+  <b>다음 단계.</b> 이 최종안을 기준으로 1024×1024 PNG + iOS 아이콘셋 전체 사이즈
+  (20·29·40·58·60·76·80·87·120·152·167·180·1024 pt) 내보내기 가능.
+  SVG가 viewBox 1024로 통일되어 무손실 스케일링. 사이즈별 최적화 버전(60–80px 단순화, 28–40px 타이포만) 도 별도 내보낼 수 있다.
+  다른 색으로 바꾸려면 SVG의 <code>fill="#2E5D3A"</code> 한 줄만 교체하면 즉시 반영.
+</div>
+
+</div>
+</body>
+</html>
