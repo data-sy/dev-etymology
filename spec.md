@@ -728,13 +728,13 @@ ViewModel 불필요 (로직 없음, 순수 UI + 시스템 API 호출만).
 
 ### 4-4. 앱 아이콘 적용
 
-> 디자인 출처: `docs/icon/icon_final.html` (딥 그린 `#2E5D3A`, 크림 `#F7E8D0`, "개발어원 사전")
+> 디자인 출처: `docs/icon/icon_candidate_v1.html` (딥 그린 `#2E5D3A`, 크림 `#F7E8D0`, "개발어원 사전")
 > 모든 SVG가 viewBox 1024×1024로 통일되어 무손실 스케일 가능
 > 앱 표시 이름: "개발 어원 사전" (CLAUDE.md 기준) — 아이콘 타이포와 일치
 
 **PNG 익스포트 (사이즈별 3종)**
 
-아이콘 요소를 그대로 다운스케일하면 작은 사이즈에서 장식이 뭉개진다. `docs/icon/icon_final.html`의 "사이즈별 최적화 전략"대로 3종 PNG를 별도 익스포트.
+아이콘 요소를 그대로 다운스케일하면 작은 사이즈에서 장식이 뭉개진다. `docs/icon/icon_candidate_v1.html`의 "사이즈별 최적화 전략"대로 3종 PNG를 별도 익스포트.
 
 | 버전 | 포함 요소 | 대상 사이즈 |
 |---|---|---|
@@ -743,7 +743,7 @@ ViewModel 불필요 (로직 없음, 순수 UI + 시스템 API 호출만).
 | 타이포만 | 딥 그린 배경 + "개발/어원" 타이포만 | 40pt 이하 (40·29·20) |
 
 익스포트 방법:
-1. `docs/icon/icon_final.html`의 HERO 섹션 및 SIZES 섹션 각 SVG를 개별 파일로 분리
+1. `docs/icon/icon_candidate_v1.html`의 HERO 섹션 및 SIZES 섹션 각 SVG를 개별 파일로 분리
 2. `rsvg-convert` 또는 브라우저 스크린샷으로 1024×1024 PNG 생성
 3. Xcode Asset Catalog이 요구하는 모든 사이즈 일괄 생성 (Bakery·Asset Catalog Creator 등 사용 가능)
 
