@@ -125,7 +125,7 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 - 검색 Task는 `currentSearchTask?.cancel()` 패턴으로 레이스 방지
 - `.possibleTypo` 추천 재검색은 push 아닌 replace (`path.removeLast()` 후 append)
 
-디자인 시스템 상세: spec.md Phase 3-0-1·4-4, `docs/wireframe-v2.html`, `docs/icon/icon_candidate_v1.html`.
+디자인 시스템 상세: spec.md Phase 3-0-1·4-4, `docs/wireframe-v2.html`, `docs/icon/icon_candidate_v2.html`.
 
 ---
 
