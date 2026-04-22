@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>DevEtym — Icon System v3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a;
+    --accent: #c8f060;
+    --text: #e8e8e8;
+    --muted: #777;
+    --muted2: #9a9a9a;
+    --card: #131313;
+    --border: #1f1f1f;
+    --rule: #2a2a2a;
+    --paper: #eeeae0;
+    --paper-line: #b8b2a4;
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding: 56px 32px 80px; }
+  .container { max-width: 1280px; margin: 0 auto; }
+  header { margin-bottom: 48px; }
+  .eyebrow {
+    font-size: 11px; color: var(--accent);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 38px; font-weight: 700;
+    letter-spacing: -0.025em; margin-bottom: 20px;
+    line-height: 1.15;
+  }
+  .intro {
+    max-width: 680px; color: var(--muted2);
+    font-size: 15px; line-height: 1.7;
+  }
+  .intro strong { color: var(--text); font-weight: 600; }
+  .intro code {
+    color: var(--accent); font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 13px; padding: 1px 5px;
+    background: rgba(200,240,96,0.07); border-radius: 3px;
+  }
+  .divider { height: 1px; background: var(--rule); margin: 40px 0 48px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .icon-block {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
+  }
+  .icon-large {
+    width: 240px; height: 240px;
+    border-radius: 54px; overflow: hidden;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+  }
+  .mini-row { display: flex; gap: 10px; align-items: center; }
+  .mini { overflow: hidden; }
+  .mini.s60 { width: 60px; height: 60px; border-radius: 14px; }
+  .mini.s40 { width: 40px; height: 40px; border-radius: 10px; }
+  .mini.s28 { width: 28px; height: 28px; border-radius: 7px; }
+  svg { display: block; width: 100%; height: 100%; }
+
+  .size-note {
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .glance {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted);
+    padding: 4px 0;
+  }
+  .glance .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .meta { display: flex; flex-direction: column; gap: 10px; }
+  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; font-weight: 600;
+    padding: 4px 10px; border-radius: 4px;
+    background: rgba(200, 240, 96, 0.08);
+    color: var(--accent);
+    border: 1px solid rgba(200, 240, 96, 0.18);
+  }
+  .name {
+    font-size: 18px; font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .name .num { color: var(--muted); font-weight: 500; font-size: 15px; }
+  .thesis {
+    font-size: 13px; color: var(--text);
+    line-height: 1.55;
+    padding: 10px 0 10px 14px;
+    border-left: 2px solid var(--accent);
+  }
+  .thesis code, .desc code {
+    color: var(--accent);
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 12px; padding: 1px 4px;
+    background: rgba(200,240,96,0.07); border-radius: 3px;
+  }
+  .desc { font-size: 13px; color: var(--muted2); line-height: 1.65; }
+
+  .footer-note {
+    margin-top: 72px; padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted); font-size: 12px;
+  }
+  .footer-note code {
+    color: var(--accent);
+    background: rgba(200,240,96,0.07);
+    padding: 2px 6px; border-radius: 3px;
+    font-family: ui-monospace, monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="eyebrow">Icon System · v3 · MVP</div>
+    <h1>DevEtym — category-first</h1>
+    <p class="intro">
+      MVP 단계의 앱 아이콘이 풀어야 하는 유일한 문제는
+      <strong>"0.5초 안에 이거 뭐 하는 앱인지 감이 오냐"</strong>다.
+      심볼 차별화, 브랜드 레이어, 메타포 해석 — 이런 건 유저 확보 후 논의할 사치다.
+      <br><br>
+      그래서 v3는 카테고리 단서를 가장 강하게 쏘는 시각 요소 — <strong>책, 페이지, 사전 레터링</strong> —
+      로 돌아오되, <strong>실행 품질</strong>로 "AI가 뱉은 클리셰"와 선을 긋는다.
+      dev 힌트는 전부 2차 요소로 내렸다. "이건 사전이구나" 확정 후에야 눈에 들어오게.
+    </p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 01 · OPEN DICTIONARY WITH CODE ENTRY -->
+    <div class="card">
+      <div class="icon-block">
+        <div class="icon-large">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bg01" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#121212"/>
+                <stop offset="1" stop-color="#0a0a0a"/>
+              </linearGradient>
+            </defs>
+            <rect width="1024" height="1024" fill="url(#bg01)"/>
+
+            <!-- Left page (slight perspective — trapezoid) -->
+            <path d="M 140 320 L 508 280 L 508 788 L 140 748 Z" fill="#eeeae0"/>
+            <!-- Right page -->
+            <path d="M 884 320 L 508 280 L 508 788 L 884 748 Z" fill="#eeeae0"/>
+            <!-- Book spine shadow under pages -->
+            <path d="M 508 280 L 508 788" stroke="#8a8475" stroke-width="2"/>
+            <path d="M 480 290 L 508 280 L 536 290 L 508 300 Z" fill="#d8d2c2"/>
+
+            <!-- Left page text lines -->
+            <g stroke="#b8b2a4" stroke-width="10" stroke-linecap="round">
+              <line x1="180" y1="370" x2="460" y2="340"/>
+              <line x1="180" y1="410" x2="430" y2="382"/>
+              <line x1="180" y1="450" x2="455" y2="422"/>
+            </g>
+
+            <!-- Headword / entry on left page -->
+            <text x="180" y="520"
+                  font-family="Georgia, serif"
+                  font-size="68"
+                  font-weight="700"
+                  fill="#2a2a2a">etym.</text>
+
+            <g stroke="#b8b2a4" stroke-width="10" stroke-linecap="round">
+              <line x1="180" y1="560" x2="440" y2="538"/>
+              <line x1="180" y1="600" x2="460" y2="580"/>
+            </g>
+
+            <!-- CODE-STYLED HIGHLIGHTED LINE (accent) -->
+            <rect x="168" y="628" width="312" height="44" rx="8" fill="#c8f060"/>
+            <text x="184" y="662"
+                  font-family="ui-monospace, 'SF Mono', Menlo, monospace"
+                  font-size="30"
+                  font-weight="700"
+                  fill="#0a0a0a">&gt; def(root)</text>
+
+            <g stroke="#b8b2a4" stroke-width="10" stroke-linecap="round">
+              <line x1="180" y1="710" x2="450" y2="692"/>
+            </g>
+
+            <!-- Right page text lines -->
+            <g stroke="#b8b2a4" stroke-width="10" stroke-linecap="round">
+              <line x1="556" y1="340" x2="844" y2="370"/>
+              <line x1="556" y1="382" x2="820" y2="408"/>
+              <line x1="556" y1="422" x2="835" y2="450"/>
+              <line x1="556" y1="462" x2="810" y2="486"/>
+              <line x1="556" y1="502" x2="828" y2="528"/>
+              <line x1="556" y1="542" x2="818" y2="566"/>
+              <line x1="556" y1="582" x2="840" y2="610"/>
+              <line x1="556" y1="622" x2="800" y2="644"/>
+              <line x1="556" y1="662" x2="822" y2="686"/>
+              <line x1="556" y1="702" x2="816" y2="724"/>
+            </g>
+          </svg>
+        </div>
+        <div class="mini-row">
+          <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><path d="M 140 320 L 508 280 L 508 788 L 140 748 Z" fill="#eeeae0"/><path d="M 884 320 L 508 280 L 508 788 L 884 748 Z" fill="#eeeae0"/><g stroke="#b8b2a4" stroke-width="16" stroke-linecap="round"><line x1="180" y1="380" x2="460" y2="350"/><line x1="180" y1="440" x2="430" y2="412"/><line x1="180" y1="580" x2="440" y2="560"/><line x1="556" y1="350" x2="844" y2="380"/><line x1="556" y1="420" x2="820" y2="450"/><line x1="556" y1="490" x2="835" y2="520"/><line x1="556" y1="560" x2="810" y2="588"/><line x1="556" y1="630" x2="828" y2="660"/></g><rect x="168" y="640" width="300" height="60" rx="10" fill="#c8f060"/></svg></div>
+          <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><path d="M 120 300 L 508 260 L 508 808 L 120 768 Z" fill="#eeeae0"/><path d="M 904 300 L 508 260 L 508 808 L 904 768 Z" fill="#eeeae0"/><g stroke="#b8b2a4" stroke-width="22" stroke-linecap="round"><line x1="170" y1="380" x2="460" y2="350"/><line x1="170" y1="460" x2="440" y2="432"/><line x1="556" y1="350" x2="844" y2="380"/><line x1="556" y1="440" x2="820" y2="470"/><line x1="556" y1="530" x2="835" y2="562"/><line x1="556" y1="620" x2="810" y2="648"/></g><rect x="158" y="620" width="320" height="80" rx="12" fill="#c8f060"/></svg></div>
+          <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><path d="M 100 280 L 508 240 L 508 828 L 100 788 Z" fill="#eeeae0"/><path d="M 924 280 L 508 240 L 508 828 L 924 788 Z" fill="#eeeae0"/><rect x="140" y="600" width="360" height="110" rx="16" fill="#c8f060"/></svg></div>
+        </div>
+        <div class="size-note">240 · 60 · 40 · 28</div>
+        <div class="glance"><span class="dot"></span>0.5초 인식: <strong style="color:var(--text); margin-left:4px">펼친 사전</strong></div>
+      </div>
+      <div class="meta">
+        <div class="tag-row"><span class="tag">Open Book</span><span class="tag">Entry</span></div>
+        <div class="name"><span class="num">01</span><span>Open Dictionary</span></div>
+        <p class="thesis">실제 사전 페이지처럼 제목어(headword) + 정의 라인 + 본문이 보인다. 한 라인만 accent로 하이라이트 — 개발 용어가 표제어라는 힌트를 사전 레이아웃 내부에서 준다.</p>
+        <p class="desc">책 실루엣이 아이콘 면적의 90%를 차지해 <strong>카테고리 오인 가능성 0</strong>. 28px에서 텍스트는 뭉개져도 "종이 책 펼친 모양 + 노란 하이라이트 줄"이 살아남는다.</p>
+      </div>
+    </div>
+
+    <!-- 02 · Aa DICTIONARY LETTER MARK -->
+    <div class="card">
+      <div class="icon-block">
+        <div class="icon-large">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0a0a0a"/>
+
+            <!-- Top ruled line (dictionary page feel) -->
+            <line x1="180" y1="250" x2="844" y2="250" stroke="#c8f060" stroke-width="4" opacity="0.35"/>
+            <line x1="180" y1="270" x2="844" y2="270" stroke="#c8f060" stroke-width="2" opacity="0.2"/>
+
+            <!-- Big serif A -->
+            <text x="360" y="760"
+                  text-anchor="middle"
+                  font-family="Georgia, 'Times New Roman', serif"
+                  font-size="780"
+                  font-weight="700"
+                  fill="#f5f5f5">A</text>
+
+            <!-- lowercase a in accent, italic -->
+            <text x="720" y="760"
+                  text-anchor="middle"
+                  font-family="Georgia, 'Times New Roman', serif"
+                  font-size="520"
+                  font-style="italic"
+                  font-weight="700"
+                  fill="#c8f060">a</text>
+
+            <!-- Bottom ruled line -->
+            <line x1="180" y1="820" x2="844" y2="820" stroke="#c8f060" stroke-width="4" opacity="0.35"/>
+            <line x1="180" y1="840" x2="844" y2="840" stroke="#c8f060" stroke-width="2" opacity="0.2"/>
+          </svg>
+        </div>
+        <div class="mini-row">
+          <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="360" y="780" text-anchor="middle" font-family="Georgia,serif" font-size="820" font-weight="700" fill="#f5f5f5">A</text><text x="720" y="780" text-anchor="middle" font-family="Georgia,serif" font-size="560" font-style="italic" font-weight="700" fill="#c8f060">a</text></svg></div>
+          <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="340" y="800" text-anchor="middle" font-family="Georgia,serif" font-size="860" font-weight="700" fill="#f5f5f5">A</text><text x="740" y="800" text-anchor="middle" font-family="Georgia,serif" font-size="600" font-style="italic" font-weight="700" fill="#c8f060">a</text></svg></div>
+          <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="320" y="820" text-anchor="middle" font-family="Georgia,serif" font-size="900" font-weight="700" fill="#f5f5f5">A</text><text x="760" y="820" text-anchor="middle" font-family="Georgia,serif" font-size="640" font-style="italic" font-weight="700" fill="#c8f060">a</text></svg></div>
+        </div>
+        <div class="size-note">240 · 60 · 40 · 28</div>
+        <div class="glance"><span class="dot"></span>0.5초 인식: <strong style="color:var(--text); margin-left:4px">사전 (Apple Dictionary 패턴)</strong></div>
+      </div>
+      <div class="meta">
+        <div class="tag-row"><span class="tag">Lettering</span><span class="tag">Safe Choice</span></div>
+        <div class="name"><span class="num">02</span><span>Aa</span></div>
+        <p class="thesis">Apple Dictionary, Oxford, Merriam-Webster, Naver 사전, Google Translate까지 모두 <code>A</code> 혹은 <code>Aa</code>를 쓴다. 글로벌 사전 앱의 <strong>공통 시각 프로토콜</strong>. 여기에 올라타면 카테고리 인식은 공짜.</p>
+        <p class="desc">대문자 세리프 A (정석) + 소문자 이탤릭 a (어원학적 "형태 변화" 암시). 상하 이중 괘선으로 사전 페이지 공간감. 5가지 중 카테고리 명확성이 가장 높음.</p>
+      </div>
+    </div>
+
+    <!-- 03 · CLOSED DICT + RIBBON + "DEV" SPINE -->
+    <div class="card">
+      <div class="icon-block">
+        <div class="icon-large">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0a0a0a"/>
+
+            <!-- Page edges (thick stack, cream) -->
+            <rect x="180" y="770" width="664" height="36" fill="#d8d2bc"/>
+            <line x1="180" y1="778" x2="844" y2="778" stroke="#a8a28c" stroke-width="1"/>
+            <line x1="180" y1="786" x2="844" y2="786" stroke="#a8a28c" stroke-width="1"/>
+            <line x1="180" y1="794" x2="844" y2="794" stroke="#a8a28c" stroke-width="1"/>
+
+            <!-- Book cover -->
+            <rect x="180" y="180" width="664" height="592" rx="10" fill="#161616" stroke="#c8f060" stroke-width="6"/>
+
+            <!-- Inner frame on cover -->
+            <rect x="222" y="222" width="580" height="508" rx="4" fill="none" stroke="#c8f060" stroke-width="1.5" opacity="0.35"/>
+
+            <!-- DEV title on cover, embossed serif -->
+            <text x="512" y="440"
+                  text-anchor="middle"
+                  font-family="Georgia, serif"
+                  font-size="160"
+                  font-weight="700"
+                  letter-spacing="6"
+                  fill="#c8f060">DEV</text>
+
+            <!-- Ornamental rule -->
+            <line x1="360" y1="490" x2="664" y2="490" stroke="#c8f060" stroke-width="2" opacity="0.45"/>
+            <circle cx="512" cy="490" r="5" fill="#c8f060"/>
+
+            <!-- ETYMOLOGICAL DICTIONARY subtitle -->
+            <text x="512" y="545"
+                  text-anchor="middle"
+                  font-family="Georgia, serif"
+                  font-size="36"
+                  font-weight="500"
+                  fill="#888"
+                  letter-spacing="6">ETYMOLOGICAL</text>
+            <text x="512" y="590"
+                  text-anchor="middle"
+                  font-family="Georgia, serif"
+                  font-size="36"
+                  font-weight="500"
+                  fill="#888"
+                  letter-spacing="6">DICTIONARY</text>
+
+            <!-- Ribbon -->
+            <rect x="660" y="180" width="48" height="690" fill="#c8f060"/>
+            <rect x="660" y="180" width="10" height="690" fill="#8aa84a" opacity="0.55"/>
+            <path d="M 660 870 L 684 840 L 708 870 Z" fill="#0a0a0a"/>
+          </svg>
+        </div>
+        <div class="mini-row">
+          <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="180" y="770" width="664" height="40" fill="#d8d2bc"/><rect x="180" y="180" width="664" height="592" rx="12" fill="#161616" stroke="#c8f060" stroke-width="10"/><text x="494" y="520" text-anchor="middle" font-family="Georgia,serif" font-size="220" font-weight="700" letter-spacing="8" fill="#c8f060">DEV</text><rect x="660" y="180" width="60" height="700" fill="#c8f060"/><path d="M 660 880 L 690 848 L 720 880 Z" fill="#0a0a0a"/></svg></div>
+          <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="160" y="770" width="704" height="52" fill="#d8d2bc"/><rect x="160" y="170" width="704" height="600" rx="12" fill="#161616" stroke="#c8f060" stroke-width="16"/><text x="480" y="540" text-anchor="middle" font-family="Georgia,serif" font-size="260" font-weight="700" letter-spacing="8" fill="#c8f060">DEV</text><rect x="660" y="170" width="72" height="720" fill="#c8f060"/><path d="M 660 890 L 696 854 L 732 890 Z" fill="#0a0a0a"/></svg></div>
+          <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="140" y="780" width="744" height="60" fill="#d8d2bc"/><rect x="140" y="160" width="744" height="620" rx="14" fill="#161616" stroke="#c8f060" stroke-width="24"/><rect x="660" y="160" width="88" height="740" fill="#c8f060"/><path d="M 660 900 L 704 860 L 748 900 Z" fill="#0a0a0a"/></svg></div>
+        </div>
+        <div class="size-note">240 · 60 · 40 · 28</div>
+        <div class="glance"><span class="dot"></span>0.5초 인식: <strong style="color:var(--text); margin-left:4px">하드커버 레퍼런스 북</strong></div>
+      </div>
+      <div class="meta">
+        <div class="tag-row"><span class="tag">Closed Book</span><span class="tag">Reference</span></div>
+        <div class="name"><span class="num">03</span><span>Hardcover "DEV"</span></div>
+        <p class="thesis">두꺼운 하드커버 + 리본 + 금박 페이지 엣지 = <strong>"이건 진지한 레퍼런스 책"</strong>의 모든 관습. 앱 이름 <code>DEV</code>을 표지에 박아서 카테고리 + 주제를 한 번에.</p>
+        <p class="desc">28px에서 "DEV" 글자는 사라지지만 <strong>책+리본 실루엣</strong>은 살아남는다. 그 자체로 사전 인식 완결. 로컬 사용자에게 친숙한 전통 사전 형태.</p>
+      </div>
+    </div>
+
+    <!-- 04 · DICTIONARY WITH THUMB INDEX -->
+    <div class="card">
+      <div class="icon-block">
+        <div class="icon-large">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0a0a0a"/>
+
+            <!-- Book body -->
+            <rect x="160" y="200" width="580" height="624" rx="10" fill="#eeeae0"/>
+            <!-- Spine shadow -->
+            <rect x="160" y="200" width="16" height="624" fill="#c9c5b5"/>
+
+            <!-- Text lines on visible page -->
+            <g stroke="#b8b2a4" stroke-width="8" stroke-linecap="round">
+              <line x1="210" y1="270" x2="680" y2="270"/>
+              <line x1="210" y1="310" x2="660" y2="310"/>
+              <line x1="210" y1="350" x2="680" y2="350"/>
+              <line x1="210" y1="390" x2="640" y2="390"/>
+              <line x1="210" y1="430" x2="680" y2="430"/>
+              <line x1="210" y1="470" x2="670" y2="470"/>
+              <line x1="210" y1="510" x2="680" y2="510"/>
+              <line x1="210" y1="550" x2="650" y2="550"/>
+              <line x1="210" y1="590" x2="680" y2="590"/>
+              <line x1="210" y1="630" x2="660" y2="630"/>
+              <line x1="210" y1="670" x2="680" y2="670"/>
+              <line x1="210" y1="710" x2="630" y2="710"/>
+              <line x1="210" y1="750" x2="680" y2="750"/>
+            </g>
+
+            <!-- Thumb index tabs on right side -->
+            <!-- A -->
+            <rect x="740" y="220" width="120" height="70" rx="4" fill="#d8d2bc"/>
+            <text x="800" y="268" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#5a5445">A</text>
+            <!-- B -->
+            <rect x="740" y="300" width="120" height="70" rx="4" fill="#d8d2bc"/>
+            <text x="800" y="348" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#5a5445">B</text>
+            <!-- C -->
+            <rect x="740" y="380" width="120" height="70" rx="4" fill="#d8d2bc"/>
+            <text x="800" y="428" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#5a5445">C</text>
+            <!-- D (highlighted — for DEV) -->
+            <rect x="740" y="460" width="140" height="70" rx="4" fill="#c8f060"/>
+            <text x="810" y="508" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#0a0a0a">D</text>
+            <!-- E -->
+            <rect x="740" y="540" width="120" height="70" rx="4" fill="#d8d2bc"/>
+            <text x="800" y="588" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#5a5445">E</text>
+            <!-- F -->
+            <rect x="740" y="620" width="120" height="70" rx="4" fill="#d8d2bc"/>
+            <text x="800" y="668" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#5a5445">F</text>
+            <!-- ... -->
+            <rect x="740" y="700" width="120" height="70" rx="4" fill="#d8d2bc"/>
+            <text x="800" y="756" text-anchor="middle" font-family="Georgia,serif" font-size="44" font-weight="700" fill="#5a5445">⋯</text>
+          </svg>
+        </div>
+        <div class="mini-row">
+          <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="160" y="200" width="580" height="624" rx="10" fill="#eeeae0"/><g stroke="#b8b2a4" stroke-width="16" stroke-linecap="round"><line x1="210" y1="300" x2="680" y2="300"/><line x1="210" y1="380" x2="660" y2="380"/><line x1="210" y1="460" x2="680" y2="460"/><line x1="210" y1="540" x2="650" y2="540"/><line x1="210" y1="620" x2="680" y2="620"/><line x1="210" y1="700" x2="660" y2="700"/></g><rect x="740" y="220" width="120" height="90" rx="6" fill="#d8d2bc"/><rect x="740" y="320" width="120" height="90" rx="6" fill="#d8d2bc"/><rect x="740" y="420" width="140" height="90" rx="6" fill="#c8f060"/><rect x="740" y="520" width="120" height="90" rx="6" fill="#d8d2bc"/><rect x="740" y="620" width="120" height="90" rx="6" fill="#d8d2bc"/></svg></div>
+          <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="140" y="180" width="600" height="664" rx="10" fill="#eeeae0"/><rect x="740" y="220" width="140" height="120" rx="8" fill="#d8d2bc"/><rect x="740" y="360" width="140" height="120" rx="8" fill="#d8d2bc"/><rect x="740" y="500" width="160" height="120" rx="8" fill="#c8f060"/><rect x="740" y="640" width="140" height="120" rx="8" fill="#d8d2bc"/></svg></div>
+          <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="120" y="160" width="620" height="704" rx="12" fill="#eeeae0"/><rect x="740" y="240" width="160" height="180" rx="10" fill="#d8d2bc"/><rect x="740" y="440" width="180" height="180" rx="10" fill="#c8f060"/><rect x="740" y="640" width="160" height="180" rx="10" fill="#d8d2bc"/></svg></div>
+        </div>
+        <div class="size-note">240 · 60 · 40 · 28</div>
+        <div class="glance"><span class="dot"></span>0.5초 인식: <strong style="color:var(--text); margin-left:4px">A-Z 색인이 달린 사전</strong></div>
+      </div>
+      <div class="meta">
+        <div class="tag-row"><span class="tag">Thumb Index</span><span class="tag">Dictionary-Specific</span></div>
+        <div class="name"><span class="num">04</span><span>A–Z Index</span></div>
+        <p class="thesis">종이 사전에서만 볼 수 있는 물리적 단서 — 책 옆면에 파인 <strong>알파벳 인덱스 탭</strong>. 백과사전·법전·의학사전이 쓰는 그 형태. 책이 아니라 <strong>사전이라고 특정</strong>되는 몇 안 되는 시각 요소.</p>
+        <p class="desc">A·B·C·D·E·F·⋯ 중 <strong>D가 accent</strong> — <code>D</code>ev, <code>D</code>evEtym을 가리키는 포인터. 옆의 색인 블록이 작은 사이즈에서도 노란 점으로 살아남아 식별 앵커 역할.</p>
+      </div>
+    </div>
+
+    <!-- 05 · DICT STACK WITH TOP BOOK OPEN -->
+    <div class="card">
+      <div class="icon-block">
+        <div class="icon-large">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0a0a0a"/>
+
+            <!-- Bottom book (thick stack base) -->
+            <rect x="130" y="720" width="764" height="100" rx="6" fill="#2d2a24"/>
+            <rect x="130" y="720" width="764" height="14" fill="#c8f060" opacity="0.7"/>
+            <!-- pages edge hint -->
+            <line x1="140" y1="780" x2="884" y2="780" stroke="#888" stroke-width="2" opacity="0.4"/>
+
+            <!-- Middle book -->
+            <rect x="150" y="608" width="724" height="108" rx="6" fill="#1f1c18"/>
+            <rect x="150" y="608" width="724" height="16" fill="#c8f060" opacity="0.45"/>
+            <line x1="160" y1="672" x2="864" y2="672" stroke="#888" stroke-width="2" opacity="0.4"/>
+
+            <!-- Top book — OPEN (the one you're reading) -->
+            <!-- Pages -->
+            <path d="M 170 230 L 508 200 L 508 596 L 170 570 Z" fill="#eeeae0"/>
+            <path d="M 854 230 L 508 200 L 508 596 L 854 570 Z" fill="#eeeae0"/>
+            <!-- Spine -->
+            <line x1="508" y1="200" x2="508" y2="596" stroke="#888" stroke-width="2"/>
+
+            <!-- Left page text -->
+            <g stroke="#b8b2a4" stroke-width="9" stroke-linecap="round">
+              <line x1="210" y1="280" x2="460" y2="258"/>
+              <line x1="210" y1="320" x2="440" y2="300"/>
+              <line x1="210" y1="360" x2="460" y2="340"/>
+              <line x1="210" y1="400" x2="430" y2="380"/>
+              <line x1="210" y1="440" x2="450" y2="420"/>
+              <line x1="210" y1="480" x2="440" y2="460"/>
+              <line x1="210" y1="520" x2="455" y2="502"/>
+            </g>
+            <!-- Right page text -->
+            <g stroke="#b8b2a4" stroke-width="9" stroke-linecap="round">
+              <line x1="556" y1="258" x2="810" y2="280"/>
+              <line x1="556" y1="300" x2="790" y2="320"/>
+              <line x1="556" y1="340" x2="810" y2="360"/>
+              <line x1="556" y1="380" x2="800" y2="400"/>
+              <line x1="556" y1="420" x2="815" y2="440"/>
+              <line x1="556" y1="460" x2="790" y2="480"/>
+              <line x1="556" y1="500" x2="810" y2="520"/>
+            </g>
+
+            <!-- Accent ribbon from top book -->
+            <rect x="720" y="200" width="32" height="420" fill="#c8f060"/>
+            <path d="M 720 620 L 736 600 L 752 620 Z" fill="#0a0a0a"/>
+          </svg>
+        </div>
+        <div class="mini-row">
+          <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="130" y="720" width="764" height="100" rx="6" fill="#2d2a24"/><rect x="130" y="720" width="764" height="20" fill="#c8f060" opacity="0.7"/><rect x="150" y="608" width="724" height="108" rx="6" fill="#1f1c18"/><rect x="150" y="608" width="724" height="22" fill="#c8f060" opacity="0.45"/><path d="M 170 230 L 508 200 L 508 596 L 170 570 Z" fill="#eeeae0"/><path d="M 854 230 L 508 200 L 508 596 L 854 570 Z" fill="#eeeae0"/><rect x="720" y="200" width="40" height="440" fill="#c8f060"/></svg></div>
+          <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="110" y="730" width="804" height="110" rx="6" fill="#2d2a24"/><rect x="110" y="730" width="804" height="26" fill="#c8f060"/><rect x="130" y="610" width="764" height="116" rx="6" fill="#1f1c18"/><rect x="130" y="610" width="764" height="26" fill="#c8f060" opacity="0.5"/><path d="M 150 220 L 508 180 L 508 600 L 150 560 Z" fill="#eeeae0"/><path d="M 874 220 L 508 180 L 508 600 L 874 560 Z" fill="#eeeae0"/><rect x="720" y="180" width="50" height="460" fill="#c8f060"/></svg></div>
+          <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="90" y="740" width="844" height="120" rx="8" fill="#2d2a24"/><rect x="90" y="740" width="844" height="34" fill="#c8f060"/><rect x="110" y="610" width="804" height="124" rx="8" fill="#1f1c18"/><rect x="110" y="610" width="804" height="34" fill="#c8f060"/><path d="M 130 200 L 508 160 L 508 600 L 130 550 Z" fill="#eeeae0"/><path d="M 894 200 L 508 160 L 508 600 L 894 550 Z" fill="#eeeae0"/></svg></div>
+        </div>
+        <div class="size-note">240 · 60 · 40 · 28</div>
+        <div class="glance"><span class="dot"></span>0.5초 인식: <strong style="color:var(--text); margin-left:4px">사전 여러 권 + 펼친 책</strong></div>
+      </div>
+      <div class="meta">
+        <div class="tag-row"><span class="tag">Stack</span><span class="tag">Volume</span></div>
+        <div class="name"><span class="num">05</span><span>Dictionary Stack</span></div>
+        <p class="thesis"><strong>여러 권 쌓인 두꺼운 책 + 맨 위에 펼친 책</strong>의 조합은 "시리즈 레퍼런스" — 즉 사전/백과/법전에만 쓰이는 구도. 한 권짜리 책보다 "여러 권 중 하나를 찾아 펼쳤다"가 어원 사전과 더 잘 맞는다.</p>
+        <p class="desc">하단 책 엣지의 accent 띠가 브랜드 컬러 앵커 + 시각적 리듬. 28px에서는 "쌓인 블록 + 펼친 V 모양"이 남아 사전 시리즈감 유지.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    v1 방향 유지 · 실행 품질로 차별 · MVP 단계는 카테고리 명확성 &gt; 심볼 차별화 · <code>#0a0a0a</code> / <code>#c8f060</code> / 1024×1024
+  </div>
+</div>
+
+</body>
+</html>

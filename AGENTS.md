@@ -105,7 +105,7 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 - `DevEtym/DevEtym/Features/History/**`
 - `DevEtym/DevEtym/Features/Onboarding/**`
 - `DevEtym/DevEtym/App/ContentView.swift`
-- `DevEtym/DevEtym/Resources/Assets.xcassets/` (컬러 팔레트)
+- `DevEtym/DevEtym/Resources/Assets.xcassets/` (컬러 팔레트, AppIcon.appiconset)
 - `DevEtym/DevEtym/Resources/Fonts/` (DM Sans·Mono·Serif Display, OFL)
 - `DevEtym/DevEtym/Info.plist` (UIAppFonts)
 - `DevEtym/DevEtymTests/Mocks/MockTermService.swift`
@@ -116,6 +116,7 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 - 네비게이션 (`NavigationStack` + `.navigationDestination(for:)`)
 - 상태 동기화 (`.onAppear` 재조회)
 - 접근성 (`accessibilityLabel`, Dynamic Type)
+- 앱 아이콘 적용 (SVG → PNG 익스포트, AppIcon.appiconset 등록)
 
 **규칙**
 - ViewModel은 `TermServiceProtocol`에만 의존, `@MainActor` 선언
@@ -124,7 +125,7 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 - 검색 Task는 `currentSearchTask?.cancel()` 패턴으로 레이스 방지
 - `.possibleTypo` 추천 재검색은 push 아닌 replace (`path.removeLast()` 후 append)
 
-디자인 시스템 상세: spec.md Phase 3-0-1, `devetym-wireframe-v2.html`.
+디자인 시스템 상세: spec.md Phase 3-0-1·4-4, `docs/wireframe-v2.html`, `docs/icon/icon_candidate_v2.html`.
 
 ---
 

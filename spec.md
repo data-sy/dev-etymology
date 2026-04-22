@@ -726,4 +726,39 @@ ViewModel 불필요 (로직 없음, 순수 UI + 시스템 API 호출만).
 - 각 용어에 aliases 포함 필수 (빈 배열 금지, 최소 1개)
 - 생성 후 JSON 유효성 + aliases 존재 여부 검증
 
-✅ Phase 4 완료 조건: 모든 Phase 1-3 기능 통합 동작, 오류 처리 완비
+### 4-4. 앱 아이콘 적용
+
+> 디자인 자산: `docs/icon/assets/v2/icon.svg` (v2 최종판)
+> 검토 자료: `docs/icon/icon_candidate_v2.html`
+> 색상: 딥 그린 `#2E5D3A` / 크림 `#F7E8D0`
+> 앱 표시 이름: "개발 어원 사전" (CLAUDE.md 기준) — 아이콘 타이포와 일치
+
+**PNG 익스포트 (single-size 방식)**
+
+v2는 단일 SVG가 1024→28px 모든 사이즈에서 식별 가능하도록 설계되어, 사이즈별 최적화 없이 1024×1024 PNG 하나만 제작하고 Xcode가 자동으로 다운스케일하도록 위임한다.
+
+```bash
+rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
+  -o DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/icon.png
+```
+
+**Assets.xcassets 등록**
+
+- 경로: `DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/`
+- `Contents.json` single-size 스키마: `idiom: "universal"`, `platform: "ios"`, `size: "1024x1024"`, `filename: "icon.png"`
+- Info.plist의 `CFBundleIcons` 자동 배선 (Xcode가 Asset Catalog 사용 시)
+
+**검증 체크리스트**
+
+- [ ] 시뮬레이터 홈스크린에서 60pt 실루엣 확인
+- [ ] 시뮬레이터 알림센터에서 28px 가독성 확인 (한글이 흐려도 딥 그린+크림 덩어리로 식별)
+- [ ] 실기기(라이트·다크) 홈스크린에서 대비 확인
+- [ ] Settings / Spotlight 40pt에서 식별
+- [ ] App Store 미리보기용 1024 PNG 준비 완료
+
+**금지 사항**
+
+- 아이콘에 투명 영역 금지 (iOS 규정: 사각형 풀블리드 필요, squircle은 OS가 자동 마스킹)
+- 라이트/다크 듀얼 아이콘 시도 (iOS 18 기본 아이콘은 컬러 고정, 딥 그린의 저명도가 자동 대비 확보)
+
+✅ Phase 4 완료 조건: 모든 Phase 1-3 기능 통합 동작, 오류 처리 완비, 앱 아이콘 적용 및 가독성 검증 완료

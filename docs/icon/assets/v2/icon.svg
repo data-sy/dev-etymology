@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DevEtym 앱 아이콘 · v2 (current) · single SVG, all sizes
+     사용 사이즈: 1024 → 28px 모든 사이즈 (단일 SVG 다운스케일)
+     포함 요소: 배경 + 개발/어원 타이포 + 사전 라벨 박스 (3요소만)
+     출처: docs/icon/icon_candidate_v2.html (HERO 섹션, design review 적용판)
+     상태: 현재 채택 후보. spec.md Phase 4-4 디자인 출처. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#2E5D3A"/>
+
+  <text x="512" y="410" text-anchor="middle"
+        font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+        font-weight="900" font-size="320"
+        fill="#F7E8D0"
+        letter-spacing="16">개발</text>
+  <text x="512" y="720" text-anchor="middle"
+        font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+        font-weight="900" font-size="320"
+        fill="#F7E8D0"
+        letter-spacing="16">어원</text>
+
+  <rect x="336" y="790" width="352" height="156" rx="18" fill="#F7E8D0"/>
+  <text x="512" y="912" text-anchor="middle"
+        font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', sans-serif"
+        font-weight="900" font-size="116"
+        fill="#2E5D3A"
+        letter-spacing="10">사전</text>
+</svg>

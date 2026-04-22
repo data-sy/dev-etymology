@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>DevEtym — App Icon Concepts v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --accent: #c8f060;
+    --accent-dim: #8aa84a;
+    --text: #e8e8e8;
+    --muted: #888;
+    --card: #161616;
+    --border: #242424;
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+  }
+  body { padding: 48px 32px; }
+  header { max-width: 1400px; margin: 0 auto 48px; }
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+  h1 .accent { color: var(--accent); }
+  .subtitle { color: var(--muted); font-size: 14px; }
+  .grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .card.fresh { border-color: rgba(200, 240, 96, 0.25); }
+  .icon-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .icon-large {
+    width: 220px;
+    height: 220px;
+    border-radius: 48px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .icon-row { display: flex; gap: 10px; align-items: center; }
+  .icon-row .mini { border-radius: 12px; overflow: hidden; }
+  .icon-row .mini.s60 { width: 60px; height: 60px; }
+  .icon-row .mini.s40 { width: 40px; height: 40px; }
+  .icon-row .mini.s28 { width: 28px; height: 28px; }
+  .meta { text-align: center; width: 100%; }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(200, 240, 96, 0.08);
+    border: 1px solid rgba(200, 240, 96, 0.2);
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .tag.new {
+    color: #0a0a0a;
+    background: var(--accent);
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  svg { display: block; width: 100%; height: 100%; }
+  .size-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  footer {
+    max-width: 1400px;
+    margin: 64px auto 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  code { color: var(--accent); font-family: ui-monospace, SFMono-Regular, monospace; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DevEtym <span class="accent">·</span> App Icon Concepts <span style="color:var(--muted); font-size: 18px;">v2</span></h1>
+  <p class="subtitle">사전(dictionary) 느낌 강화 — 02·05 새로 제안</p>
+</header>
+
+<div class="grid">
+
+  <!-- ========== CONCEPT 1: Book + Brackets (keep) ========== -->
+  <div class="card">
+    <div class="icon-wrap">
+      <div class="icon-large">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bg1" cx="50%" cy="40%" r="70%">
+              <stop offset="0%" stop-color="#1a1a1a"/>
+              <stop offset="100%" stop-color="#0a0a0a"/>
+            </radialGradient>
+          </defs>
+          <rect width="1024" height="1024" fill="url(#bg1)"/>
+          <path d="M 240 340 Q 200 340 200 380 L 200 480 Q 200 512 170 512 Q 200 512 200 544 L 200 644 Q 200 684 240 684"
+                fill="none" stroke="#c8f060" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 784 340 Q 824 340 824 380 L 824 480 Q 824 512 854 512 Q 824 512 824 544 L 824 644 Q 824 684 784 684"
+                fill="none" stroke="#c8f060" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 320 400 L 512 440 L 512 720 L 320 680 Z" fill="#e8e8e8" opacity="0.95"/>
+          <path d="M 704 400 L 512 440 L 512 720 L 704 680 Z" fill="#e8e8e8" opacity="0.95"/>
+          <path d="M 512 440 L 512 720" stroke="#555" stroke-width="3"/>
+          <line x1="352" y1="470" x2="480" y2="496" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="352" y1="510" x2="460" y2="532" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="352" y1="550" x2="470" y2="573" stroke="#c8f060" stroke-width="6" stroke-linecap="round"/>
+          <line x1="352" y1="590" x2="445" y2="609" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="352" y1="630" x2="475" y2="655" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="544" y1="496" x2="672" y2="470" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="544" y1="536" x2="660" y2="512" stroke="#c8f060" stroke-width="6" stroke-linecap="round"/>
+          <line x1="544" y1="576" x2="665" y2="552" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="544" y1="616" x2="655" y2="594" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+          <line x1="544" y1="656" x2="670" y2="632" stroke="#888" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="icon-row">
+        <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><path d="M 240 340 Q 200 340 200 380 L 200 480 Q 200 512 170 512 Q 200 512 200 544 L 200 644 Q 200 684 240 684" fill="none" stroke="#c8f060" stroke-width="36" stroke-linecap="round"/><path d="M 784 340 Q 824 340 824 380 L 824 480 Q 824 512 854 512 Q 824 512 824 544 L 824 644 Q 824 684 784 684" fill="none" stroke="#c8f060" stroke-width="36" stroke-linecap="round"/><path d="M 320 400 L 512 440 L 512 720 L 320 680 Z" fill="#e8e8e8"/><path d="M 704 400 L 512 440 L 512 720 L 704 680 Z" fill="#e8e8e8"/></svg></div>
+        <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><path d="M 240 340 Q 200 340 200 380 L 200 480 Q 200 512 170 512 Q 200 512 200 544 L 200 644 Q 200 684 240 684" fill="none" stroke="#c8f060" stroke-width="36" stroke-linecap="round"/><path d="M 784 340 Q 824 340 824 380 L 824 480 Q 824 512 854 512 Q 824 512 824 544 L 824 644 Q 824 684 784 684" fill="none" stroke="#c8f060" stroke-width="36" stroke-linecap="round"/><path d="M 320 400 L 512 440 L 512 720 L 320 680 Z" fill="#e8e8e8"/><path d="M 704 400 L 512 440 L 512 720 L 704 680 Z" fill="#e8e8e8"/></svg></div>
+        <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><path d="M 240 340 Q 200 340 200 380 L 200 480 Q 200 512 170 512 Q 200 512 200 544 L 200 644 Q 200 684 240 684" fill="none" stroke="#c8f060" stroke-width="44" stroke-linecap="round"/><path d="M 784 340 Q 824 340 824 380 L 824 480 Q 824 512 854 512 Q 824 512 824 544 L 824 644 Q 824 684 784 684" fill="none" stroke="#c8f060" stroke-width="44" stroke-linecap="round"/><path d="M 320 400 L 512 440 L 512 720 L 320 680 Z" fill="#e8e8e8"/><path d="M 704 400 L 512 440 L 512 720 L 704 680 Z" fill="#e8e8e8"/></svg></div>
+      </div>
+      <div class="size-label">220 · 60 · 40 · 28</div>
+    </div>
+    <div class="meta">
+      <div class="tag">사용자 아이디어</div>
+      <div class="name">01 · Book + Brackets</div>
+      <div class="desc">열린 책을 감싼 <code>{ }</code>. 사전과 개발의 직접적 결합</div>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 2 NEW: Dictionary + Ribbon ========== -->
+  <div class="card fresh">
+    <div class="icon-wrap">
+      <div class="icon-large">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="coverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#1a1a1a"/>
+              <stop offset="100%" stop-color="#0c0c0c"/>
+            </linearGradient>
+          </defs>
+          <rect width="1024" height="1024" fill="#0a0a0a"/>
+
+          <!-- Page edges at bottom (cream/gold gilt look) -->
+          <rect x="188" y="782" width="648" height="32" fill="#d4cfb8" rx="2"/>
+          <line x1="188" y1="792" x2="836" y2="792" stroke="#a8a392" stroke-width="1"/>
+          <line x1="188" y1="800" x2="836" y2="800" stroke="#a8a392" stroke-width="1"/>
+          <line x1="188" y1="808" x2="836" y2="808" stroke="#a8a392" stroke-width="1"/>
+
+          <!-- Book cover -->
+          <rect x="188" y="204" width="648" height="580" rx="8" fill="url(#coverGrad)" stroke="#c8f060" stroke-width="5"/>
+
+          <!-- Inner decorative border -->
+          <rect x="228" y="244" width="568" height="500" rx="4" fill="none" stroke="#c8f060" stroke-width="2" opacity="0.35"/>
+
+          <!-- Spine shadow (subtle left line) -->
+          <line x1="220" y1="220" x2="220" y2="768" stroke="#000" stroke-width="2" opacity="0.6"/>
+
+          <!-- Title "Etym." -->
+          <text x="512" y="460"
+                text-anchor="middle"
+                font-family="Georgia, 'Times New Roman', serif"
+                font-style="italic"
+                font-size="160"
+                font-weight="700"
+                fill="#c8f060">Etym.</text>
+
+          <!-- Decorative rule under title -->
+          <line x1="360" y1="510" x2="664" y2="510" stroke="#c8f060" stroke-width="2" opacity="0.6"/>
+          <circle cx="512" cy="510" r="4" fill="#c8f060"/>
+
+          <!-- Subtitle small caps -->
+          <text x="512" y="580"
+                text-anchor="middle"
+                font-family="Georgia, serif"
+                font-size="44"
+                font-weight="500"
+                fill="#888"
+                letter-spacing="8">A·DICTIONARY</text>
+
+          <!-- Ribbon bookmark -->
+          <rect x="672" y="204" width="48" height="688" fill="#c8f060"/>
+          <!-- V-cut at ribbon bottom -->
+          <path d="M 672 892 L 696 862 L 720 892 Z" fill="#0a0a0a"/>
+          <!-- Subtle fold shadow on ribbon -->
+          <rect x="672" y="204" width="10" height="688" fill="#8aa84a" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="icon-row">
+        <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="188" y="782" width="648" height="32" fill="#d4cfb8"/><rect x="188" y="204" width="648" height="580" rx="8" fill="#1a1a1a" stroke="#c8f060" stroke-width="8"/><text x="512" y="500" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="200" font-weight="700" fill="#c8f060">Et.</text><rect x="672" y="204" width="56" height="688" fill="#c8f060"/><path d="M 672 892 L 700 862 L 728 892 Z" fill="#0a0a0a"/></svg></div>
+        <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="180" y="780" width="664" height="40" fill="#d4cfb8"/><rect x="180" y="200" width="664" height="580" rx="8" fill="#1a1a1a" stroke="#c8f060" stroke-width="12"/><text x="480" y="540" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="260" font-weight="700" fill="#c8f060">Et</text><rect x="672" y="200" width="72" height="700" fill="#c8f060"/><path d="M 672 900 L 708 866 L 744 900 Z" fill="#0a0a0a"/></svg></div>
+        <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><rect x="160" y="780" width="704" height="48" fill="#d4cfb8"/><rect x="160" y="180" width="704" height="600" rx="8" fill="#1a1a1a" stroke="#c8f060" stroke-width="20"/><rect x="660" y="180" width="88" height="720" fill="#c8f060"/><path d="M 660 900 L 704 860 L 748 900 Z" fill="#0a0a0a"/></svg></div>
+      </div>
+      <div class="size-label">220 · 60 · 40 · 28</div>
+    </div>
+    <div class="meta">
+      <div class="tag new">NEW · 사전 강화</div>
+      <div class="name">02 · Dictionary + Ribbon</div>
+      <div class="desc">두꺼운 하드커버 사전 + 리본 북마크 + 페이지 엣지. 가장 전통적인 "레퍼런스 북" 실루엣. 리본의 accent 세로선이 작은 사이즈에서도 식별 앵커 역할</div>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 3: Magnifier + Et (keep) ========== -->
+  <div class="card">
+    <div class="icon-wrap">
+      <div class="icon-large">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#0a0a0a"/>
+          <line x1="700" y1="700" x2="880" y2="880" stroke="#c8f060" stroke-width="60" stroke-linecap="round"/>
+          <circle cx="460" cy="460" r="270" fill="#0a0a0a" stroke="#c8f060" stroke-width="36"/>
+          <circle cx="460" cy="460" r="252" fill="#c8f060" fill-opacity="0.04"/>
+          <text x="460" y="535"
+                text-anchor="middle"
+                font-family="Georgia, 'Times New Roman', serif"
+                font-size="290"
+                font-style="italic"
+                font-weight="700"
+                fill="#c8f060">Et</text>
+          <path d="M 290 320 Q 340 270 410 260" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.35"/>
+        </svg>
+      </div>
+      <div class="icon-row">
+        <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><line x1="700" y1="700" x2="880" y2="880" stroke="#c8f060" stroke-width="70" stroke-linecap="round"/><circle cx="460" cy="460" r="270" fill="#0a0a0a" stroke="#c8f060" stroke-width="40"/><text x="460" y="545" text-anchor="middle" font-family="Georgia,serif" font-size="300" font-style="italic" font-weight="700" fill="#c8f060">Et</text></svg></div>
+        <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><line x1="700" y1="700" x2="880" y2="880" stroke="#c8f060" stroke-width="80" stroke-linecap="round"/><circle cx="460" cy="460" r="270" fill="#0a0a0a" stroke="#c8f060" stroke-width="48"/><text x="460" y="555" text-anchor="middle" font-family="Georgia,serif" font-size="320" font-style="italic" font-weight="700" fill="#c8f060">Et</text></svg></div>
+        <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><line x1="700" y1="700" x2="880" y2="880" stroke="#c8f060" stroke-width="90" stroke-linecap="round"/><circle cx="460" cy="460" r="280" fill="#0a0a0a" stroke="#c8f060" stroke-width="56"/><text x="460" y="565" text-anchor="middle" font-family="Georgia,serif" font-size="340" font-style="italic" font-weight="700" fill="#c8f060">Et</text></svg></div>
+      </div>
+      <div class="size-label">220 · 60 · 40 · 28</div>
+    </div>
+    <div class="meta">
+      <div class="tag">방향 3</div>
+      <div class="name">03 · Magnifier + Et</div>
+      <div class="desc">돋보기 렌즈 안에 "Et" (etymology 약자). 탐구·조사 뉘앙스. 실루엣 명확</div>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 4: Serif E (keep) ========== -->
+  <div class="card">
+    <div class="icon-wrap">
+      <div class="icon-large">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#0a0a0a"/>
+          <rect x="260" y="180" width="24" height="664" fill="#c8f060" opacity="0.08"/>
+          <text x="512" y="760"
+                text-anchor="middle"
+                font-family="Georgia, 'Times New Roman', serif"
+                font-size="840"
+                font-weight="700"
+                fill="#f5f5f5">E</text>
+          <rect x="330" y="820" width="364" height="28" rx="4" fill="#c8f060"/>
+          <text x="712" y="340"
+                font-family="Georgia, serif"
+                font-size="120"
+                font-style="italic"
+                font-weight="600"
+                fill="#c8f060">tym.</text>
+        </svg>
+      </div>
+      <div class="icon-row">
+        <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="512" y="760" text-anchor="middle" font-family="Georgia,serif" font-size="840" font-weight="700" fill="#f5f5f5">E</text><rect x="330" y="820" width="364" height="32" rx="4" fill="#c8f060"/><text x="712" y="340" font-family="Georgia,serif" font-size="120" font-style="italic" font-weight="600" fill="#c8f060">tym.</text></svg></div>
+        <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="512" y="770" text-anchor="middle" font-family="Georgia,serif" font-size="860" font-weight="700" fill="#f5f5f5">E</text><rect x="320" y="830" width="384" height="40" rx="4" fill="#c8f060"/></svg></div>
+        <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="512" y="790" text-anchor="middle" font-family="Georgia,serif" font-size="900" font-weight="700" fill="#f5f5f5">E</text><rect x="300" y="850" width="424" height="52" rx="4" fill="#c8f060"/></svg></div>
+      </div>
+      <div class="size-label">220 · 60 · 40 · 28</div>
+    </div>
+    <div class="meta">
+      <div class="tag">방향 4</div>
+      <div class="name">04 · Serif "E"</div>
+      <div class="desc">굵은 세리프 <b>E</b> + accent 언더라인. 최고의 미니멀, 홈스크린 식별성 최상</div>
+    </div>
+  </div>
+
+  <!-- ========== CONCEPT 5 NEW: /dev/ Phonetic Entry ========== -->
+  <div class="card fresh">
+    <div class="icon-wrap">
+      <div class="icon-large">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="1024" fill="#0a0a0a"/>
+
+          <!-- Top accent rule (decorative, dictionary page feel) -->
+          <line x1="200" y1="280" x2="824" y2="280" stroke="#c8f060" stroke-width="2" opacity="0.3"/>
+
+          <!-- Opening slash / -->
+          <text x="170" y="670"
+                font-family="Georgia, 'Times New Roman', serif"
+                font-size="560"
+                font-weight="300"
+                fill="#c8f060">/</text>
+
+          <!-- 'dev' bold serif white -->
+          <text x="512" y="640"
+                text-anchor="middle"
+                font-family="Georgia, 'Times New Roman', serif"
+                font-size="340"
+                font-weight="700"
+                fill="#f5f5f5">dev</text>
+
+          <!-- Closing slash / -->
+          <text x="720" y="670"
+                font-family="Georgia, serif"
+                font-size="560"
+                font-weight="300"
+                fill="#c8f060">/</text>
+
+          <!-- Part-of-speech marker (italic small) -->
+          <text x="512" y="750"
+                text-anchor="middle"
+                font-family="Georgia, serif"
+                font-style="italic"
+                font-size="60"
+                fill="#888">n. etym.</text>
+
+          <!-- Bottom accent rule -->
+          <line x1="200" y1="800" x2="824" y2="800" stroke="#c8f060" stroke-width="2" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="icon-row">
+        <div class="mini s60"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="130" y="680" font-family="Georgia,serif" font-size="580" font-weight="300" fill="#c8f060">/</text><text x="512" y="640" text-anchor="middle" font-family="Georgia,serif" font-size="340" font-weight="700" fill="#f5f5f5">dev</text><text x="720" y="680" font-family="Georgia,serif" font-size="580" font-weight="300" fill="#c8f060">/</text></svg></div>
+        <div class="mini s40"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="100" y="720" font-family="Georgia,serif" font-size="680" font-weight="300" fill="#c8f060">/</text><text x="512" y="660" text-anchor="middle" font-family="Georgia,serif" font-size="380" font-weight="700" fill="#f5f5f5">dev</text><text x="740" y="720" font-family="Georgia,serif" font-size="680" font-weight="300" fill="#c8f060">/</text></svg></div>
+        <div class="mini s28"><svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><rect width="1024" height="1024" fill="#0a0a0a"/><text x="70" y="760" font-family="Georgia,serif" font-size="780" font-weight="400" fill="#c8f060">/</text><text x="512" y="680" text-anchor="middle" font-family="Georgia,serif" font-size="420" font-weight="800" fill="#f5f5f5">dev</text><text x="770" y="760" font-family="Georgia,serif" font-size="780" font-weight="400" fill="#c8f060">/</text></svg></div>
+      </div>
+      <div class="size-label">220 · 60 · 40 · 28</div>
+    </div>
+    <div class="meta">
+      <div class="tag new">NEW · 중의적</div>
+      <div class="name">05 · /dev/ Entry</div>
+      <div class="desc">사전 음성기호 <code>/…/</code> + 유닉스 경로 <code>/dev/</code>의 중의적 표현. "DevEtym" 앱 이름도 직접 노출. 개발자만이 알아보는 이스터에그</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  다크 배경 <code>#0a0a0a</code> · accent <code>#c8f060</code> · 1024×1024 뷰박스 · NEW 표시된 카드는 이번에 제안한 것
+</footer>
+
+</body>
+</html>
