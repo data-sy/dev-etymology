@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevEtym — 앱 아이콘 후보 v2 (촌스럽고 가시적)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #fafafa;
+    color: #0a0a0a;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding: 56px 32px 80px; }
+  .container { max-width: 1320px; margin: 0 auto; }
+
+  header.brief { margin-bottom: 40px; }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  header.brief h1 {
+    font-family: "Times New Roman", Georgia, serif;
+    font-weight: 400;
+    font-size: 36px;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .mood {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.65;
+    max-width: 780px;
+    margin-bottom: 28px;
+  }
+  .mood b { color: #0a0a0a; font-weight: 600; }
+
+  .palette { display: flex; flex-wrap: wrap; gap: 8px; }
+  .swatch {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 10px 6px 8px;
+    background: #fff; border: 1px solid #e4e4e4; border-radius: 8px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; color: #333;
+  }
+  .chip { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.08); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 22px;
+    margin-top: 32px;
+  }
+
+  .card {
+    background: #ececec;
+    border-radius: 22px;
+    padding: 28px 26px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .icon-frame {
+    width: 220px;
+    height: 220px;
+    border-radius: 50px;
+    margin: 0 auto;
+    box-shadow:
+      0 10px 28px rgba(0,0,0,0.10),
+      0 1px 2px rgba(0,0,0,0.06);
+    overflow: hidden;
+    position: relative;
+  }
+  .icon-frame svg { display: block; width: 100%; height: 100%; }
+
+  .previews {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 22px;
+    padding-top: 4px;
+  }
+  .preview-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .pv {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.14);
+    overflow: hidden;
+    background: #fff;
+  }
+  .pv svg { display: block; width: 100%; height: 100%; }
+  .pv-60 { width: 60px; height: 60px; border-radius: 14px; }
+  .pv-40 { width: 40px; height: 40px; border-radius: 9px; }
+  .pv-28 { width: 28px; height: 28px; border-radius: 7px; }
+  .pv-label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 9px; color: #777; letter-spacing: 0.04em;
+  }
+
+  .num {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; color: #777; letter-spacing: 0.1em;
+  }
+  .concept-name {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 22px;
+    line-height: 1.2;
+    margin-top: 4px;
+    margin-bottom: 6px;
+  }
+  .tagline { font-size: 13px; color: #555; line-height: 1.55; margin-bottom: 12px; }
+  dl.meta-list { border-top: 1px solid #ddd; padding-top: 12px; font-size: 12.5px; line-height: 1.6; }
+  dl.meta-list dt {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #888; margin-top: 12px; margin-bottom: 3px;
+  }
+  dl.meta-list dt:first-child { margin-top: 0; }
+  dl.meta-list dd { color: #333; }
+
+  .ranking {
+    margin-top: 56px; padding: 32px 32px 28px;
+    background: #fff; border: 1px solid #e4e4e4; border-radius: 18px;
+  }
+  .ranking .eyebrow { margin-bottom: 4px; }
+  .ranking h2 {
+    font-family: "Times New Roman", Georgia, serif;
+    font-weight: 400; font-size: 26px; margin-bottom: 18px;
+  }
+  .ranking ol { list-style: none; counter-reset: rank; }
+  .ranking li {
+    counter-increment: rank;
+    padding: 16px 0;
+    border-top: 1px solid #f1f1f1;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .ranking li:first-child { border-top: none; padding-top: 4px; }
+  .ranking li::before {
+    content: counter(rank);
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 30px;
+    color: #A35A10;
+    line-height: 1;
+  }
+  .rank-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .rank-name .meta-tag {
+    font-family: ui-monospace, monospace;
+    font-size: 10px; color: #888; margin-left: 8px; letter-spacing: 0.06em;
+  }
+  .rank-reason { font-size: 13px; color: #555; line-height: 1.55; }
+
+  .footer-note {
+    margin-top: 28px; padding: 16px 20px;
+    background: #f1f1f1; border-radius: 12px;
+    font-size: 12px; color: #555; line-height: 1.6;
+  }
+  .footer-note b { color: #0a0a0a; }
+
+  .version-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #F0A060;
+    color: #0A0A0A;
+    border: 2px solid #0A0A0A;
+    border-radius: 999px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="brief">
+  <div class="eyebrow">// devetym · icon candidates · v2 · loud &amp; legible</div>
+  <h1>DevEtym <span style="color:#A35A10">·</span> 촌스럽고 가시적인 버전<span class="version-pill">v2</span></h1>
+  <p class="mood">
+    <b>v2 방향 전환:</b> v1의 "조용한 터미널 위의 사전"은 홈스크린 경쟁에서 너무 점잖다.
+    이번엔 <b>90–2000년대 한국 문방구·참고서 표지·학원 간판</b> 무드 — 채도 높은 원색 풀배경,
+    두꺼운 검정 외곽선, 큼지막한 한글 볼드 타이포. "세련됨"을 버리고
+    <b>0.3초 인식 + 한국어 사용자 직격</b>만 남긴다.
+  </p>
+  <p class="mood" style="font-size:12.5px;color:#666">
+    <b>팔레트 확장 근거:</b> 기존 다크모드 액센트(라임 <code>#C8F060</code>, 오렌지 <code>#F0A060</code>, 시안 <code>#60C8F0</code>)를
+    라이트 배경에서도 풀컬러로 사용한다. 촌스러움의 필수 조건인 <i>채도</i>를 팔레트 안에서 확보하는 최소 확장.
+  </p>
+  <div class="palette">
+    <div class="swatch"><span class="chip" style="background:#0A0A0A"></span>ink · #0A0A0A</div>
+    <div class="swatch"><span class="chip" style="background:#3F7A00"></span>olive · #3F7A00</div>
+    <div class="swatch"><span class="chip" style="background:#A35A10"></span>copper · #A35A10</div>
+    <div class="swatch"><span class="chip" style="background:#1E6B94"></span>blue · #1E6B94</div>
+    <div class="swatch"><span class="chip" style="background:#C8F060"></span>lime · #C8F060</div>
+    <div class="swatch"><span class="chip" style="background:#F0A060"></span>orange · #F0A060</div>
+    <div class="swatch"><span class="chip" style="background:#60C8F0"></span>cyan · #60C8F0</div>
+    <div class="swatch"><span class="chip" style="background:#F7E8D0"></span>cream · #F7E8D0</div>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- ============================================================
+       Card 01 — 빅 타이포 "어원"
+       ============================================================ -->
+  <article class="card">
+    <div class="icon-frame">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#A35A10"/>
+        <rect x="70" y="70" width="884" height="884" rx="100" ry="100"
+              fill="none" stroke="#FFFFFF" stroke-width="18"/>
+        <rect x="100" y="100" width="824" height="824" rx="80" ry="80"
+              fill="none" stroke="#FFFFFF" stroke-width="6"/>
+        <text x="512" y="600" text-anchor="middle"
+              font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+              font-weight="900" font-size="440"
+              fill="#FFFFFF"
+              letter-spacing="-20">어원</text>
+        <text x="512" y="840" text-anchor="middle"
+              font-family="ui-monospace, 'SF Mono', Menlo, monospace"
+              font-weight="700" font-size="58"
+              fill="#FFFFFF" opacity="0.85"
+              letter-spacing="8">DEV ETYMOLOGY</text>
+      </svg>
+    </div>
+
+    <div class="previews">
+      <div class="preview-block">
+        <div class="pv pv-60">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#A35A10"/>
+            <rect x="70" y="70" width="884" height="884" rx="100" fill="none" stroke="#FFFFFF" stroke-width="24"/>
+            <text x="512" y="620" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="480" fill="#FFFFFF" letter-spacing="-20">어원</text>
+          </svg>
+        </div>
+        <span class="pv-label">60</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-40">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#A35A10"/>
+            <text x="512" y="660" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="560" fill="#FFFFFF" letter-spacing="-30">어원</text>
+          </svg>
+        </div>
+        <span class="pv-label">40</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-28">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#A35A10"/>
+            <text x="512" y="700" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="640" fill="#FFFFFF" letter-spacing="-40">어원</text>
+          </svg>
+        </div>
+        <span class="pv-label">28</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="num">01</div>
+      <h3 class="concept-name">빅 타이포 <b style="color:#A35A10">“어원”</b></h3>
+      <p class="tagline">카퍼 풀배경 + 흰색 한글 ExtraBold "어원" 두 글자 + 테두리 이중선. 참고서 표지.</p>
+      <dl class="meta-list">
+        <dt>핵심 시각 요소</dt>
+        <dd>한글 "어원" 두 글자가 아이콘 면적의 70%를 차지. 하단 작은 mono 라틴 태그라인.</dd>
+        <dt>왜 이 브리프에 맞는가</dt>
+        <dd>한국어 사용자에게 "어원"은 단어 그 자체가 카테고리다. 이미지 해석 단계를 건너뛰고 글자로 직격한다. 두꺼운 흰 이중 테두리는 90년대 참고서·학원 간판의 관용 장치로, 촌스러움의 "정직한 표지" 정서를 즉시 소환한다.</dd>
+        <dt>리스크</dt>
+        <dd>한국어 모르면 기능 0. 타이포 아이콘은 App Store 썸네일 경쟁에서 "정보는 많으나 이미지적 임팩트는 없다"는 평가를 받을 수 있음.</dd>
+        <dt>28px 실루엣 앵커</dt>
+        <dd>"어원" 두 글자 자체. 한글 구조의 네모 블록이 작아져도 한글로 인지됨 + 카퍼 풀배경의 컬러 앵커.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       Card 02 — 책 + 돋보기 (클립아트)
+       ============================================================ -->
+  <article class="card">
+    <div class="icon-frame">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#1E6B94"/>
+        <!-- 책 본체 -->
+        <rect x="180" y="360" width="664" height="440" rx="12" fill="#A35A10" stroke="#0A0A0A" stroke-width="22"/>
+        <!-- 책 페이지 -->
+        <rect x="210" y="390" width="604" height="380" fill="#F7E8D0" stroke="#0A0A0A" stroke-width="14"/>
+        <!-- 페이지 라인 -->
+        <line x1="260" y1="480" x2="500" y2="480" stroke="#0A0A0A" stroke-width="14" stroke-linecap="round"/>
+        <line x1="260" y1="540" x2="560" y2="540" stroke="#0A0A0A" stroke-width="14" stroke-linecap="round"/>
+        <line x1="260" y1="600" x2="460" y2="600" stroke="#0A0A0A" stroke-width="14" stroke-linecap="round"/>
+        <!-- 책등 -->
+        <line x1="512" y1="390" x2="512" y2="770" stroke="#0A0A0A" stroke-width="10" opacity="0.3"/>
+        <!-- 돋보기 -->
+        <circle cx="680" cy="560" r="180" fill="none" stroke="#0A0A0A" stroke-width="40"/>
+        <circle cx="680" cy="560" r="180" fill="#C8F060" opacity="0.3"/>
+        <circle cx="680" cy="560" r="160" fill="none" stroke="#FFFFFF" stroke-width="8" opacity="0.6"/>
+        <line x1="820" y1="700" x2="930" y2="810" stroke="#0A0A0A" stroke-width="56" stroke-linecap="round"/>
+        <line x1="820" y1="700" x2="930" y2="810" stroke="#C8F060" stroke-width="28" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="previews">
+      <div class="preview-block">
+        <div class="pv pv-60">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#1E6B94"/>
+            <rect x="180" y="360" width="664" height="440" rx="12" fill="#A35A10" stroke="#0A0A0A" stroke-width="28"/>
+            <rect x="210" y="390" width="604" height="380" fill="#F7E8D0" stroke="#0A0A0A" stroke-width="18"/>
+            <circle cx="680" cy="560" r="180" fill="#C8F060" stroke="#0A0A0A" stroke-width="50"/>
+            <line x1="820" y1="700" x2="930" y2="810" stroke="#0A0A0A" stroke-width="70" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="pv-label">60</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-40">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#1E6B94"/>
+            <rect x="160" y="340" width="704" height="460" rx="12" fill="#A35A10" stroke="#0A0A0A" stroke-width="40"/>
+            <rect x="200" y="380" width="624" height="400" fill="#F7E8D0" stroke="#0A0A0A" stroke-width="24"/>
+            <circle cx="700" cy="560" r="200" fill="#C8F060" stroke="#0A0A0A" stroke-width="60"/>
+            <line x1="850" y1="710" x2="960" y2="820" stroke="#0A0A0A" stroke-width="90" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="pv-label">40</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-28">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#1E6B94"/>
+            <rect x="140" y="320" width="744" height="480" rx="12" fill="#A35A10" stroke="#0A0A0A" stroke-width="70"/>
+            <rect x="190" y="370" width="644" height="420" fill="#F7E8D0" stroke="#0A0A0A" stroke-width="40"/>
+            <circle cx="700" cy="560" r="220" fill="#C8F060" stroke="#0A0A0A" stroke-width="80"/>
+          </svg>
+        </div>
+        <span class="pv-label">28</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="num">02</div>
+      <h3 class="concept-name">책 + 돋보기 · 클립아트</h3>
+      <p class="tagline">딥블루 위에 카퍼 책과 라임 돋보기. 아이콘 모음 CD-ROM에서 튀어나온 듯한 정직한 클립아트.</p>
+      <dl class="meta-list">
+        <dt>핵심 시각 요소</dt>
+        <dd>펼쳐진 사전 책(크림색 페이지) 위에 큰 라임 돋보기가 겹쳐짐. 전체에 두꺼운 검정 아웃라인.</dd>
+        <dt>왜 이 브리프에 맞는가</dt>
+        <dd>"사전+검색"이라는 기능을 글자 없이 그림만으로 전달. 어휘·언어장벽 없음. 풀배경 원색 + 두꺼운 외곽선은 홈스크린 어떤 배경지에서도 식별된다. 의도적 촌스러움이 오히려 "친근하고 쉬운 앱" 인상을 준다.</dd>
+        <dt>리스크</dt>
+        <dd>"개발자용"이라는 정보 0. 범용 영어사전·어린이 사전과 구분 불가. 타이포 추가로 보정 필요할 수 있음.</dd>
+        <dt>28px 실루엣 앵커</dt>
+        <dd>카퍼 책 박스 + 라임 돋보기 원 — 색-형태 듀얼 앵커. 작아져도 "책 옆 동그란 것"으로 읽힘.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       Card 03 — 네온 간판 { e }
+       ============================================================ -->
+  <article class="card">
+    <div class="icon-frame">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#0A0A0A"/>
+        <!-- 간판 테두리 -->
+        <rect x="70" y="70" width="884" height="884" rx="100" fill="none" stroke="#F0A060" stroke-width="12"/>
+        <rect x="110" y="110" width="804" height="804" rx="70" fill="none" stroke="#C8F060" stroke-width="6"/>
+        <!-- 중괄호 { -->
+        <text x="240" y="720" text-anchor="middle"
+              font-family="ui-monospace, 'SF Mono', 'DM Mono', Menlo, monospace"
+              font-weight="900" font-size="740"
+              fill="#C8F060"
+              stroke="#0A0A0A" stroke-width="10">{</text>
+        <!-- 중괄호 } -->
+        <text x="784" y="720" text-anchor="middle"
+              font-family="ui-monospace, 'SF Mono', 'DM Mono', Menlo, monospace"
+              font-weight="900" font-size="740"
+              fill="#C8F060"
+              stroke="#0A0A0A" stroke-width="10">}</text>
+        <!-- e -->
+        <text x="512" y="700" text-anchor="middle"
+              font-family="'Apple SD Gothic Neo', sans-serif"
+              font-weight="900" font-size="540"
+              fill="#F0A060"
+              stroke="#0A0A0A" stroke-width="14">e</text>
+        <!-- 하단 깜빡임 dot -->
+        <circle cx="512" cy="860" r="14" fill="#C8F060"/>
+      </svg>
+    </div>
+
+    <div class="previews">
+      <div class="preview-block">
+        <div class="pv pv-60">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0A0A0A"/>
+            <text x="240" y="720" text-anchor="middle" font-family="ui-monospace, monospace" font-weight="900" font-size="740" fill="#C8F060">{</text>
+            <text x="784" y="720" text-anchor="middle" font-family="ui-monospace, monospace" font-weight="900" font-size="740" fill="#C8F060">}</text>
+            <text x="512" y="700" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="540" fill="#F0A060">e</text>
+          </svg>
+        </div>
+        <span class="pv-label">60</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-40">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0A0A0A"/>
+            <text x="220" y="740" text-anchor="middle" font-family="ui-monospace, monospace" font-weight="900" font-size="820" fill="#C8F060">{</text>
+            <text x="804" y="740" text-anchor="middle" font-family="ui-monospace, monospace" font-weight="900" font-size="820" fill="#C8F060">}</text>
+            <text x="512" y="720" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="620" fill="#F0A060">e</text>
+          </svg>
+        </div>
+        <span class="pv-label">40</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-28">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#0A0A0A"/>
+            <text x="200" y="760" text-anchor="middle" font-family="ui-monospace, monospace" font-weight="900" font-size="900" fill="#C8F060">{</text>
+            <text x="824" y="760" text-anchor="middle" font-family="ui-monospace, monospace" font-weight="900" font-size="900" fill="#C8F060">}</text>
+            <text x="512" y="740" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="700" fill="#F0A060">e</text>
+          </svg>
+        </div>
+        <span class="pv-label">28</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="num">03</div>
+      <h3 class="concept-name">네온 간판 <span style="color:#C8F060;background:#0A0A0A;padding:1px 6px">{ <span style="color:#F0A060">e</span> }</span></h3>
+      <p class="tagline">v1의 {e}를 PC방·학원 간판으로. 검정 배경 + 형광 라임 중괄호 + 형광 오렌지 볼드 e.</p>
+      <dl class="meta-list">
+        <dt>핵심 시각 요소</dt>
+        <dd>두꺼운 고딕 중괄호가 네온관처럼 발광, 가운데 볼드 sans-serif `e`가 대비색으로 꽂힌다. 이중 외곽선 프레임이 간판 테두리 역할.</dd>
+        <dt>왜 이 브리프에 맞는가</dt>
+        <dd>v1 {e}의 인식 구조(코드⊃어원)는 유지하되, 톤을 "세련된 마크"에서 "간판"으로 바꿔 홈스크린 어둠 속에서 발광한다. 한국 사용자가 90–2000년대 학원 간판에서 본 "{컴퓨터}" 로고의 시각 문법을 그대로 소환 — 즉시 친숙함 + 뚜렷한 식별력.</dd>
+        <dt>리스크</dt>
+        <dd>형광색은 iOS 기본 아이콘들 옆에서 "조잡함"으로 읽힐 수도 있음. 좋아하는 사람과 싫어하는 사람이 극명히 갈리는 스타일.</dd>
+        <dt>28px 실루엣 앵커</dt>
+        <dd>검정 배경 + 라임 중괄호 두 곡선 — 형태 + 고채도 색의 이중 앵커로 축소 강함.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       Card 04 — 고전 사전 표지
+       ============================================================ -->
+  <article class="card">
+    <div class="icon-frame">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#3F7A00"/>
+        <!-- 이중 사각 테두리 (고전 사전 표지 장식) -->
+        <rect x="80" y="80" width="864" height="864" rx="20" fill="none" stroke="#F7E8D0" stroke-width="16"/>
+        <rect x="120" y="120" width="784" height="784" rx="14" fill="none" stroke="#F7E8D0" stroke-width="6"/>
+        <!-- 장식 수평선 -->
+        <line x1="200" y1="300" x2="824" y2="300" stroke="#F7E8D0" stroke-width="6"/>
+        <line x1="260" y1="320" x2="764" y2="320" stroke="#F7E8D0" stroke-width="3"/>
+        <!-- 영문 타이틀 -->
+        <text x="512" y="470" text-anchor="middle"
+              font-family="'Times New Roman', 'DM Serif Display', Georgia, serif"
+              font-weight="700" font-size="160"
+              fill="#F7E8D0"
+              letter-spacing="6">DEV ETYM</text>
+        <!-- 한글 부제 -->
+        <text x="512" y="620" text-anchor="middle"
+              font-family="'Apple SD Gothic Neo', sans-serif"
+              font-weight="700" font-size="120"
+              fill="#F7E8D0"
+              letter-spacing="12">개발어원</text>
+        <!-- 장식 수평선 -->
+        <line x1="200" y1="700" x2="824" y2="700" stroke="#F7E8D0" stroke-width="3"/>
+        <line x1="260" y1="720" x2="764" y2="720" stroke="#F7E8D0" stroke-width="6"/>
+        <!-- 하단 장식 "사전" 한자 느낌 박스 -->
+        <rect x="420" y="780" width="184" height="80" rx="4" fill="#F7E8D0"/>
+        <text x="512" y="842" text-anchor="middle"
+              font-family="'Apple SD Gothic Neo', sans-serif"
+              font-weight="900" font-size="64"
+              fill="#3F7A00"
+              letter-spacing="8">사전</text>
+      </svg>
+    </div>
+
+    <div class="previews">
+      <div class="preview-block">
+        <div class="pv pv-60">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#3F7A00"/>
+            <rect x="80" y="80" width="864" height="864" rx="20" fill="none" stroke="#F7E8D0" stroke-width="20"/>
+            <text x="512" y="500" text-anchor="middle" font-family="'Times New Roman', Georgia, serif" font-weight="700" font-size="200" fill="#F7E8D0" letter-spacing="6">DEV ETYM</text>
+            <text x="512" y="680" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="160" fill="#F7E8D0" letter-spacing="20">개발어원</text>
+            <rect x="400" y="780" width="224" height="100" rx="6" fill="#F7E8D0"/>
+            <text x="512" y="858" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="84" fill="#3F7A00" letter-spacing="12">사전</text>
+          </svg>
+        </div>
+        <span class="pv-label">60</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-40">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#3F7A00"/>
+            <text x="512" y="480" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="300" fill="#F7E8D0" letter-spacing="10">개발</text>
+            <text x="512" y="800" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="300" fill="#F7E8D0" letter-spacing="10">어원</text>
+          </svg>
+        </div>
+        <span class="pv-label">40</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-28">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#3F7A00"/>
+            <text x="512" y="500" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="380" fill="#F7E8D0" letter-spacing="-10">개발</text>
+            <text x="512" y="880" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="380" fill="#F7E8D0" letter-spacing="-10">어원</text>
+          </svg>
+        </div>
+        <span class="pv-label">28</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="num">04</div>
+      <h3 class="concept-name">고전 사전 표지</h3>
+      <p class="tagline">녹색 가죽 표지의 전문사전 표지 복각. "DEV ETYM / 개발어원 / 사전" 3단 구성.</p>
+      <dl class="meta-list">
+        <dt>핵심 시각 요소</dt>
+        <dd>olive 풀배경 + 크림색 이중 테두리 + 영문 serif 타이틀 + 한글 볼드 부제 + 하단 "사전" 라벨 박스. 도서관 장서 책등 스타일.</dd>
+        <dt>왜 이 브리프에 맞는가</dt>
+        <dd>"이건 진짜 사전이에요"를 텍스트로 세 번 반복한다. "DEV ETYM" → "개발어원" → "사전". 글자 크기가 단계적이라 사이즈별로 살아남는 글자가 달라짐 — 28px에서도 "개발어원" 네 글자는 확실히 읽힌다. 고전 사전 장정을 그대로 빌려와서 "신뢰할 수 있는 레퍼런스" 정서를 즉발.</dd>
+        <dt>리스크</dt>
+        <dd>영문 부분이 28px에서 소실. 타이포 밀도가 높아 홈스크린에서 "글자 아이콘" 그룹에 묻힐 수 있음. 한국어 모르면 접근성 급락.</dd>
+        <dt>28px 실루엣 앵커</dt>
+        <dd>olive 풀배경 + "개발 / 어원" 두 줄 한글 덩어리 — 텍스트 덩어리의 매스감.</dd>
+      </dl>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       Card 05 — 책 위 한글 '어' 스티커
+       ============================================================ -->
+  <article class="card">
+    <div class="icon-frame">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#F7E8D0"/>
+        <!-- 점 패턴 배경 (문방구 느낌) -->
+        <g fill="#A35A10" opacity="0.18">
+          <circle cx="120" cy="120" r="10"/>
+          <circle cx="260" cy="180" r="8"/>
+          <circle cx="900" cy="140" r="10"/>
+          <circle cx="860" cy="880" r="10"/>
+          <circle cx="140" cy="880" r="8"/>
+          <circle cx="780" cy="240" r="6"/>
+          <circle cx="200" cy="780" r="6"/>
+        </g>
+        <!-- 펼친 책 (검정 두꺼운 외곽선, 살짝 기울어짐) -->
+        <g transform="rotate(-3 512 560)">
+          <!-- 왼쪽 페이지 -->
+          <path d="M 140 720 L 140 380 Q 140 340 180 340 L 500 380 L 500 760 L 180 720 Q 140 720 140 720 Z"
+                fill="#FFFFFF" stroke="#0A0A0A" stroke-width="42" stroke-linejoin="round"/>
+          <!-- 오른쪽 페이지 -->
+          <path d="M 884 720 L 884 380 Q 884 340 844 340 L 524 380 L 524 760 L 844 720 Q 884 720 884 720 Z"
+                fill="#FFFFFF" stroke="#0A0A0A" stroke-width="42" stroke-linejoin="round"/>
+          <!-- 페이지 라인 (오른쪽) -->
+          <line x1="580" y1="500" x2="820" y2="500" stroke="#0A0A0A" stroke-width="12" opacity="0.4"/>
+          <line x1="580" y1="560" x2="800" y2="560" stroke="#0A0A0A" stroke-width="12" opacity="0.4"/>
+          <line x1="580" y1="620" x2="760" y2="620" stroke="#0A0A0A" stroke-width="12" opacity="0.4"/>
+        </g>
+        <!-- 한글 '어' 스티커 (왼쪽 페이지 위, 오렌지 배경 원) -->
+        <g transform="rotate(-8 340 540)">
+          <circle cx="340" cy="540" r="180" fill="#F0A060" stroke="#0A0A0A" stroke-width="22"/>
+          <text x="340" y="630" text-anchor="middle"
+                font-family="'Apple SD Gothic Neo', sans-serif"
+                font-weight="900" font-size="240"
+                fill="#0A0A0A">어</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="previews">
+      <div class="preview-block">
+        <div class="pv pv-60">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#F7E8D0"/>
+            <g transform="rotate(-3 512 560)">
+              <path d="M 140 720 L 140 380 Q 140 340 180 340 L 500 380 L 500 760 L 180 720 Z" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="50"/>
+              <path d="M 884 720 L 884 380 Q 884 340 844 340 L 524 380 L 524 760 L 844 720 Z" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="50"/>
+            </g>
+            <circle cx="340" cy="540" r="180" fill="#F0A060" stroke="#0A0A0A" stroke-width="28"/>
+            <text x="340" y="630" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="240" fill="#0A0A0A">어</text>
+          </svg>
+        </div>
+        <span class="pv-label">60</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-40">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#F7E8D0"/>
+            <path d="M 120 720 L 120 380 L 500 380 L 500 760 L 120 720 Z" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="70"/>
+            <path d="M 904 720 L 904 380 L 524 380 L 524 760 L 904 720 Z" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="70"/>
+            <circle cx="340" cy="540" r="220" fill="#F0A060" stroke="#0A0A0A" stroke-width="48"/>
+            <text x="340" y="640" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="320" fill="#0A0A0A">어</text>
+          </svg>
+        </div>
+        <span class="pv-label">40</span>
+      </div>
+      <div class="preview-block">
+        <div class="pv pv-28">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1024" height="1024" fill="#F7E8D0"/>
+            <circle cx="512" cy="512" r="380" fill="#F0A060" stroke="#0A0A0A" stroke-width="80"/>
+            <text x="512" y="680" text-anchor="middle" font-family="'Apple SD Gothic Neo', sans-serif" font-weight="900" font-size="560" fill="#0A0A0A">어</text>
+          </svg>
+        </div>
+        <span class="pv-label">28</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="num">05</div>
+      <h3 class="concept-name">책 + 한글 ‘어’ 스티커</h3>
+      <p class="tagline">크림 배경, 두꺼운 검정 외곽선의 펼친 책 위에 삐뚤어진 오렌지 스티커 + 한글 ‘어’.</p>
+      <dl class="meta-list">
+        <dt>핵심 시각 요소</dt>
+        <dd>살짝 기울어진 펼친 책, 왼쪽 페이지 위에 원형 오렌지 스티커(8도 회전)에 볼드 '어' 한 글자. 배경엔 문방구 점 패턴 소량.</dd>
+        <dt>왜 이 브리프에 맞는가</dt>
+        <dd>책(사전) + 한글 '어'(어원)의 두 시그널을 모두 유지하되, 기하학적 완벽성 대신 "손으로 대충 붙인 스티커" 정서를 더한다. 이 정서가 "친근한 학습 도구" 인상을 즉시 만든다. 28px 축소 시 책이 사라져도 오렌지 원형 + 검정 '어'가 아이콘 중앙을 지배하므로 인식 유지.</dd>
+        <dt>리스크</dt>
+        <dd>요소가 세 층(패턴·책·스티커)이라 작은 사이즈에서 복잡도 과잉. 기울기·점 패턴이 "정돈되지 않음"으로 읽힐 위험.</dd>
+        <dt>28px 실루엣 앵커</dt>
+        <dd>중앙 오렌지 원 + 검정 '어'. 책은 과감히 생략하고 스티커만 크게 살리는 대체 버전 포함(위 28px).</dd>
+      </dl>
+    </div>
+  </article>
+
+</div>
+
+<!-- ============================================================
+     Ranking v2
+     ============================================================ -->
+<section class="ranking">
+  <div class="eyebrow">// senior designer's pick · v2 ranked</div>
+  <h2>추천 순위 · v2</h2>
+  <ol>
+    <li>
+      <div>
+        <div class="rank-name">책 + 한글 ‘어’ 스티커 <span class="meta-tag">card 05</span></div>
+        <div class="rank-reason">v2의 지향("촌스러움 + 가시성 + 친근함")을 가장 균형 있게 달성. 책(범용 사전 시그널) + '어'(한국어 직격) 두 신호가 공존하며, 삐뚤어진 스티커 처리로 "정직한 학습 도구" 정서 추가. 28px에서도 스티커만 남아 식별 유지.</div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <div class="rank-name">빅 타이포 “어원” <span class="meta-tag">card 01</span></div>
+        <div class="rank-reason">한국 사용자 직격 효율 1위. 이미지 해석 단계를 건너뛰고 글자로 꽂힌다. 참고서 표지의 권위 정서를 즉발. 타이포 아이콘의 "이미지적 임팩트 부족"만 감수할 수 있다면 최상위.</div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <div class="rank-name">네온 간판 { e } <span class="meta-tag">card 03</span></div>
+        <div class="rank-reason">v1 5번을 아주 좋아했다면 이 버전이 정확한 연결 고리. 형태 논리는 그대로, 톤만 학원 간판 네온으로. 호불호 강하지만 "촌스럽고 눈에 띄게"라는 브리프에 가장 직접적으로 응답.</div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <div class="rank-name">책 + 돋보기 · 클립아트 <span class="meta-tag">card 02</span></div>
+        <div class="rank-reason">가장 "안전한 촌스러움". 범용 사전·검색 앱으로 즉시 분류되지만 "개발자용"이라는 특화 정보 0. 소구력은 높으나 차별화는 낮음.</div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <div class="rank-name">고전 사전 표지 <span class="meta-tag">card 04</span></div>
+        <div class="rank-reason">텍스트 밀도가 가장 높아 정보는 풍부하지만 28px에서 가장 많은 요소가 무너짐. 가독성 기준으로 후순위. App Store 썸네일 전용이라면 매력적이나 홈스크린 아이콘으로는 무거움.</div>
+      </div>
+    </li>
+  </ol>
+
+  <div class="footer-note">
+    <b>다음 단계.</b> v1·v2 합쳐 10개 중에서 최종 픽이 결정되면 1024×1024 PNG + iOS 아이콘셋 전체 사이즈 출력 가능.
+    모든 SVG가 viewBox 1024×1024로 통일되어 있어 무손실 스케일링. v2는 풀컬러 배경이 많아 라이트/다크 듀얼 톤 대신
+    단일 톤으로 가는 것이 정체성상 맞다.
+  </div>
+</section>
+
+</div>
+</body>
+</html>
