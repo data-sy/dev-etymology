@@ -91,7 +91,7 @@ struct DetailView: View {
                     etymologyBlock(entry.etymology)
                     sectionLabel("왜 이 이름인가")
                     Text(entry.namingReason)
-                        .font(Theme.sans(13, relativeTo: .body))
+                        .font(Theme.sans(15, relativeTo: .body))
                         .foregroundStyle(Theme.Palette.textDim)
                         .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
@@ -117,7 +117,7 @@ struct DetailView: View {
             }
             if !entry.summary.isEmpty {
                 Text(entry.summary)
-                    .font(Theme.sans(13, relativeTo: .subheadline))
+                    .font(Theme.sans(15, relativeTo: .subheadline))
                     .foregroundStyle(Theme.Palette.textDim)
                     .padding(.top, 4)
             }
@@ -174,7 +174,7 @@ struct DetailView: View {
                 .frame(width: 2)
             VStack(alignment: .leading, spacing: 0) {
                 Text(text)
-                    .font(Theme.sans(12, relativeTo: .body))
+                    .font(Theme.sans(14, relativeTo: .body))
                     .foregroundStyle(Theme.Palette.textDim)
                     .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)

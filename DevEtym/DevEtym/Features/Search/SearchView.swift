@@ -122,7 +122,7 @@ struct SearchView: View {
                                     .font(Theme.mono(13, weight: .medium, relativeTo: .body))
                                     .foregroundStyle(Theme.Palette.text)
                                 Text(entry.summary)
-                                    .font(Theme.sans(11, relativeTo: .caption))
+                                    .font(Theme.sans(13, relativeTo: .caption))
                                     .foregroundStyle(Theme.Palette.textDim)
                                     .lineLimit(1)
                             }

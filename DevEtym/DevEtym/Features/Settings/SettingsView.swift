@@ -49,7 +49,7 @@ struct SettingsView: View {
             } label: {
                 Label {
                     Text("화면 모드")
-                        .font(Theme.sans(14, relativeTo: .body))
+                        .font(Theme.sans(16, relativeTo: .body))
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: "circle.lefthalf.filled")
@@ -91,7 +91,7 @@ struct SettingsView: View {
             } label: {
                 Label {
                     Text("앱 평가하기")
-                        .font(Theme.sans(14, relativeTo: .body))
+                        .font(Theme.sans(16, relativeTo: .body))
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: "star")
@@ -150,7 +150,7 @@ struct SettingsView: View {
                     Label {
                         HStack {
                             Text("개인정보 처리방침")
-                                .font(Theme.sans(14, relativeTo: .body))
+                                .font(Theme.sans(16, relativeTo: .body))
                                 .foregroundStyle(Theme.Palette.text)
                             Spacer()
                             Image(systemName: "arrow.up.right")
@@ -185,7 +185,7 @@ struct SettingsView: View {
             } label: {
                 Label {
                     Text("오픈소스 라이선스")
-                        .font(Theme.sans(14, relativeTo: .body))
+                        .font(Theme.sans(16, relativeTo: .body))
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: "doc.text")
@@ -214,7 +214,7 @@ struct SettingsView: View {
     private func infoRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(Theme.sans(14, relativeTo: .body))
+                .font(Theme.sans(16, relativeTo: .body))
                 .foregroundStyle(Theme.Palette.text)
             Spacer()
             Text(value)
@@ -232,7 +232,7 @@ struct SettingsView: View {
             Link(destination: url) {
                 Label {
                     Text(title)
-                        .font(Theme.sans(14, relativeTo: .body))
+                        .font(Theme.sans(16, relativeTo: .body))
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: icon)
@@ -256,7 +256,7 @@ struct SettingsView: View {
                     .accessibilityHidden(true)
             }
             Text("이 앱의 모든 어원 설명은 AI(Claude)가 생성합니다. 부정확한 내용이 포함될 수 있습니다.")
-                .font(Theme.sans(12, relativeTo: .footnote))
+                .font(Theme.sans(14, relativeTo: .footnote))
                 .foregroundStyle(Theme.Palette.textDim)
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
@@ -281,7 +281,7 @@ struct SettingsView: View {
                     .font(Theme.mono(13, weight: .medium, relativeTo: .body))
                     .foregroundStyle(Theme.Palette.text)
                 Text(oflLicenseText)
-                    .font(Theme.sans(12, relativeTo: .footnote))
+                    .font(Theme.sans(14, relativeTo: .footnote))
                     .foregroundStyle(Theme.Palette.textDim)
                     .lineSpacing(3)
             }

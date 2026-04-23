@@ -41,7 +41,7 @@ struct OnboardingView: View {
                     .font(Theme.serif(28, relativeTo: .largeTitle))
                     .foregroundStyle(Theme.Palette.text)
                 Text("개발 용어의 어원과 작명 이유를\n한국어로 풀어 설명합니다")
-                    .font(Theme.sans(13, relativeTo: .body))
+                    .font(Theme.sans(15, relativeTo: .body))
                     .foregroundStyle(Theme.Palette.textDim)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -66,7 +66,7 @@ struct OnboardingView: View {
                     .accessibilityHidden(true)
             }
             Text("이 앱의 모든 설명은 AI가 생성합니다. 오류가 있을 수 있으니 발견 시 상세 화면 하단의 제보 버튼으로 알려주세요.")
-                .font(Theme.sans(12, relativeTo: .footnote))
+                .font(Theme.sans(14, relativeTo: .footnote))
                 .foregroundStyle(Theme.Palette.textDim)
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)

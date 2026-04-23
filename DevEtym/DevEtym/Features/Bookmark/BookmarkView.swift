@@ -103,7 +103,7 @@ struct BookmarkView: View {
                     .font(Theme.mono(13, weight: .medium, relativeTo: .body))
                     .foregroundStyle(Theme.Palette.text)
                 Text(previewText(for: term))
-                    .font(Theme.sans(10, relativeTo: .caption))
+                    .font(Theme.sans(12, relativeTo: .caption))
                     .foregroundStyle(Theme.Palette.textMuted)
                     .lineLimit(1)
             }
