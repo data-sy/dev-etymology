@@ -11,4 +11,8 @@ enum Constants {
     static let autocompleteDebounceMs: Int = 300
     /// 최근 검색 표시 개수
     static let recentSearchLimit: Int = 5
+    /// 데이터 수집 동의 여부 UserDefaults 키
+    static let analyticsConsentKey = "analyticsConsent"
+    /// 데이터 수집 동의 여부를 사용자에게 이미 물었는지 UserDefaults 키
+    static let analyticsConsentAskedKey = "analyticsConsentAsked"
 }
