@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DevEtym 앱 아이콘 · v2 · dark mode variant
+     iOS 18 다크 모드 변형. 라이트 v2 대비 배경만 더 짙게 (#2E5D3A → #1F4128)
+     해서 다크 환경에서 더 잘 융화되도록 조정. 글자·박스는 동일.
+     iOS가 dark 변형 미등록 시 자동으로 색을 비틀어 디자인 의도를 해칠
+     수 있어 명시적으로 등록. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#1F4128"/>
+
+  <text x="512" y="410" text-anchor="middle"
+        font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+        font-weight="900" font-size="320"
+        fill="#F7E8D0"
+        letter-spacing="16">개발</text>
+  <text x="512" y="720" text-anchor="middle"
+        font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+        font-weight="900" font-size="320"
+        fill="#F7E8D0"
+        letter-spacing="16">어원</text>
+
+  <rect x="336" y="790" width="352" height="156" rx="18" fill="#F7E8D0"/>
+  <text x="512" y="912" text-anchor="middle"
+        font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', sans-serif"
+        font-weight="900" font-size="116"
+        fill="#1F4128"
+        letter-spacing="10">사전</text>
+</svg>
