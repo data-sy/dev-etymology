@@ -68,7 +68,16 @@
       "Bash(env)",
       "Bash(awk *)",
       "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project /Users/owner/dev-etymology/DevEtym/DevEtym.xcodeproj -scheme DevEtym -destination 'platform=iOS Simulator,id=367055D8-373E-4A02-B97F-87B8FC40F825' -only-testing:DevEtymTests -parallel-testing-enabled NO)",
-      "Bash(set -e)"
+      "Bash(set -e)",
+      "Bash(rsvg-convert -w 1024 -h 1024 /tmp/devetym_icon_test.svg -o /tmp/devetym_icon_test.png)",
+      "Bash(rsvg-convert -w 360 -h 360 /tmp/devetym_v2_test.svg -o /tmp/devetym_v2_test.png)",
+      "Bash(rsvg-convert -w 360 -h 360 /tmp/devetym_v2_refined.svg -o /tmp/devetym_v2_refined.png)",
+      "Bash(rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg -o DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/icon.png)",
+      "Bash(magick identify *)",
+      "Bash(rsvg-convert -w 480 -h 480 docs/icon/assets/v2/launch-logo.svg -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@2x.png)",
+      "Bash(rsvg-convert -w 720 -h 720 docs/icon/assets/v2/launch-logo.svg -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@3x.png)",
+      "Bash(plutil -lint DevEtym/DevEtym/Info.plist)",
+      "Bash(rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon-dark.svg -o DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/icon-dark.png)"
     ]
   }
 }
