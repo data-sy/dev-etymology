@@ -206,7 +206,7 @@ struct SettingsView: View {
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(Theme.mono(10, weight: .medium, relativeTo: .caption2))
+            .font(Theme.mono(11, weight: .medium, relativeTo: .caption2))
             .foregroundStyle(Theme.Palette.accent)
             .textCase(.uppercase)
     }
@@ -248,7 +248,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 6) {
             Label {
                 Text("AI 생성 고지")
-                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .font(Theme.mono(12, weight: .medium, relativeTo: .footnote))
                     .foregroundStyle(Theme.Palette.accentAI)
             } icon: {
                 Image(systemName: "sparkles")

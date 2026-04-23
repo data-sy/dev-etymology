@@ -58,7 +58,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 8) {
             Label {
                 Text("AI 생성 고지")
-                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .font(Theme.mono(12, weight: .medium, relativeTo: .footnote))
                     .foregroundStyle(Theme.Palette.accentAI)
             } icon: {
                 Image(systemName: "exclamationmark.bubble")

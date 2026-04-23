@@ -61,7 +61,7 @@ struct DetailView: View {
             ProgressView()
                 .tint(Theme.Palette.accent)
             Text("어원을 분석하는 중...")
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .font(Theme.mono(11, relativeTo: .footnote))
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -126,11 +126,11 @@ struct DetailView: View {
 
     private func categoryBadge(_ category: String) -> some View {
         Text(CategoryDisplay.formatted(category).uppercased())
-            .font(Theme.mono(9, relativeTo: .caption2))
+            .font(Theme.mono(10, relativeTo: .caption2))
             .tracking(0.6)
             .foregroundStyle(Theme.Palette.accent)
-            .padding(.horizontal, 7)
-            .padding(.vertical, 3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 5)
                     .fill(Theme.Palette.accent.opacity(0.08))
@@ -144,11 +144,11 @@ struct DetailView: View {
 
     private var aiBadge: some View {
         Text("✦ AI 생성")
-            .font(Theme.mono(9, relativeTo: .caption2))
+            .font(Theme.mono(10, relativeTo: .caption2))
             .tracking(0.6)
             .foregroundStyle(Theme.Palette.accentAI)
-            .padding(.horizontal, 7)
-            .padding(.vertical, 3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 5)
                     .fill(Theme.Palette.accentAI.opacity(0.08))
@@ -162,7 +162,7 @@ struct DetailView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(Theme.mono(9, relativeTo: .caption2))
+            .font(Theme.mono(10, relativeTo: .caption2))
             .tracking(1.2)
             .foregroundStyle(Theme.Palette.textMuted)
     }
@@ -193,7 +193,7 @@ struct DetailView: View {
             } label: {
                 Label(viewModel.isBookmarked ? "북마크 해제" : "북마크",
                       systemImage: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
-                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .font(Theme.mono(12, weight: .medium, relativeTo: .footnote))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
             }
@@ -209,7 +209,7 @@ struct DetailView: View {
 
             ShareLink(item: shareText(entry: entry)) {
                 Label("공유", systemImage: "square.and.arrow.up")
-                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .font(Theme.mono(12, weight: .medium, relativeTo: .footnote))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
             }
@@ -244,7 +244,7 @@ struct DetailView: View {
                 dismiss()
             } label: {
                 Text("검색으로 돌아가기")
-                    .font(Theme.mono(11, weight: .medium, relativeTo: .footnote))
+                    .font(Theme.mono(12, weight: .medium, relativeTo: .footnote))
                     .padding(.horizontal, 18)
                     .padding(.vertical, 10)
                     .foregroundStyle(Theme.Palette.accent)
@@ -282,7 +282,7 @@ struct DetailView: View {
             }
             .accessibilityLabel("추천 용어 \(suggestion) 검색")
             Button("아니요, 돌아가기") { dismiss() }
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .font(Theme.mono(11, relativeTo: .footnote))
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -298,7 +298,7 @@ struct DetailView: View {
             if let url = reportMailtoURL(entry: entry) {
                 Link(destination: url) {
                     Label("이 설명이 잘못됐나요? 오류 제보하기", systemImage: "envelope")
-                        .font(Theme.mono(10, relativeTo: .footnote))
+                        .font(Theme.mono(11, relativeTo: .footnote))
                         .foregroundStyle(Theme.Palette.textMuted)
                 }
                 .padding(.vertical, 12)

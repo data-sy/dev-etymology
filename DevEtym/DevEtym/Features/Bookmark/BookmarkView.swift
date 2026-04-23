@@ -46,7 +46,7 @@ struct BookmarkView: View {
                 .font(Theme.serif(20, relativeTo: .title2))
                 .foregroundStyle(Theme.Palette.text)
             Text("// 저장한 용어")
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .font(Theme.mono(11, relativeTo: .footnote))
                 .tracking(0.6)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
@@ -62,7 +62,7 @@ struct BookmarkView: View {
                 .accessibilityHidden(true)
             Text("아직 저장한 용어가 없어요.\n용어 검색 후 북마크해보세요.")
                 .multilineTextAlignment(.center)
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .font(Theme.mono(11, relativeTo: .footnote))
                 .foregroundStyle(Theme.Palette.textMuted)
                 .lineSpacing(4)
         }

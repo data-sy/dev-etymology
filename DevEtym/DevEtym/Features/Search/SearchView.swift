@@ -57,7 +57,7 @@ struct SearchView: View {
                 .font(Theme.serif(20, relativeTo: .title2))
                 .foregroundStyle(Theme.Palette.text)
             Text("// 개발 용어 어원 사전")
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .font(Theme.mono(11, relativeTo: .footnote))
                 .tracking(0.6)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
@@ -104,7 +104,7 @@ struct SearchView: View {
 
     private var hintText: some View {
         Text("영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)")
-            .font(Theme.mono(10, relativeTo: .footnote))
+            .font(Theme.mono(11, relativeTo: .footnote))
             .foregroundStyle(Theme.Palette.textMuted)
     }
 
@@ -143,7 +143,7 @@ struct SearchView: View {
             sectionLabel("최근 검색")
             if viewModel.recent.isEmpty {
                 Text("최근 검색한 용어가 없습니다")
-                    .font(Theme.mono(10, relativeTo: .footnote))
+                    .font(Theme.mono(11, relativeTo: .footnote))
                     .foregroundStyle(Theme.Palette.textMuted)
             } else {
                 FlowChips(
@@ -156,7 +156,7 @@ struct SearchView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(Theme.mono(9, relativeTo: .caption2))
+            .font(Theme.mono(10, relativeTo: .caption2))
             .tracking(1.5)
             .foregroundStyle(Theme.Palette.textMuted)
             .padding(.bottom, 8)
@@ -183,7 +183,7 @@ private struct FlowChips: View {
                         onTap(item)
                     } label: {
                         Text(item)
-                            .font(Theme.mono(10, relativeTo: .footnote))
+                            .font(Theme.mono(11, relativeTo: .footnote))
                             .foregroundStyle(Theme.Palette.textDim)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
