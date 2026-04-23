@@ -761,4 +761,51 @@ rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
 - 아이콘에 투명 영역 금지 (iOS 규정: 사각형 풀블리드 필요, squircle은 OS가 자동 마스킹)
 - 라이트/다크 듀얼 아이콘 시도 (iOS 18 기본 아이콘은 컬러 고정, 딥 그린의 저명도가 자동 대비 확보)
 
-✅ Phase 4 완료 조건: 모든 Phase 1-3 기능 통합 동작, 오류 처리 완비, 앱 아이콘 적용 및 가독성 검증 완료
+### 4-5. 런치 스크린 (Launch Screen)
+
+> 디자인 자산: `docs/icon/assets/v2/launch-logo.svg` (투명 배경, 로고만)
+> 배경 색상: `#2E5D3A` (Theme/launchBackground)
+> 목적: 앱 아이콘 → 런치 화면 → 첫 화면의 시각 연속성 확보. 흰 화면(Xcode 자동 생성 빈 dict) 방지.
+
+**구성 (UILaunchScreen 방식, iOS 14+ 권장)**
+
+- 배경: 딥 그린 풀블리드 (`Theme/launchBackground` 컬러셋)
+- 중앙 이미지: "개발어원 사전" 크림 로고 (`LaunchLogo` 이미지셋, 2x/3x PNG)
+- LaunchScreen.storyboard 사용하지 않음
+
+**Info.plist 키**
+
+```xml
+<key>UILaunchScreen</key>
+<dict>
+    <key>UIColorName</key><string>Theme/launchBackground</string>
+    <key>UIImageName</key><string>LaunchLogo</string>
+    <key>UIImageRespectsSafeAreaInsets</key><true/>
+</dict>
+```
+
+`INFOPLIST_KEY_UILaunchScreen_Generation = YES`(Xcode 자동 생성)는 빈 dict만 만들어 흰 화면이 됨. Info.plist에 명시한 키가 우선 적용되도록 위 dict 추가 필요.
+
+**자산 익스포트**
+
+```bash
+rsvg-convert -w 480 -h 480 docs/icon/assets/v2/launch-logo.svg \
+  -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@2x.png
+rsvg-convert -w 720 -h 720 docs/icon/assets/v2/launch-logo.svg \
+  -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@3x.png
+```
+
+**검증 체크리스트**
+
+- [ ] 시뮬레이터 첫 실행 시 흰 화면 대신 딥 그린 + 로고 노출
+- [ ] 노치/Dynamic Island 영역 침범 없음 (UIImageRespectsSafeAreaInsets)
+- [ ] 라이트·다크 시스템 모두 동일 색상 (런치는 컬러 고정)
+- [ ] 런치 → SearchView 전환 시 깜빡임 없음
+
+**금지 사항**
+
+- 런치 화면에 "Loading..." 텍스트, 스피너, 애니메이션 (Apple HIG 위반)
+- 라이트/다크 색상 분기 (런치는 단일 컬러)
+- 정적이지 않은 콘텐츠 (날짜·시간·사용자 데이터)
+
+✅ Phase 4 완료 조건: 모든 Phase 1-3 기능 통합 동작, 오류 처리 완비, 앱 아이콘 적용 및 가독성 검증 완료, 런치 스크린 적용 완료
