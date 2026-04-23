@@ -117,6 +117,7 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 - 상태 동기화 (`.onAppear` 재조회)
 - 접근성 (`accessibilityLabel`, Dynamic Type)
 - 앱 아이콘 적용 (SVG → PNG 익스포트, AppIcon.appiconset 등록)
+- 런치 스크린 적용 (UILaunchScreen, LaunchLogo 이미지셋·launchBackground 컬러셋)
 
 **규칙**
 - ViewModel은 `TermServiceProtocol`에만 의존, `@MainActor` 선언
@@ -125,7 +126,7 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 - 검색 Task는 `currentSearchTask?.cancel()` 패턴으로 레이스 방지
 - `.possibleTypo` 추천 재검색은 push 아닌 replace (`path.removeLast()` 후 append)
 
-디자인 시스템 상세: spec.md Phase 3-0-1·4-4, `docs/wireframe-v2.html`, `docs/icon/icon_candidate_v2.html`.
+디자인 시스템 상세: spec.md Phase 3-0-1·4-4·4-5, `docs/wireframe-v2.html`, `docs/icon/icon_candidate_v2.html`.
 
 ---
 

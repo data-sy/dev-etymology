@@ -18,6 +18,7 @@ enum Theme {
         static let accent    = Color("Theme/accent")
         static let accent2   = Color("Theme/accent2")
         static let accentAI  = Color("Theme/accentAI")
+        static let brand     = Color("Theme/brand")
         static let text      = Color("Theme/text")
         static let textDim   = Color("Theme/textDim")
         static let textMuted = Color("Theme/textMuted")
