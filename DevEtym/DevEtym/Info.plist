@@ -14,5 +14,14 @@
 		<string>DMSerifDisplay-Regular.ttf</string>
 		<string>DMSerifDisplay-Italic.ttf</string>
 	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>Theme/launchBackground</string>
+		<key>UIImageName</key>
+		<string>LaunchLogo</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
