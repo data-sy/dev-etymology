@@ -29,4 +29,9 @@ final class MockAnalyticsService: AnalyticsServiceProtocol {
         guard consentGiven else { return }
         recordedErrors.append(RecordedError(keyword: keyword, errorType: errorType))
     }
+
+    var stubbedAppInstanceID: String? = "test-instance-id"
+    func appInstanceID() async -> String? {
+        stubbedAppInstanceID
+    }
 }

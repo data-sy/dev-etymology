@@ -30,4 +30,8 @@ protocol AnalyticsServiceProtocol {
 
     /// 검색 중 Claude API 오류 이벤트 기록
     func logError(keyword: String, errorType: AnalyticsErrorType)
+
+    /// Firebase App Instance ID — 사용자가 과거 데이터 삭제 요청 시
+    /// 자신의 익명 식별자를 확인하는 용도 (앱 재설치 시 변경됨)
+    func appInstanceID() async -> String?
 }

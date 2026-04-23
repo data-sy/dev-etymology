@@ -34,4 +34,8 @@ final class AnalyticsService: AnalyticsServiceProtocol {
             "error_type": errorType.rawValue
         ])
     }
+
+    func appInstanceID() async -> String? {
+        await Analytics.appInstanceID()
+    }
 }

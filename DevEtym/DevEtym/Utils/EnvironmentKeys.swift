@@ -45,4 +45,5 @@ final class PlaceholderAnalyticsService: AnalyticsServiceProtocol {
     nonisolated init() {}
     func logSearch(keyword: String, resultType: SearchResultType) {}
     func logError(keyword: String, errorType: AnalyticsErrorType) {}
+    func appInstanceID() async -> String? { nil }
 }
