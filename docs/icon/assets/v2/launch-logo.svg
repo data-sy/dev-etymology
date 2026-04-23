@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DevEtym launch screen logo · transparent background, cream foreground
      사용처: Info.plist UILaunchScreen.UIImageName ("LaunchLogo")
-     배경색은 별도 Color Asset (Theme/launchBackground · #2E5D3A) 사용.
+     배경색은 별도 Color Asset (Theme/brand · #2E5D3A) 사용.
      아이콘(v2 icon.svg)에서 배경 rect만 제거한 동일 구성으로
      앱 아이콘 → 런치 화면 → 첫 화면의 시각 연속성 확보. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">

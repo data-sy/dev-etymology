@@ -14,7 +14,7 @@ struct OnboardingView: View {
                 VStack(spacing: 14) {
                     Image(systemName: "book.closed")
                         .font(.system(size: 64))
-                        .foregroundStyle(Theme.Palette.accent)
+                        .foregroundStyle(Theme.Palette.brand)
                         .accessibilityHidden(true)
                     Text("개발 어원 사전")
                         .font(Theme.serif(28, relativeTo: .largeTitle))

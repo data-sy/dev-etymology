@@ -764,12 +764,12 @@ rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
 ### 4-5. 런치 스크린 (Launch Screen)
 
 > 디자인 자산: `docs/icon/assets/v2/launch-logo.svg` (투명 배경, 로고만)
-> 배경 색상: `#2E5D3A` (Theme/launchBackground)
+> 배경 색상: `#2E5D3A` (Theme/brand)
 > 목적: 앱 아이콘 → 런치 화면 → 첫 화면의 시각 연속성 확보. 흰 화면(Xcode 자동 생성 빈 dict) 방지.
 
 **구성 (UILaunchScreen 방식, iOS 14+ 권장)**
 
-- 배경: 딥 그린 풀블리드 (`Theme/launchBackground` 컬러셋)
+- 배경: 딥 그린 풀블리드 (`Theme/brand` 컬러셋)
 - 중앙 이미지: "개발어원 사전" 크림 로고 (`LaunchLogo` 이미지셋, 2x/3x PNG)
 - LaunchScreen.storyboard 사용하지 않음
 
@@ -778,7 +778,7 @@ rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
 ```xml
 <key>UILaunchScreen</key>
 <dict>
-    <key>UIColorName</key><string>Theme/launchBackground</string>
+    <key>UIColorName</key><string>Theme/brand</string>
     <key>UIImageName</key><string>LaunchLogo</string>
     <key>UIImageRespectsSafeAreaInsets</key><true/>
 </dict>
