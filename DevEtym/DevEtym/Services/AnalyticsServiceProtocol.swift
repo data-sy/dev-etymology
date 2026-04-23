@@ -20,8 +20,11 @@ enum AnalyticsErrorType: String {
 ///
 /// ViewModel/UI가 Firebase를 직접 import하지 않도록 추상화한다.
 /// 실제 Firebase 의존은 AnalyticsService 구현체에만 존재한다.
+///
+/// `consentGiven` 세터를 existential(any AnalyticsServiceProtocol)로도 호출하려면
+/// class-bound여야 하므로 AnyObject를 상속한다.
 @MainActor
-protocol AnalyticsServiceProtocol {
+protocol AnalyticsServiceProtocol: AnyObject {
     /// 사용자 동의 여부. UserDefaults에 퍼시스트되며 false일 때 모든 log는 no-op
     var consentGiven: Bool { get set }
 
