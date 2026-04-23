@@ -61,10 +61,10 @@ struct HistoryView: View {
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("히스토리")
-                    .font(Theme.serif(20, relativeTo: .title2))
+                    .font(Theme.Typography.titleTab)
                     .foregroundStyle(Theme.Palette.text)
                 Text("// 최근 검색 기록")
-                    .font(Theme.mono(11, relativeTo: .footnote))
+                    .font(Theme.Typography.label)
                     .tracking(0.6)
                     .foregroundStyle(Theme.Palette.textMuted)
             }
@@ -76,7 +76,7 @@ struct HistoryView: View {
                     showClearConfirm = true
                 } label: {
                     Text("전체 삭제")
-                        .font(Theme.mono(10, relativeTo: .caption2))
+                        .font(Theme.Typography.caption)
                         .foregroundStyle(Theme.Palette.textMuted)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -97,7 +97,7 @@ struct HistoryView: View {
                 .foregroundStyle(Theme.Palette.textMuted)
                 .accessibilityHidden(true)
             Text("검색 기록이 없습니다")
-                .font(Theme.mono(11, relativeTo: .footnote))
+                .font(Theme.Typography.label)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -133,11 +133,11 @@ struct HistoryView: View {
     private func historyRow(entry: SearchHistory) -> some View {
         HStack {
             Text(entry.keyword)
-                .font(Theme.mono(13, relativeTo: .body))
+                .font(Theme.Typography.codeInput)
                 .foregroundStyle(Theme.Palette.textDim)
             Spacer()
             Text(relativeText(for: entry.searchedAt))
-                .font(Theme.mono(10, relativeTo: .caption2))
+                .font(Theme.Typography.caption)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .padding(.vertical, 10)

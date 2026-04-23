@@ -54,10 +54,10 @@ struct SearchView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("DevEtym")
-                .font(Theme.serif(20, relativeTo: .title2))
+                .font(Theme.Typography.titleTab)
                 .foregroundStyle(Theme.Palette.text)
             Text("// 개발 용어 어원 사전")
-                .font(Theme.mono(11, relativeTo: .footnote))
+                .font(Theme.Typography.label)
                 .tracking(0.6)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
@@ -71,7 +71,7 @@ struct SearchView: View {
                 .foregroundStyle(Theme.Palette.textMuted)
                 .accessibilityHidden(true)
             TextField("", text: $viewModel.query, prompt: Text("mutex, semaphore, daemon...").foregroundColor(Theme.Palette.textMuted))
-                .font(Theme.mono(13, relativeTo: .body))
+                .font(Theme.Typography.codeInput)
                 .foregroundStyle(Theme.Palette.text)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -104,7 +104,7 @@ struct SearchView: View {
 
     private var hintText: some View {
         Text("영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)")
-            .font(Theme.mono(11, relativeTo: .footnote))
+            .font(Theme.Typography.label)
             .foregroundStyle(Theme.Palette.textMuted)
     }
 
@@ -119,10 +119,10 @@ struct SearchView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(entry.keyword)
-                                    .font(Theme.mono(13, weight: .medium, relativeTo: .body))
+                                    .font(Theme.Typography.codeBody)
                                     .foregroundStyle(Theme.Palette.text)
                                 Text(entry.summary)
-                                    .font(Theme.sans(13, relativeTo: .caption))
+                                    .font(Theme.Typography.bodyPreview)
                                     .foregroundStyle(Theme.Palette.textDim)
                                     .lineLimit(1)
                             }
@@ -143,7 +143,7 @@ struct SearchView: View {
             sectionLabel("최근 검색")
             if viewModel.recent.isEmpty {
                 Text("최근 검색한 용어가 없습니다")
-                    .font(Theme.mono(11, relativeTo: .footnote))
+                    .font(Theme.Typography.label)
                     .foregroundStyle(Theme.Palette.textMuted)
             } else {
                 FlowChips(
@@ -156,7 +156,7 @@ struct SearchView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(Theme.mono(10, relativeTo: .caption2))
+            .font(Theme.Typography.caption)
             .tracking(1.5)
             .foregroundStyle(Theme.Palette.textMuted)
             .padding(.bottom, 8)
@@ -183,7 +183,7 @@ private struct FlowChips: View {
                         onTap(item)
                     } label: {
                         Text(item)
-                            .font(Theme.mono(11, relativeTo: .footnote))
+                            .font(Theme.Typography.label)
                             .foregroundStyle(Theme.Palette.textDim)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
