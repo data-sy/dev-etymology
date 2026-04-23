@@ -10,26 +10,31 @@ final class TermService: TermServiceProtocol {
     private let modelContext: ModelContext
     private let bundleDBService: BundleDBServiceProtocol
     private let claudeAPIService: ClaudeAPIServiceProtocol
+    private let analyticsService: AnalyticsServiceProtocol
 
     init(
         modelContext: ModelContext,
         bundleDBService: BundleDBServiceProtocol = BundleDBService(),
-        claudeAPIService: ClaudeAPIServiceProtocol = ClaudeAPIService()
+        claudeAPIService: ClaudeAPIServiceProtocol = ClaudeAPIService(),
+        analyticsService: AnalyticsServiceProtocol = PlaceholderAnalyticsService()
     ) {
         self.modelContext = modelContext
         self.bundleDBService = bundleDBService
         self.claudeAPIService = claudeAPIService
+        self.analyticsService = analyticsService
     }
 
     // MARK: - 검색
 
     func fetch(keyword: String) async throws -> TermResult {
         let normalized = normalize(keyword)
+        // 빈 입력은 사용자의 실제 검색이 아니므로 분석 이벤트에서 제외
         guard !normalized.isEmpty else { return .notDevTerm }
 
         // 1) 번들 DB
         if let entry = bundleDBService.search(keyword: normalized) {
             try upsertSearchHistory(keyword: normalized)
+            analyticsService.logSearch(keyword: normalized, resultType: .bundleHit)
             return .found(entry, source: "bundle")
         }
 
@@ -37,6 +42,7 @@ final class TermService: TermServiceProtocol {
         //    (source == "bundle"은 북마크 용도로만 저장된 번들 항목이므로 캐시에서 제외)
         if let cached = findTerm(keyword: normalized), cached.source == "ai" {
             try upsertSearchHistory(keyword: normalized)
+            analyticsService.logSearch(keyword: normalized, resultType: .aiGenerated)
             return .found(cached.toEntry(), source: "ai")
         }
 
@@ -45,11 +51,29 @@ final class TermService: TermServiceProtocol {
             let entry = try await claudeAPIService.generate(keyword: normalized)
             upsertTerm(entry: entry, source: "ai")
             try upsertSearchHistory(keyword: normalized)
+            analyticsService.logSearch(keyword: normalized, resultType: .aiGenerated)
             return .found(entry, source: "ai")
-        } catch ClaudeAPIError.notDevTerm {
-            return .notDevTerm
-        } catch ClaudeAPIError.possibleTypo(let suggestion) {
-            return .possibleTypo(suggestion)
+        } catch let apiError as ClaudeAPIError {
+            switch apiError {
+            case .notDevTerm:
+                analyticsService.logSearch(keyword: normalized, resultType: .notDevTerm)
+                return .notDevTerm
+            case .possibleTypo(let suggestion):
+                analyticsService.logSearch(keyword: normalized, resultType: .possibleTypo)
+                return .possibleTypo(suggestion)
+            case .timeout:
+                analyticsService.logError(keyword: normalized, errorType: .timeout)
+                throw apiError
+            case .invalidResponse:
+                analyticsService.logError(keyword: normalized, errorType: .invalidResponse)
+                throw apiError
+            case .networkError:
+                analyticsService.logError(keyword: normalized, errorType: .networkError)
+                throw apiError
+            case .invalidAPIKey:
+                analyticsService.logError(keyword: normalized, errorType: .invalidAPIKey)
+                throw apiError
+            }
         } catch {
             throw error
         }
