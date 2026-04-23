@@ -113,8 +113,8 @@ enum Theme {
 
         /// 로딩 시 용어명 헤더 (mono 18 medium · title3)
         static let codeHero         = Theme.mono(18, weight: .medium, relativeTo: .title3)
-        /// 리스트 행 용어명·CTA·라이선스 타이틀 (mono 13 medium · body)
-        static let codeBody         = Theme.mono(13, weight: .medium, relativeTo: .body)
+        /// 리스트 행 용어명·CTA·라이선스 타이틀 (mono 15 medium · body)
+        static let codeBody         = Theme.mono(15, weight: .medium, relativeTo: .body)
         /// 액션 버튼·강조 라벨 (mono 12 medium · footnote) — 북마크·공유·AI 생성 고지
         static let codeAction       = Theme.mono(12, weight: .medium, relativeTo: .footnote)
         /// Settings SECTION 헤더 (mono 11 medium · caption2)
@@ -122,8 +122,8 @@ enum Theme {
 
         // MARK: 코드·모노 (일반)
 
-        /// 검색 입력필드·히스토리 행 용어명 (mono 13 · body)
-        static let codeInput        = Theme.mono(13, relativeTo: .body)
+        /// 검색 입력필드·히스토리 행 용어명 (mono 15 · body)
+        static let codeInput        = Theme.mono(15, relativeTo: .body)
         /// Settings 정보 행 값 (mono 13 · footnote)
         static let codeValue        = Theme.mono(13, relativeTo: .footnote)
         /// 힌트·서브타이틀·empty·칩 (mono 11 · footnote)
