@@ -15,4 +15,6 @@ enum Constants {
     static let analyticsConsentKey = "analyticsConsent"
     /// 데이터 수집 동의 여부를 사용자에게 이미 물었는지 UserDefaults 키
     static let analyticsConsentAskedKey = "analyticsConsentAsked"
+    /// 개인정보 처리방침 공개 URL (GitHub Pages)
+    static let privacyPolicyURL = "https://data-sy.github.io/dev-etymology/privacy-policy/"
 }

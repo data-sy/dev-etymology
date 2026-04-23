@@ -122,7 +122,7 @@ struct SettingsView: View {
 
             aiDisclaimerRow
 
-            if let privacyURL = URL(string: "https://example.com/privacy") {
+            if let privacyURL = URL(string: Constants.privacyPolicyURL) {
                 Link(destination: privacyURL) {
                     Label {
                         HStack {
