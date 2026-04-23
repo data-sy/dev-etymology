@@ -145,7 +145,7 @@ struct SettingsView: View {
             }
             .accessibilityLabel("내 익명 디바이스 식별자 보기")
 
-            if let privacyURL = URL(string: Constants.privacyPolicyURL) {
+            if let privacyURL = URL(string: AppConfig.privacyPolicyURL) {
                 Link(destination: privacyURL) {
                     Label {
                         HStack {
@@ -227,7 +227,7 @@ struct SettingsView: View {
     @ViewBuilder
     private func mailLink(title: String, icon: String, subject: String) -> some View {
         let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? subject
-        let urlString = "mailto:\(Constants.reportEmail)?subject=\(encodedSubject)"
+        let urlString = "mailto:\(AppConfig.supportEmail)?subject=\(encodedSubject)"
         if let url = URL(string: urlString) {
             Link(destination: url) {
                 Label {
@@ -351,7 +351,7 @@ private struct AppInstanceIDView: View {
             VStack(alignment: .leading, spacing: 16) {
                 descriptionText
                 idCard
-                Text("과거 이벤트 삭제를 요청하시려면 \(Constants.reportEmail)으로 위 식별자를 포함하여 메일을 보내주세요. 앱을 삭제하면 이 ID는 무효화되며 재설치 시 새로 발급됩니다.")
+                Text("과거 이벤트 삭제를 요청하시려면 \(AppConfig.supportEmail)으로 위 식별자를 포함하여 메일을 보내주세요. 앱을 삭제하면 이 ID는 무효화되며 재설치 시 새로 발급됩니다.")
                     .font(Theme.sans(12, relativeTo: .footnote))
                     .foregroundStyle(Theme.Palette.textDim)
                     .lineSpacing(3)

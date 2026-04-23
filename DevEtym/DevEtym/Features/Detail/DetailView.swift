@@ -322,7 +322,7 @@ struct DetailView: View {
         """
         var components = URLComponents()
         components.scheme = "mailto"
-        components.path = Constants.reportEmail
+        components.path = AppConfig.supportEmail
         components.queryItems = [
             URLQueryItem(name: "subject", value: subject),
             URLQueryItem(name: "body", value: body)

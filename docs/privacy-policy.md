@@ -73,6 +73,7 @@ Google의 자체 개인정보 처리방침은 https://policies.google.com/privac
 ## 8. 연락처
 
 개인정보 관련 문의 및 요청:
+<!-- TODO(이메일): 출시 전 실제 고객 지원 이메일로 교체 (현재는 플레이스홀더) -->
 - 이메일: devetym@gmail.com
 - 회신 기한: 영업일 기준 7일 이내
 

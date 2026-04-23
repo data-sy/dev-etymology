@@ -158,7 +158,7 @@ struct OnboardingView: View {
 
     @ViewBuilder
     private var privacyPolicyLink: some View {
-        if let url = URL(string: Constants.privacyPolicyURL) {
+        if let url = URL(string: AppConfig.privacyPolicyURL) {
             Link(destination: url) {
                 HStack(spacing: 6) {
                     Text("개인정보 처리방침 전문 보기")
