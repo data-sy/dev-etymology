@@ -38,10 +38,11 @@ private final class PlaceholderTermService: TermServiceProtocol {
 }
 
 /// Firebase 없이 동작하는 더미 — Preview/기본값/테스트에서 no-op
-/// TermService init의 기본 파라미터로도 쓰이므로 internal 접근
+/// TermService init의 기본 파라미터로도 쓰이므로 internal 접근과 nonisolated init을 사용
 @MainActor
 final class PlaceholderAnalyticsService: AnalyticsServiceProtocol {
     var consentGiven: Bool = false
+    nonisolated init() {}
     func logSearch(keyword: String, resultType: SearchResultType) {}
     func logError(keyword: String, errorType: AnalyticsErrorType) {}
 }
