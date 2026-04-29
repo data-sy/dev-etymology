@@ -7,18 +7,12 @@ struct SearchView: View {
     @Environment(\.termService) private var termService
     @StateObject private var viewModel = SearchViewModel()
     @State private var path = NavigationPath()
-    #if DEBUG
-    @State private var showTypographyDebug = false
-    #endif
 
     var body: some View {
         NavigationStack(path: $path) {
-            ZStack(alignment: .top) {
+            ZStack {
                 Theme.Palette.bg.ignoresSafeArea()
                 content
-                #if DEBUG
-                debugHUD
-                #endif
             }
             .navigationTitle("")
             .toolbar(.hidden, for: .navigationBar)
@@ -31,36 +25,12 @@ struct SearchView: View {
                     }
                 )
             }
-            #if DEBUG
-            .sheet(isPresented: $showTypographyDebug) {
-                TypographyDebugView()
-                    .preferredColorScheme(.dark)
-            }
-            #endif
         }
         .onAppear {
             viewModel.termService = termService
             viewModel.refreshRecent()
         }
     }
-
-    #if DEBUG
-    // 타이포그래피 적용 검증용 임시 마커. 탭하면 디버그 뷰. 머지 전 제거.
-    private var debugHUD: some View {
-        Button {
-            showTypographyDebug = true
-        } label: {
-            Text("phase=design-pass ▸ tap to inspect")
-                .font(.system(size: 10, design: .monospaced))
-                .foregroundStyle(.red)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(Color.black.opacity(0.7))
-                .padding(.top, 4)
-        }
-        .buttonStyle(.plain)
-    }
-    #endif
 
     // MARK: - 컨텐츠
 
