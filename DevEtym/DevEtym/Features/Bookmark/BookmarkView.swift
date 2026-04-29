@@ -43,10 +43,10 @@ struct BookmarkView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("북마크")
-                .font(Theme.serif(20, relativeTo: .title2))
+                .typoTitleTab()
                 .foregroundStyle(Theme.Palette.text)
             Text("// 저장한 용어")
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .typoLabel()
                 .tracking(0.6)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
@@ -62,7 +62,7 @@ struct BookmarkView: View {
                 .accessibilityHidden(true)
             Text("아직 저장한 용어가 없어요.\n용어 검색 후 북마크해보세요.")
                 .multilineTextAlignment(.center)
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .typoLabel()
                 .foregroundStyle(Theme.Palette.textMuted)
                 .lineSpacing(4)
         }
@@ -100,10 +100,10 @@ struct BookmarkView: View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(term.keyword)
-                    .font(Theme.mono(13, weight: .medium, relativeTo: .body))
+                    .typoCodeBody()
                     .foregroundStyle(Theme.Palette.text)
                 Text(previewText(for: term))
-                    .font(Theme.sans(10, relativeTo: .caption))
+                    .typoBodyPreviewSmall()
                     .foregroundStyle(Theme.Palette.textMuted)
                     .lineLimit(1)
             }

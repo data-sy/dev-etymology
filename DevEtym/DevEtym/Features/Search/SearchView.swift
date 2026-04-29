@@ -36,7 +36,7 @@ struct SearchView: View {
 
     @ViewBuilder
     private var content: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 24) {
             header
             searchField
             hintText
@@ -54,10 +54,10 @@ struct SearchView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("DevEtym")
-                .font(Theme.serif(20, relativeTo: .title2))
+                .typoTitleTab()
                 .foregroundStyle(Theme.Palette.text)
             Text("// 개발 용어 어원 사전")
-                .font(Theme.mono(10, relativeTo: .footnote))
+                .typoLabel()
                 .tracking(0.6)
                 .foregroundStyle(Theme.Palette.textMuted)
         }
@@ -66,12 +66,12 @@ struct SearchView: View {
     }
 
     private var searchField: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(Theme.Palette.textMuted)
                 .accessibilityHidden(true)
             TextField("", text: $viewModel.query, prompt: Text("mutex, semaphore, daemon...").foregroundColor(Theme.Palette.textMuted))
-                .font(Theme.mono(13, relativeTo: .body))
+                .typoCodeInput()
                 .foregroundStyle(Theme.Palette.text)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -93,7 +93,7 @@ struct SearchView: View {
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 11)
+        .padding(.vertical, 13)
         .background(Theme.Palette.surface2)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -104,7 +104,7 @@ struct SearchView: View {
 
     private var hintText: some View {
         Text("영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)")
-            .font(Theme.mono(10, relativeTo: .footnote))
+            .typoLabel()
             .foregroundStyle(Theme.Palette.textMuted)
     }
 
@@ -119,10 +119,10 @@ struct SearchView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(entry.keyword)
-                                    .font(Theme.mono(13, weight: .medium, relativeTo: .body))
+                                    .typoCodeBody()
                                     .foregroundStyle(Theme.Palette.text)
                                 Text(entry.summary)
-                                    .font(Theme.sans(11, relativeTo: .caption))
+                                    .typoBodyPreview()
                                     .foregroundStyle(Theme.Palette.textDim)
                                     .lineLimit(1)
                             }
@@ -139,11 +139,11 @@ struct SearchView: View {
     }
 
     private var recentSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             sectionLabel("최근 검색")
             if viewModel.recent.isEmpty {
                 Text("최근 검색한 용어가 없습니다")
-                    .font(Theme.mono(10, relativeTo: .footnote))
+                    .typoLabel()
                     .foregroundStyle(Theme.Palette.textMuted)
             } else {
                 FlowChips(
@@ -156,7 +156,7 @@ struct SearchView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(Theme.mono(9, relativeTo: .caption2))
+            .typoCaption()
             .tracking(1.5)
             .foregroundStyle(Theme.Palette.textMuted)
             .padding(.bottom, 8)
@@ -183,10 +183,10 @@ private struct FlowChips: View {
                         onTap(item)
                     } label: {
                         Text(item)
-                            .font(Theme.mono(10, relativeTo: .footnote))
+                            .typoCodeChip()
                             .foregroundStyle(Theme.Palette.textDim)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
                             .background(
                                 Capsule().fill(Theme.Palette.surface2)
                             )
