@@ -77,7 +77,20 @@
       "Bash(rsvg-convert -w 480 -h 480 docs/icon/assets/v2/launch-logo.svg -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@2x.png)",
       "Bash(rsvg-convert -w 720 -h 720 docs/icon/assets/v2/launch-logo.svg -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@3x.png)",
       "Bash(plutil -lint DevEtym/DevEtym/Info.plist)",
-      "Bash(rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon-dark.svg -o DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/icon-dark.png)"
+      "Bash(rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon-dark.svg -o DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/icon-dark.png)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project /Users/owner/devetym-ui-readability/DevEtym/DevEtym.xcodeproj -scheme DevEtym -destination 'platform=iOS Simulator,id=367055D8-373E-4A02-B97F-87B8FC40F825' build)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl list devices)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl install 367055D8-373E-4A02-B97F-87B8FC40F825 /Users/owner/Library/Developer/Xcode/DerivedData/DevEtym-hgturgqufcqzuxfdhkneajkbeiga/Build/Products/Debug-iphonesimulator/DevEtym.app)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl get_app_container 367055D8-373E-4A02-B97F-87B8FC40F825 com.robin.devetym data)",
+      "Bash(/usr/libexec/PlistBuddy -c 'Add :hasSeenOnboarding bool true' __TRACKED_VAR__/Library/Preferences/com.robin.devetym.plist)",
+      "Bash(/usr/libexec/PlistBuddy -c 'Set :hasSeenOnboarding true' __TRACKED_VAR__/Library/Preferences/com.robin.devetym.plist)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl launch 367055D8-373E-4A02-B97F-87B8FC40F825 com.robin.devetym)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/04-debug-hud.png)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl terminate 367055D8-373E-4A02-B97F-87B8FC40F825 com.robin.devetym)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/05-sf-switch.png)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl shutdown all)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/06-search-with-tap-hint.png)",
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/07-baseline-17.png)"
     ]
   }
 }

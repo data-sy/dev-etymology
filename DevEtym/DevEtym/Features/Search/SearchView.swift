@@ -50,7 +50,7 @@ struct SearchView: View {
         Button {
             showTypographyDebug = true
         } label: {
-            Text("phase=SF-switch ▸ tap to inspect")
+            Text("phase=baseline-17pt ▸ tap to inspect")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundStyle(.red)
                 .padding(.horizontal, 6)

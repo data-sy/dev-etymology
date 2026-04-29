@@ -176,27 +176,27 @@ struct TypographyDebugView: View {
                 tokenRow("titleTab",         spec: "DM Serif 20 / title2",     font: Theme.Typography.titleTab)
             }
             Group {
-                tokenRow("bodyLarge",        spec: "SF .body",                 font: Theme.Typography.bodyLarge)
-                tokenRow("body",             spec: "SF .body",                 font: Theme.Typography.body)
-                tokenRow("bodySub",          spec: "SF .subheadline",          font: Theme.Typography.bodySub)
-                tokenRow("bodyEmphasis",     spec: "SF .headline",             font: Theme.Typography.bodyEmphasis)
-                tokenRow("bodyBlock",        spec: "SF .body",                 font: Theme.Typography.bodyBlock)
-                tokenRow("bodyNotice",       spec: "SF .footnote",             font: Theme.Typography.bodyNotice)
-                tokenRow("bodyPreview",      spec: "SF .subheadline",          font: Theme.Typography.bodyPreview)
-                tokenRow("bodyPreviewSmall", spec: "SF .caption",              font: Theme.Typography.bodyPreviewSmall)
+                tokenRow("bodyLarge",        spec: "SF .body (17)",            font: Theme.Typography.bodyLarge)
+                tokenRow("body",             spec: "SF .body (17)",            font: Theme.Typography.body)
+                tokenRow("bodySub",          spec: "SF .body (17)",            font: Theme.Typography.bodySub)
+                tokenRow("bodyEmphasis",     spec: "SF .headline (17 sb)",     font: Theme.Typography.bodyEmphasis)
+                tokenRow("bodyBlock",        spec: "SF .body (17)",            font: Theme.Typography.bodyBlock)
+                tokenRow("bodyNotice",       spec: "SF .callout (16)",         font: Theme.Typography.bodyNotice)
+                tokenRow("bodyPreview",      spec: "SF .body (17)",            font: Theme.Typography.bodyPreview)
+                tokenRow("bodyPreviewSmall", spec: "SF .footnote (13)",        font: Theme.Typography.bodyPreviewSmall)
             }
             Group {
-                tokenRow("codeHero",         spec: "DM Mono 18 medium",        font: Theme.Typography.codeHero)
-                tokenRow("codeBody",         spec: "DM Mono 15 medium",        font: Theme.Typography.codeBody)
-                tokenRow("codeInput",        spec: "DM Mono 15",               font: Theme.Typography.codeInput)
-                tokenRow("codeValue",        spec: "DM Mono 13",               font: Theme.Typography.codeValue)
-                tokenRow("badge",            spec: "DM Mono 10 medium",        font: Theme.Typography.badge)
+                tokenRow("codeHero",         spec: "DM Mono 20 medium",        font: Theme.Typography.codeHero)
+                tokenRow("codeBody",         spec: "DM Mono 17 medium",        font: Theme.Typography.codeBody)
+                tokenRow("codeInput",        spec: "DM Mono 17",               font: Theme.Typography.codeInput)
+                tokenRow("codeValue",        spec: "DM Mono 15",               font: Theme.Typography.codeValue)
+                tokenRow("badge",            spec: "DM Mono 11 medium",        font: Theme.Typography.badge)
             }
             Group {
-                tokenRow("codeAction",       spec: "SF .footnote medium",      font: Theme.Typography.codeAction)
-                tokenRow("sectionHeader",    spec: "SF .footnote medium",      font: Theme.Typography.sectionHeader)
-                tokenRow("label",            spec: "SF .footnote",             font: Theme.Typography.label)
-                tokenRow("caption",          spec: "SF .caption2",             font: Theme.Typography.caption)
+                tokenRow("codeAction",       spec: "SF .callout medium (16)",  font: Theme.Typography.codeAction)
+                tokenRow("sectionHeader",    spec: "SF .subheadline med (15)", font: Theme.Typography.sectionHeader)
+                tokenRow("label",            spec: "SF .subheadline (15)",     font: Theme.Typography.label)
+                tokenRow("caption",          spec: "SF .caption (12)",         font: Theme.Typography.caption)
             }
         }
     }
