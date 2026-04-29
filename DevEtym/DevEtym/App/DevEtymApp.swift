@@ -12,6 +12,10 @@ struct DevEtymApp: App {
 
     init() {
         FirebaseApp.configure()
+        #if DEBUG
+        // 타이포그래피 적용 검증용 임시 마커. 머지 전 제거.
+        print("[DEVETYM-BUILD] sha=1284ff6 codeInput=15pt codeBody=15pt body=15pt bodyLarge=16pt")
+        #endif
         do {
             modelContainer = try ModelContainer(for: Term.self, SearchHistory.self)
         } catch {

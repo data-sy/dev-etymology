@@ -10,9 +10,12 @@ struct SearchView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            ZStack {
+            ZStack(alignment: .top) {
                 Theme.Palette.bg.ignoresSafeArea()
                 content
+                #if DEBUG
+                debugHUD
+                #endif
             }
             .navigationTitle("")
             .toolbar(.hidden, for: .navigationBar)
@@ -31,6 +34,19 @@ struct SearchView: View {
             viewModel.refreshRecent()
         }
     }
+
+    #if DEBUG
+    // 타이포그래피 적용 검증용 임시 마커. 머지 전 제거.
+    private var debugHUD: some View {
+        Text("v1284ff6 ▸ codeInput=15 codeBody=15 body=15 bodyLarge=16")
+            .font(.system(size: 10, design: .monospaced))
+            .foregroundStyle(.red)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.black.opacity(0.7))
+            .padding(.top, 4)
+    }
+    #endif
 
     // MARK: - 컨텐츠
 
