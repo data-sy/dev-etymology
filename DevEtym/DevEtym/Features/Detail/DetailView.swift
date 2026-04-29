@@ -126,7 +126,7 @@ struct DetailView: View {
 
     private func categoryBadge(_ category: String) -> some View {
         Text(CategoryDisplay.formatted(category).uppercased())
-            .font(Theme.Typography.caption)
+            .font(Theme.Typography.badge)
             .tracking(0.6)
             .foregroundStyle(Theme.Palette.accent)
             .padding(.horizontal, 8)
@@ -144,7 +144,7 @@ struct DetailView: View {
 
     private var aiBadge: some View {
         Text("✦ AI 생성")
-            .font(Theme.Typography.caption)
+            .font(Theme.Typography.badge)
             .tracking(0.6)
             .foregroundStyle(Theme.Palette.accentAI)
             .padding(.horizontal, 8)

@@ -79,56 +79,62 @@ enum Theme {
     // MARK: - Typography (의미론적 폰트 토큰)
 
     /// 화면에서 실제로 쓰는 폰트 토큰의 중앙 저장소.
-    /// 호출부는 `Theme.sans/mono/serif`를 직접 부르지 말고 아래 토큰만 사용.
-    /// 사이즈·weight·Dynamic Type 스케일을 여기서만 조정하면 전 화면에 반영된다.
+    ///
+    /// 폰트 패밀리 선택 원칙
+    /// - DM Serif Display: 디자인 시그니처. 짧은 헤더에만.
+    /// - DM Mono: 영문 단독 텍스트(키워드·코드·고정폭 값·영문 뱃지) 한정.
+    /// - 시스템 폰트(SF): 한글 비중이 큰 본문·라벨. 한글 fallback 메트릭 정상화.
+    ///   커스텀 폰트의 metric 박스에 한글이 끼워 맞춰지면 시각적으로 작게 렌더되는 것을 회피.
     enum Typography {
 
-        // MARK: 타이틀 (serif)
+        // MARK: 타이틀 (DM Serif — 디자인 정체성)
 
         /// 용어명 대형 / Onboarding 타이틀 (serif 28 · largeTitle)
         static let titleHero        = Theme.serif(28, relativeTo: .largeTitle)
         /// 탭 헤더 (serif 20 · title2) — 검색·북마크·히스토리
         static let titleTab         = Theme.serif(20, relativeTo: .title2)
 
-        // MARK: 본문 (sans)
+        // MARK: 본문 (시스템 폰트 — 한글 메트릭 정상화)
 
-        /// Settings 항목 라벨 (sans 16)
-        static let bodyLarge        = Theme.sans(16, relativeTo: .body)
-        /// 일반 본문 (sans 15) — Detail namingReason, Onboarding 서브타이틀
-        static let body             = Theme.sans(15, relativeTo: .body)
-        /// Detail summary 전용 (sans 15, subheadline 스케일)
-        static let bodySub          = Theme.sans(15, relativeTo: .subheadline)
-        /// 빈 상태·안내 타이틀 (sans 15 medium · headline)
-        static let bodyEmphasis     = Theme.sans(15, weight: .medium, relativeTo: .headline)
-        /// 강조 블록 내 본문 (sans 14) — Detail etymology 블록
-        static let bodyBlock        = Theme.sans(14, relativeTo: .body)
-        /// 고지문·OFL 본문 (sans 14 · footnote)
-        static let bodyNotice       = Theme.sans(14, relativeTo: .footnote)
-        /// 자동완성 한 줄 미리보기 (sans 13 · caption)
-        static let bodyPreview      = Theme.sans(13, relativeTo: .caption)
-        /// 북마크 리스트 한 줄 미리보기 (sans 12 · caption)
-        static let bodyPreviewSmall = Theme.sans(12, relativeTo: .caption)
+        /// Settings 항목 라벨 (HIG body)
+        static let bodyLarge        = Font.system(.body)
+        /// 일반 본문 — Detail namingReason, Onboarding 서브타이틀
+        static let body             = Font.system(.body)
+        /// Detail summary 전용 (subheadline)
+        static let bodySub          = Font.system(.subheadline)
+        /// 빈 상태·안내 타이틀 (headline · semibold)
+        static let bodyEmphasis     = Font.system(.headline)
+        /// 강조 블록 내 본문 — Detail etymology(가장 길게 흐르는 본문)
+        static let bodyBlock        = Font.system(.body)
+        /// 고지문·OFL 본문 (footnote)
+        static let bodyNotice       = Font.system(.footnote)
+        /// 자동완성 한 줄 미리보기 (subheadline)
+        static let bodyPreview      = Font.system(.subheadline)
+        /// 북마크 리스트 한 줄 미리보기 (caption)
+        static let bodyPreviewSmall = Font.system(.caption)
 
-        // MARK: 코드·모노 (강조)
+        // MARK: 영문 코드 (DM Mono — 키워드·고정폭 값·영문 뱃지)
 
         /// 로딩 시 용어명 헤더 (mono 18 medium · title3)
         static let codeHero         = Theme.mono(18, weight: .medium, relativeTo: .title3)
-        /// 리스트 행 용어명·CTA·라이선스 타이틀 (mono 15 medium · body)
+        /// 리스트 행 영문 용어명 (mono 15 medium · body)
         static let codeBody         = Theme.mono(15, weight: .medium, relativeTo: .body)
-        /// 액션 버튼·강조 라벨 (mono 12 medium · footnote) — 북마크·공유·AI 생성 고지
-        static let codeAction       = Theme.mono(12, weight: .medium, relativeTo: .footnote)
-        /// Settings SECTION 헤더 (mono 11 medium · caption2)
-        static let sectionHeader    = Theme.mono(11, weight: .medium, relativeTo: .caption2)
-
-        // MARK: 코드·모노 (일반)
-
-        /// 검색 입력필드·히스토리 행 용어명 (mono 15 · body)
+        /// 검색 입력필드·히스토리 행 영문 키워드 (mono 15 · body)
         static let codeInput        = Theme.mono(15, relativeTo: .body)
-        /// Settings 정보 행 값 (mono 13 · footnote)
+        /// Settings 정보 행 값(버전·빌드 번호) (mono 13 · footnote)
         static let codeValue        = Theme.mono(13, relativeTo: .footnote)
-        /// 힌트·서브타이틀·empty·칩 (mono 11 · footnote)
-        static let label            = Theme.mono(11, relativeTo: .footnote)
-        /// 섹션 라벨·뱃지·상대시간·보조 버튼 (mono 10 · caption2)
-        static let caption          = Theme.mono(10, relativeTo: .caption2)
+        /// 카테고리·AI 뱃지(영문 라벨) (mono 10 medium · caption2)
+        static let badge            = Theme.mono(10, weight: .medium, relativeTo: .caption2)
+
+        // MARK: 한글 라벨 (시스템 폰트)
+
+        /// 액션 버튼·강조 라벨 — 북마크·공유·AI 생성 고지 (footnote medium)
+        static let codeAction       = Font.system(.footnote, weight: .medium)
+        /// Settings SECTION 헤더 (footnote medium)
+        static let sectionHeader    = Font.system(.footnote, weight: .medium)
+        /// 힌트·서브타이틀·empty·칩 (footnote)
+        static let label            = Font.system(.footnote)
+        /// 섹션 라벨·상대시간·보조 버튼 (caption2)
+        static let caption          = Font.system(.caption2)
     }
 }
