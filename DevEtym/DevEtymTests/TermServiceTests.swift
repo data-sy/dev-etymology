@@ -9,6 +9,7 @@ final class TermServiceTests: XCTestCase {
     private var context: ModelContext!
     private var bundleMock: MockBundleDBService!
     private var apiMock: MockClaudeAPIService!
+    private var analyticsMock: MockAnalyticsService!
     private var service: TermService!
 
     override func setUp() async throws {
@@ -28,10 +29,12 @@ final class TermServiceTests: XCTestCase {
             )
         ])
         apiMock = MockClaudeAPIService()
+        analyticsMock = MockAnalyticsService()
         service = TermService(
             modelContext: context,
             bundleDBService: bundleMock,
-            claudeAPIService: apiMock
+            claudeAPIService: apiMock,
+            analyticsService: analyticsMock
         )
     }
 
@@ -333,5 +336,92 @@ final class TermServiceTests: XCTestCase {
         if let first = firstDate, let updated = history.first?.searchedAt {
             XCTAssertGreaterThan(updated, first)
         }
+    }
+
+    // MARK: - Analytics 이벤트 기록
+
+    func test_fetch_bundleHit_logsBundleHit() async throws {
+        _ = try await service.fetch(keyword: "mutex")
+        XCTAssertEqual(
+            analyticsMock.recordedSearches,
+            [RecordedSearch(keyword: "mutex", resultType: .bundleHit)]
+        )
+        XCTAssertTrue(analyticsMock.recordedErrors.isEmpty)
+    }
+
+    func test_fetch_aiGenerated_logsAiGenerated() async throws {
+        apiMock.result = .success(aiEntry())
+        _ = try await service.fetch(keyword: "goroutine")
+        XCTAssertEqual(
+            analyticsMock.recordedSearches,
+            [RecordedSearch(keyword: "goroutine", resultType: .aiGenerated)]
+        )
+    }
+
+    func test_fetch_aiCacheHit_logsAiGenerated() async throws {
+        apiMock.result = .success(aiEntry())
+        _ = try await service.fetch(keyword: "goroutine")
+        analyticsMock.recordedSearches.removeAll()
+        apiMock.generateCalls.removeAll()
+
+        // 2회차: SwiftData 캐시 경유 — 여전히 aiGenerated로 기록
+        _ = try await service.fetch(keyword: "goroutine")
+        XCTAssertTrue(apiMock.generateCalls.isEmpty)
+        XCTAssertEqual(
+            analyticsMock.recordedSearches,
+            [RecordedSearch(keyword: "goroutine", resultType: .aiGenerated)]
+        )
+    }
+
+    func test_fetch_notDevTerm_logsNotDevTerm() async throws {
+        apiMock.result = .failure(ClaudeAPIError.notDevTerm)
+        _ = try await service.fetch(keyword: "사과")
+        XCTAssertEqual(
+            analyticsMock.recordedSearches,
+            [RecordedSearch(keyword: "사과", resultType: .notDevTerm)]
+        )
+        XCTAssertTrue(analyticsMock.recordedErrors.isEmpty)
+    }
+
+    func test_fetch_possibleTypo_logsPossibleTypo() async throws {
+        apiMock.result = .failure(ClaudeAPIError.possibleTypo(suggestion: "mutex"))
+        _ = try await service.fetch(keyword: "mutx")
+        XCTAssertEqual(
+            analyticsMock.recordedSearches,
+            [RecordedSearch(keyword: "mutx", resultType: .possibleTypo)]
+        )
+        XCTAssertTrue(analyticsMock.recordedErrors.isEmpty)
+    }
+
+    func test_fetch_timeout_logsErrorAndRethrows() async {
+        apiMock.result = .failure(ClaudeAPIError.timeout)
+        do {
+            _ = try await service.fetch(keyword: "goroutine")
+            XCTFail("에러 throw 기대")
+        } catch let error as ClaudeAPIError {
+            XCTAssertEqual(error, .timeout)
+        } catch {
+            XCTFail("예상치 못한 에러: \(error)")
+        }
+        XCTAssertEqual(
+            analyticsMock.recordedErrors,
+            [RecordedError(keyword: "goroutine", errorType: .timeout)]
+        )
+        XCTAssertTrue(analyticsMock.recordedSearches.isEmpty)
+    }
+
+    func test_fetch_invalidAPIKey_logsErrorAndRethrows() async {
+        apiMock.result = .failure(ClaudeAPIError.invalidAPIKey)
+        _ = try? await service.fetch(keyword: "goroutine")
+        XCTAssertEqual(
+            analyticsMock.recordedErrors,
+            [RecordedError(keyword: "goroutine", errorType: .invalidAPIKey)]
+        )
+    }
+
+    func test_fetch_emptyInput_skipsAllAnalytics() async throws {
+        _ = try await service.fetch(keyword: "   ")
+        XCTAssertTrue(analyticsMock.recordedSearches.isEmpty)
+        XCTAssertTrue(analyticsMock.recordedErrors.isEmpty)
     }
 }

@@ -7,10 +7,20 @@ private struct TermServiceKey: EnvironmentKey {
     static let defaultValue: any TermServiceProtocol = PlaceholderTermService()
 }
 
+private struct AnalyticsServiceKey: EnvironmentKey {
+    @MainActor
+    static let defaultValue: any AnalyticsServiceProtocol = PlaceholderAnalyticsService()
+}
+
 extension EnvironmentValues {
     var termService: any TermServiceProtocol {
         get { self[TermServiceKey.self] }
         set { self[TermServiceKey.self] = newValue }
+    }
+
+    var analyticsService: any AnalyticsServiceProtocol {
+        get { self[AnalyticsServiceKey.self] }
+        set { self[AnalyticsServiceKey.self] = newValue }
     }
 }
 
@@ -25,4 +35,15 @@ private final class PlaceholderTermService: TermServiceProtocol {
     func recentSearches(limit: Int) -> [SearchHistory] { [] }
     func deleteSearchHistory(_ keyword: String) throws {}
     func clearAllSearchHistory() throws {}
+}
+
+/// Firebase 없이 동작하는 더미 — Preview/기본값/테스트에서 no-op
+/// TermService init의 기본 파라미터로도 쓰이므로 internal 접근과 nonisolated init을 사용
+@MainActor
+final class PlaceholderAnalyticsService: AnalyticsServiceProtocol {
+    var consentGiven: Bool = false
+    nonisolated init() {}
+    func logSearch(keyword: String, resultType: SearchResultType) {}
+    func logError(keyword: String, errorType: AnalyticsErrorType) {}
+    func appInstanceID() async -> String? { nil }
 }

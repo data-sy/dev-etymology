@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EBA442D42F9A521800C28BFF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = EBA442D32F9A521800C28BFF /* FirebaseAnalytics */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		EBE5638B2F8E7C5A0075247E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -67,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBA442D42F9A521800C28BFF /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +134,7 @@
 			);
 			name = DevEtym;
 			packageProductDependencies = (
+				EBA442D32F9A521800C28BFF /* FirebaseAnalytics */,
 			);
 			productName = DevEtym;
 			productReference = EBE5637B2F8E7C580075247E /* DevEtym.app */;
@@ -212,6 +218,9 @@
 			);
 			mainGroup = EBE563722F8E7C580075247E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EBA442D22F9A521800C28BFF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EBE5637C2F8E7C580075247E /* Products */;
 			projectDirPath = "";
@@ -636,6 +645,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EBA442D22F9A521800C28BFF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.12.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EBA442D32F9A521800C28BFF /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EBA442D22F9A521800C28BFF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EBE563732F8E7C580075247E /* Project object */;
 }

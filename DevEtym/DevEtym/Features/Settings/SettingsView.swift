@@ -4,6 +4,7 @@ import StoreKit
 struct SettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: Int = 2
     @Environment(\.requestReview) private var requestReview
+    @Environment(\.analyticsService) private var analyticsService
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "-"
@@ -13,12 +14,21 @@ struct SettingsView: View {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "-"
     }
 
+    /// Toggle 상태를 AnalyticsService.consentGiven과 양방향으로 묶는 Binding
+    private var consentBinding: Binding<Bool> {
+        Binding(
+            get: { analyticsService.consentGiven },
+            set: { analyticsService.consentGiven = $0 }
+        )
+    }
+
     var body: some View {
         NavigationStack {
             List {
                 appearanceSection
                 appInfoSection
                 supportSection
+                dataCollectionSection
                 legalSection
             }
             .scrollContentBackground(.hidden)
@@ -101,28 +111,41 @@ struct SettingsView: View {
         .listRowBackground(Theme.Palette.surface)
     }
 
-    // MARK: - 법적 고지
+    // MARK: - 데이터 수집 (PIPA 옵트인)
 
-    private var legalSection: some View {
+    private var dataCollectionSection: some View {
         Section {
-            NavigationLink {
-                openSourceLicenseView
-            } label: {
+            Toggle(isOn: consentBinding) {
                 Label {
-                    Text("오픈소스 라이선스")
+                    Text("데이터 수집 동의")
                         .font(Theme.sans(14, relativeTo: .body))
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
-                    Image(systemName: "doc.text")
+                    Image(systemName: "chart.bar.doc.horizontal")
                         .foregroundStyle(Theme.Palette.accent)
                         .accessibilityHidden(true)
                 }
             }
-            .accessibilityLabel("오픈소스 라이선스 보기")
+            .tint(Theme.Palette.accent)
+            .accessibilityLabel("데이터 수집 동의 토글")
+            .accessibilityHint("끄면 이후 분석 이벤트가 수집되지 않습니다")
 
-            aiDisclaimerRow
+            NavigationLink {
+                appInstanceIDView
+            } label: {
+                Label {
+                    Text("내 식별자 보기")
+                        .font(Theme.sans(14, relativeTo: .body))
+                        .foregroundStyle(Theme.Palette.text)
+                } icon: {
+                    Image(systemName: "person.text.rectangle")
+                        .foregroundStyle(Theme.Palette.accent)
+                        .accessibilityHidden(true)
+                }
+            }
+            .accessibilityLabel("내 익명 디바이스 식별자 보기")
 
-            if let privacyURL = URL(string: "https://example.com/privacy") {
+            if let privacyURL = URL(string: AppConfig.privacyPolicyURL) {
                 Link(destination: privacyURL) {
                     Label {
                         HStack {
@@ -143,6 +166,36 @@ struct SettingsView: View {
                 }
                 .accessibilityLabel("개인정보 처리방침 열기")
             }
+        } header: {
+            sectionHeader("데이터 수집")
+        } footer: {
+            Text("번들 사전 확장 우선순위에 반영하기 위한 익명 이용 데이터만 수집합니다.")
+                .font(Theme.sans(11, relativeTo: .caption2))
+                .foregroundStyle(Theme.Palette.textMuted)
+        }
+        .listRowBackground(Theme.Palette.surface)
+    }
+
+    // MARK: - 법적 고지
+
+    private var legalSection: some View {
+        Section {
+            NavigationLink {
+                openSourceLicenseView
+            } label: {
+                Label {
+                    Text("오픈소스 라이선스")
+                        .font(Theme.sans(14, relativeTo: .body))
+                        .foregroundStyle(Theme.Palette.text)
+                } icon: {
+                    Image(systemName: "doc.text")
+                        .foregroundStyle(Theme.Palette.accent)
+                        .accessibilityHidden(true)
+                }
+            }
+            .accessibilityLabel("오픈소스 라이선스 보기")
+
+            aiDisclaimerRow
         } header: {
             sectionHeader("법적 고지")
         }
@@ -174,7 +227,7 @@ struct SettingsView: View {
     @ViewBuilder
     private func mailLink(title: String, icon: String, subject: String) -> some View {
         let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? subject
-        let urlString = "mailto:\(Constants.reportEmail)?subject=\(encodedSubject)"
+        let urlString = "mailto:\(AppConfig.supportEmail)?subject=\(encodedSubject)"
         if let url = URL(string: urlString) {
             Link(destination: url) {
                 Label {
@@ -210,6 +263,15 @@ struct SettingsView: View {
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
+    }
+
+    /// App Instance ID를 표시하고 클립보드 복사를 제공하는 화면
+    /// 과거 이벤트 삭제 요청 메일에 이 ID를 첨부하도록 안내한다.
+    private var appInstanceIDView: some View {
+        AppInstanceIDView(fetchID: { await analyticsService.appInstanceID() })
+            .background(Theme.Palette.bg)
+            .navigationTitle("내 식별자")
+            .navigationBarTitleDisplayMode(.inline)
     }
 
     private var openSourceLicenseView: some View {
@@ -272,4 +334,77 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .preferredColorScheme(.dark)
+}
+
+// MARK: - 내 식별자 화면
+
+/// Firebase App Instance ID를 비동기로 받아 표시하고 복사 버튼을 제공
+private struct AppInstanceIDView: View {
+    let fetchID: () async -> String?
+
+    @State private var instanceID: String?
+    @State private var isLoading = true
+    @State private var didCopy = false
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                descriptionText
+                idCard
+                Text("과거 이벤트 삭제를 요청하시려면 \(AppConfig.supportEmail)으로 위 식별자를 포함하여 메일을 보내주세요. 앱을 삭제하면 이 ID는 무효화되며 재설치 시 새로 발급됩니다.")
+                    .font(Theme.sans(12, relativeTo: .footnote))
+                    .foregroundStyle(Theme.Palette.textDim)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(18)
+        }
+        .task {
+            instanceID = await fetchID()
+            isLoading = false
+        }
+    }
+
+    private var descriptionText: some View {
+        Text("이 기기에 발급된 익명 디바이스 식별자입니다. 사용자의 이름·이메일 등과 연결되지 않습니다.")
+            .font(Theme.sans(13, relativeTo: .body))
+            .foregroundStyle(Theme.Palette.text)
+            .lineSpacing(3)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    @ViewBuilder
+    private var idCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else if let id = instanceID {
+                Text(id)
+                    .font(Theme.mono(13, relativeTo: .body))
+                    .foregroundStyle(Theme.Palette.text)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                Button {
+                    UIPasteboard.general.string = id
+                    didCopy = true
+                } label: {
+                    Label(didCopy ? "복사됨" : "클립보드에 복사",
+                          systemImage: didCopy ? "checkmark" : "doc.on.doc")
+                        .font(Theme.sans(12, weight: .medium, relativeTo: .footnote))
+                        .foregroundStyle(Theme.Palette.accent)
+                }
+                .accessibilityLabel("식별자를 클립보드에 복사")
+            } else {
+                Text("식별자를 가져올 수 없습니다. 데이터 수집 동의 후 앱을 재시작하면 발급됩니다.")
+                    .font(Theme.sans(12, relativeTo: .footnote))
+                    .foregroundStyle(Theme.Palette.textMuted)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.Palette.surface2)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
 }

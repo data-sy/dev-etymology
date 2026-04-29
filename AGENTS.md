@@ -205,39 +205,26 @@ git worktree add ../devetym-<agent-name> -b feat/<branch-name>
 
 샘플 후보: `deadlock`, `binary-tree`, `tcp`, `crud`, `singleton`, `debug`, `hash`, `cursor`, `decorator`, `kernel` (few-shot 예시인 mutex/jpa/daemon은 공정 비교 불가라 제외).
 
-### analytics — 검색 키워드 수집 (services → settings 순차)
+### analytics — ✅ 완료 (`feat/analytics`, 2026-04-23)
 
-출시 후 실제로 어떤 용어가 검색되는지 파악하여 번들 DB 확장 우선순위에 반영.
+출시 후 어떤 용어가 검색되는지 파악해 번들 DB 확장 우선순위에 반영하기 위한 인프라.
+services + settings를 단일 브랜치(`feat/analytics`)로 묶어서 작업 완료.
 
-**확정 사항 (2026-04-21):**
-- **백엔드**: Firebase Analytics (SDK는 Swift Package Manager로 추가)
-- **수집 범위**: 검색 키워드, 시각, 결과 종류(번들/AI/notDevTerm/possibleTypo), 오류 종류, Firebase App Instance ID(익명)
-- **옵트인 전략**: 첫 실행 시 다이얼로그로 명시 동의 — 한국 PIPA 준수
-- **개인정보 처리방침 초안**: `docs/privacy-policy.md`
+**완료된 항목**
+- Firebase Analytics SDK 연동 (`FirebaseApp.configure()`, Swift Package)
+- `AnalyticsService` + `AnalyticsServiceProtocol` (@MainActor, AnyObject, EnvironmentKey 주입)
+- `TermService.fetch()` 결과별·오류별 이벤트 송신 (`search`, `search_error`)
+- 온보딩 2페이지 확장 — 1) 인트로 2) PIPA 동의 화면 (허용/거부)
+- 설정 탭 "데이터 수집" 섹션 — 토글·내 식별자 보기(App Instance ID 복사)·처리방침 링크
+- 개인정보 처리방침 GitHub Pages 배선 (`docs/_config.yml`, front matter)
+- 외부 접점 설정을 `AppConfig.swift`로 분리 (플레이스홀더는 `// TODO(태그):` 주석)
+- 테스트: `AnalyticsServiceTests`, `TermServiceTests`(분석 로깅 분기) + `MockAnalyticsService`
 
-**services 담당 (선행 — `feat/analytics-infra`)**
-- `DevEtym/DevEtym/Services/AnalyticsService.swift` (신규) + `AnalyticsServiceProtocol.swift` — `@MainActor` 준수
-- `DevEtym/DevEtym/App/DevEtymApp.swift` — `FirebaseApp.configure()` 호출, EnvironmentKey 주입
-- `DevEtym/DevEtym/Services/TermService.swift` — `fetch()` 결과별 트래킹 이벤트 송신
-- `DevEtym/DevEtym/Utils/EnvironmentKeys.swift` — AnalyticsService 주입 키 추가
-- `DevEtym/DevEtym/Utils/Constants.swift` — 동의 `UserDefaults` 키 상수(예: `analyticsConsentKey`)
-- `DevEtym/DevEtymTests/AnalyticsServiceTests.swift` + `Mocks/MockAnalyticsService.swift`
-- Xcode Package Dependencies에 `firebase-ios-sdk` 추가 (수동 GUI 작업, 에이전트 대신 사용자 수행)
-
-**settings 담당 (후속 — `feat/analytics-consent-ui`)**
-- `DevEtym/DevEtym/Features/Onboarding/OnboardingView.swift` — 첫 실행 시 "데이터 수집 동의" 화면 추가 (기존 온보딩에 이어서)
-- `DevEtym/DevEtym/Features/Settings/SettingsView.swift` — "데이터 수집" 섹션 (토글 + "내 식별자 보기" 링크 + "처리방침" 링크)
-- 처리방침 텍스트를 앱 내에서 표시할지 외부 URL로 링크할지 결정 (배포 전 GitHub Pages 등에 호스팅하는 방향 권장)
-
-**사용자 수동 전제 조건 (에이전트가 못 하는 부분)**
-- Firebase Console에서 iOS 앱 등록 → `GoogleService-Info.plist` 다운로드 → Xcode 프로젝트에 추가
-- Xcode에서 `firebase-ios-sdk` Swift Package 추가 (File → Add Package Dependencies)
-- `docs/privacy-policy.md` 내용을 최종 URL에 호스팅 (GitHub Pages, Notion, 자체 사이트 등)
-
-**머지 순서**
-1. services 에이전트 작업 → PR → main 머지
-2. 사용자 수동 작업 (Firebase 콘솔, Xcode 패키지)
-3. settings 에이전트 작업 → PR → main 머지
+**머지 후 · 출시 전 남은 수동 작업**
+- [ ] GitHub Repository Settings → Pages → Source: `main /docs` 활성화
+- [ ] Firebase DebugView로 이벤트 수신 확인 (Scheme에 `-FIRDebugEnabled` argument)
+- [ ] 출시 전 `AppConfig.supportEmail` 실제 값으로 교체 — `grep -rn "TODO(" DevEtym docs` 로 확인
+- [ ] 처리방침의 연락처 이메일(`docs/privacy-policy.md`)도 함께 교체
 
 ---
 
