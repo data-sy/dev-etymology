@@ -49,7 +49,7 @@ struct SettingsView: View {
             } label: {
                 Label {
                     Text("화면 모드")
-                        .font(Theme.Typography.bodyLarge)
+                        .typoBodyLarge()
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: "circle.lefthalf.filled")
@@ -91,7 +91,7 @@ struct SettingsView: View {
             } label: {
                 Label {
                     Text("앱 평가하기")
-                        .font(Theme.Typography.bodyLarge)
+                        .typoBodyLarge()
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: "star")
@@ -150,7 +150,7 @@ struct SettingsView: View {
                     Label {
                         HStack {
                             Text("개인정보 처리방침")
-                                .font(Theme.Typography.bodyLarge)
+                                .typoBodyLarge()
                                 .foregroundStyle(Theme.Palette.text)
                             Spacer()
                             Image(systemName: "arrow.up.right")
@@ -185,7 +185,7 @@ struct SettingsView: View {
             } label: {
                 Label {
                     Text("오픈소스 라이선스")
-                        .font(Theme.Typography.bodyLarge)
+                        .typoBodyLarge()
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: "doc.text")
@@ -206,7 +206,7 @@ struct SettingsView: View {
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(Theme.Typography.sectionHeader)
+            .typoSectionHeader()
             .foregroundStyle(Theme.Palette.accent)
             .textCase(.uppercase)
     }
@@ -214,11 +214,11 @@ struct SettingsView: View {
     private func infoRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(Theme.Typography.bodyLarge)
+                .typoBodyLarge()
                 .foregroundStyle(Theme.Palette.text)
             Spacer()
             Text(value)
-                .font(Theme.Typography.codeValue)
+                .typoCodeValue()
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .accessibilityElement(children: .combine)
@@ -232,7 +232,7 @@ struct SettingsView: View {
             Link(destination: url) {
                 Label {
                     Text(title)
-                        .font(Theme.Typography.bodyLarge)
+                        .typoBodyLarge()
                         .foregroundStyle(Theme.Palette.text)
                 } icon: {
                     Image(systemName: icon)
@@ -248,7 +248,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 6) {
             Label {
                 Text("AI 생성 고지")
-                    .font(Theme.Typography.codeAction)
+                    .typoCodeAction()
                     .foregroundStyle(Theme.Palette.accentAI)
             } icon: {
                 Image(systemName: "sparkles")
@@ -256,7 +256,7 @@ struct SettingsView: View {
                     .accessibilityHidden(true)
             }
             Text("이 앱의 모든 어원 설명은 AI(Claude)가 생성합니다. 부정확한 내용이 포함될 수 있습니다.")
-                .font(Theme.Typography.bodyNotice)
+                .typoBodyNotice()
                 .foregroundStyle(Theme.Palette.textDim)
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
@@ -278,10 +278,10 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("DM Sans / DM Mono / DM Serif Display")
-                    .font(Theme.Typography.codeBody)
+                    .typoCodeBody()
                     .foregroundStyle(Theme.Palette.text)
                 Text(oflLicenseText)
-                    .font(Theme.Typography.bodyNotice)
+                    .typoBodyNotice()
                     .foregroundStyle(Theme.Palette.textDim)
                     .lineSpacing(3)
             }

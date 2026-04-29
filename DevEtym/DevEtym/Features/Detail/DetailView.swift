@@ -56,12 +56,12 @@ struct DetailView: View {
     private var loadingView: some View {
         VStack(spacing: 14) {
             Text(keyword)
-                .font(Theme.Typography.codeHero)
+                .typoCodeHero()
                 .foregroundStyle(Theme.Palette.accent)
             ProgressView()
                 .tint(Theme.Palette.accent)
             Text("어원을 분석하는 중...")
-                .font(Theme.Typography.label)
+                .typoLabel()
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -91,9 +91,8 @@ struct DetailView: View {
                     etymologyBlock(entry.etymology)
                     sectionLabel("왜 이 이름인가")
                     Text(entry.namingReason)
-                        .font(Theme.Typography.body)
+                        .typoBody()
                         .foregroundStyle(Theme.Palette.textDim)
-                        .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
                     actionRow(entry: entry)
                 }
@@ -107,7 +106,7 @@ struct DetailView: View {
     private func headerBlock(entry: TermEntry, source: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(entry.keyword)
-                .font(Theme.Typography.titleHero)
+                .typoTitleHero()
                 .foregroundStyle(Theme.Palette.text)
             HStack(spacing: 6) {
                 categoryBadge(entry.category)
@@ -117,7 +116,7 @@ struct DetailView: View {
             }
             if !entry.summary.isEmpty {
                 Text(entry.summary)
-                    .font(Theme.Typography.bodySub)
+                    .typoBodySub()
                     .foregroundStyle(Theme.Palette.textDim)
                     .padding(.top, 4)
             }
@@ -126,43 +125,41 @@ struct DetailView: View {
 
     private func categoryBadge(_ category: String) -> some View {
         Text(CategoryDisplay.formatted(category).uppercased())
-            .font(Theme.Typography.badge)
-            .tracking(0.6)
+            .typoBadge()
             .foregroundStyle(Theme.Palette.accent)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .background(
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(Theme.Palette.accent.opacity(0.08))
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Theme.Palette.accent.opacity(0.12))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(Theme.Palette.accent.opacity(0.2), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Theme.Palette.accent.opacity(0.28), lineWidth: 1)
             )
             .accessibilityLabel("카테고리 \(category)")
     }
 
     private var aiBadge: some View {
         Text("✦ AI 생성")
-            .font(Theme.Typography.badge)
-            .tracking(0.6)
+            .typoBadgeAI()
             .foregroundStyle(Theme.Palette.accentAI)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .background(
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(Theme.Palette.accentAI.opacity(0.08))
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Theme.Palette.accentAI.opacity(0.12))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(Theme.Palette.accentAI.opacity(0.25), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Theme.Palette.accentAI.opacity(0.28), lineWidth: 1)
             )
             .accessibilityLabel("이 설명은 AI가 생성한 결과입니다")
     }
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(Theme.Typography.caption)
+            .typoCaption()
             .tracking(1.2)
             .foregroundStyle(Theme.Palette.textMuted)
     }
@@ -174,12 +171,11 @@ struct DetailView: View {
                 .frame(width: 2)
             VStack(alignment: .leading, spacing: 0) {
                 Text(text)
-                    .font(Theme.Typography.bodyBlock)
+                    .typoBodyBlock()
                     .foregroundStyle(Theme.Palette.textDim)
-                    .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 12)
             }
         }
         .background(Theme.Palette.surface2)
@@ -193,7 +189,7 @@ struct DetailView: View {
             } label: {
                 Label(viewModel.isBookmarked ? "북마크 해제" : "북마크",
                       systemImage: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
-                    .font(Theme.Typography.codeAction)
+                    .typoCodeAction()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
             }
@@ -209,7 +205,7 @@ struct DetailView: View {
 
             ShareLink(item: shareText(entry: entry)) {
                 Label("공유", systemImage: "square.and.arrow.up")
-                    .font(Theme.Typography.codeAction)
+                    .typoCodeAction()
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
             }
@@ -238,13 +234,13 @@ struct DetailView: View {
                 .foregroundStyle(Theme.Palette.textMuted)
                 .accessibilityHidden(true)
             Text("개발 용어를 검색해주세요")
-                .font(Theme.Typography.bodyEmphasis)
+                .typoBodyEmphasis()
                 .foregroundStyle(Theme.Palette.text)
             Button {
                 dismiss()
             } label: {
                 Text("검색으로 돌아가기")
-                    .font(Theme.Typography.codeAction)
+                    .typoCodeAction()
                     .padding(.horizontal, 18)
                     .padding(.vertical, 10)
                     .foregroundStyle(Theme.Palette.accent)
@@ -265,13 +261,13 @@ struct DetailView: View {
                 .foregroundStyle(Theme.Palette.accent)
                 .accessibilityHidden(true)
             Text("\(suggestion)을(를) 찾으셨나요?")
-                .font(Theme.Typography.bodyEmphasis)
+                .typoBodyEmphasis()
                 .foregroundStyle(Theme.Palette.text)
             Button {
                 onSelectSuggestion?(suggestion)
             } label: {
                 Text(suggestion)
-                    .font(Theme.Typography.codeBody)
+                    .typoCodeBody()
                     .padding(.horizontal, 22)
                     .padding(.vertical, 10)
                     .foregroundStyle(Theme.Palette.bg)
@@ -282,7 +278,7 @@ struct DetailView: View {
             }
             .accessibilityLabel("추천 용어 \(suggestion) 검색")
             Button("아니요, 돌아가기") { dismiss() }
-                .font(Theme.Typography.label)
+                .typoLabel()
                 .foregroundStyle(Theme.Palette.textMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -298,7 +294,7 @@ struct DetailView: View {
             if let url = reportMailtoURL(entry: entry) {
                 Link(destination: url) {
                     Label("이 설명이 잘못됐나요? 오류 제보하기", systemImage: "envelope")
-                        .font(Theme.Typography.label)
+                        .typoLabel()
                         .foregroundStyle(Theme.Palette.textMuted)
                 }
                 .padding(.vertical, 12)

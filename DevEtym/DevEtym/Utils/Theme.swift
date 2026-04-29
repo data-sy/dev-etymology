@@ -123,8 +123,12 @@ enum Theme {
         static let codeInput        = Theme.mono(17, relativeTo: .body)
         /// Settings 정보 행 값(버전·빌드 번호) (mono 15 · footnote)
         static let codeValue        = Theme.mono(15, relativeTo: .footnote)
-        /// 카테고리·AI 뱃지(영문 라벨) (mono 11 medium · caption2)
-        static let badge            = Theme.mono(11, weight: .medium, relativeTo: .caption2)
+        /// 카테고리 뱃지(영문 약어 — DB, PATTERNS) (mono 12 medium · caption2)
+        static let badge            = Theme.mono(12, weight: .medium, relativeTo: .caption2)
+        /// AI 뱃지(한글 섞임 — "✦ AI 생성") — SF caption semibold
+        static let badgeAI          = Font.system(.caption, weight: .semibold)
+        /// 칩(영문 키워드) — FlowChips (mono 13 medium · footnote)
+        static let codeChip         = Theme.mono(13, weight: .medium, relativeTo: .footnote)
 
         // MARK: 한글 라벨 (시스템 폰트)
 

@@ -190,7 +190,9 @@ struct TypographyDebugView: View {
                 tokenRow("codeBody",         spec: "DM Mono 17 medium",        font: Theme.Typography.codeBody)
                 tokenRow("codeInput",        spec: "DM Mono 17",               font: Theme.Typography.codeInput)
                 tokenRow("codeValue",        spec: "DM Mono 15",               font: Theme.Typography.codeValue)
-                tokenRow("badge",            spec: "DM Mono 11 medium",        font: Theme.Typography.badge)
+                tokenRow("codeChip",         spec: "DM Mono 13 medium",        font: Theme.Typography.codeChip)
+                tokenRow("badge",            spec: "DM Mono 12 medium",        font: Theme.Typography.badge)
+                tokenRow("badgeAI",          spec: "SF .caption semibold",     font: Theme.Typography.badgeAI)
             }
             Group {
                 tokenRow("codeAction",       spec: "SF .callout medium (16)",  font: Theme.Typography.codeAction)

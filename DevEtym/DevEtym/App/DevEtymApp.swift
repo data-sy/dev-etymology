@@ -14,7 +14,7 @@ struct DevEtymApp: App {
         FirebaseApp.configure()
         #if DEBUG
         // 타이포그래피 적용 검증용 임시 마커. 머지 전 제거.
-        print("[DEVETYM-BUILD] phase=baseline-17pt · body=SF.body(17) · code*=mono17 · label=SF.subheadline(15)")
+        print("[DEVETYM-BUILD] phase=design-pass · ViewModifier 토큰화 · textDim #B4 · badge mono12 sb · etymology lineSpacing 7")
         #endif
         do {
             modelContainer = try ModelContainer(for: Term.self, SearchHistory.self)
