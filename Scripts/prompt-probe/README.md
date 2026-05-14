@@ -28,10 +28,31 @@ devetym_v2_probe/
 
 ### 1. 환경 준비
 
+가상환경(macOS Homebrew Python 등 PEP 668 환경에서는 필수, 그 외 환경에서도 의존성 격리상 권장):
+
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+활성화된 venv 안에서는 `python` / `pip`가 자동으로 `.venv`의 python3·pip3를 가리킴. 새 셸 세션에서 다시 돌리려면 `source .venv/bin/activate` 한 번만.
+
+API 키 — Anthropic 콘솔 발급 키를 셸 환경변수로:
+
+```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
+
+DevEtym repo가 `DevEtym/Config.xcconfig`로 키를 이미 관리하고 있다면 한 줄로 추출 가능 (이 디렉토리, 즉 `Scripts/prompt-probe/`에서 실행 가정):
+
+```bash
+export ANTHROPIC_API_KEY=$(awk '/^CLAUDE_API_KEY/ {print $3}' ../../DevEtym/Config.xcconfig)
+echo ${ANTHROPIC_API_KEY:0:7}   # sk-ant- 로 시작하는지 확인
+```
+
+> `CLAUDE_API_KEY = <값>` 형식이라 공백 split만으로 `$3`이 값. `-F`·`gsub` 같은 구분자·escape 처리 불필요.
+> 위 한 줄을 복사할 때 줄바꿈이 끼면 zsh가 multi-line 입력 모드에 들어가니, 줄바꿈 없는 한 줄 그대로 붙여넣을 것.
 
 ### 2. Sanity check 먼저 (API 호출 없음)
 
