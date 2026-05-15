@@ -62,6 +62,19 @@ GOAL_AND_TOOL_SECTION = """
 
 
 # ──────────────────────────────────────────────────────────────────
+# null_guard — v2 production에서 [도구 선택] 섹션 끝에 추가된 보호 룰.
+# v2 ship 시점부터 *항상 켜진 baseline*이므로 build.py에서 hardcode로
+# 항상 GOAL_AND_TOOL_SECTION 뒤에 부착. factorial 차원이 아님.
+# ──────────────────────────────────────────────────────────────────
+
+NULL_GUARD_EXTRA = (
+    "\n- 입력 문자열이 'null', 'undefined', 'void', 'None', 'nil', 'NaN' "
+    "같은 프로그래밍 예약어인 경우, 빈 입력으로 해석하지 말고 "
+    "return_term_entry로 처리하세요."
+)
+
+
+# ──────────────────────────────────────────────────────────────────
 # alias_strict — 한정 수식어 변형 부정 예시. 약점 3.
 # use_alias_strict=True일 때 aliases 룰 끝에 한 줄 삽입.
 # 줄바꿈 + 두 칸 들여쓰기로 기존 bullet 구조 유지.

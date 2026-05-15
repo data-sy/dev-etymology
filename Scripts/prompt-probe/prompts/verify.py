@@ -1,8 +1,11 @@
 """
-8 cell이 의도대로 조립됐는지 sanity check.
+활성화된 cell이 의도대로 조립됐는지 sanity check.
 
 측정 시작 전 항상 실행해 prompt assembly 버그로 측정 무효화되는 사고를 방지.
 독립 실행도 가능: `python -m prompts.verify`
+
+활성 cell 수는 build.py의 CELL_CONFIGS 길이에 따라 결정됨 (8 cell factorial
+전체일 수도 있고, acceptance 측정처럼 일부만 활성일 수도 있음).
 """
 
 import hashlib
@@ -38,10 +41,11 @@ def verify_cells() -> bool:
                     f"[{name}] '{marker_key}' 꺼져 있는데 마커 발견: {marker_text!r}"
                 )
 
-    # 8 cell의 hash가 모두 unique한지 (중복 cell 없는지)
+    # 활성화된 cell의 hash가 모두 unique한지 (중복 cell 없는지)
+    n_cells = len(CELLS)
     hashes = {hashlib.sha256(p.encode("utf-8")).hexdigest(): name for name, p in CELLS.items()}
-    if len(hashes) != 8:
-        errors.append(f"중복 cell 발견: unique hash {len(hashes)}개 (8 기대)")
+    if len(hashes) != n_cells:
+        errors.append(f"중복 cell 발견: unique hash {len(hashes)}개 ({n_cells} 기대)")
 
     if errors:
         print("Sanity check FAILED:")
@@ -49,7 +53,7 @@ def verify_cells() -> bool:
             print(f"  - {e}")
         return False
 
-    print(f"Sanity check passed: 8 cells, all unique, all markers correct.")
+    print(f"Sanity check passed: {n_cells} cells, all unique, all markers correct.")
     print()
     print(f"{'cell':<45s} {'길이':>5s}  {'hash[:12]':>12s}")
     print("-" * 70)
