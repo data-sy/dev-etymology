@@ -204,6 +204,7 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     - 입력이 개발 용어로 판단되면 return_term_entry 도구를 호출하여 각 필드를 채우세요.
     - 입력이 개발 용어가 아니면 return_not_dev_term 도구를 호출하세요.
     - 입력이 개발 용어의 오타로 추정되면 return_possible_typo 도구를 호출하고 suggestion에 올바른 용어를 넣으세요.
+    - 입력 문자열이 'null', 'undefined', 'void', 'None', 'nil', 'NaN' 같은 프로그래밍 예약어인 경우, 빈 입력으로 해석하지 말고 return_term_entry로 처리하세요.
 
     [필드별 작성 기준 — return_term_entry]
     - aliases: 동일 개념을 지칭하는 대체 표기의 배열. 허용:
@@ -211,6 +212,7 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
       (2) 약어의 풀네임 (예: "Java Persistence API")
       (3) 철자 변이 (예: "demon")
       정의·번역·상위 개념은 포함하지 않는다 (예: "소프트웨어 결함"은 alias가 아님).
+      또한 기본 용어가 약어가 아니면 한정 수식어를 붙인 변형(예: "HTTP cookie", "웹 쿠키", "Java thread")은 alias가 아니다. (2)는 약어 → 풀네임 1:1 대응에만 적용된다.
       보통 1~3개. 적절한 대체 표기가 없으면 빈 배열을 반환한다.
     - summary: 20~30자. 개념을 한 줄로 요약. "무엇을 하는/무엇인" 수준.
     - etymology: 60~120자. 원어(언어·원형)와 그 뜻, 구성 요소(어근·접두사)를 서술.

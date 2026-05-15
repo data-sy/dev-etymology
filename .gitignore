@@ -79,4 +79,8 @@ Config.xcconfig
 # Firebase 설정 (프로젝트 ID·API 키 포함)
 GoogleService-Info.plist
 
-
+# Python (Scripts/prompt-probe 등 측정·생성 도구)
+__pycache__/
+*.pyc
+.venv/
+venv/
