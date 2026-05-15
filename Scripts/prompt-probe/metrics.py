@@ -79,16 +79,35 @@ def split_last_sentence(text: str) -> tuple[str, str]:
     return body, last
 
 
-def aliases_has_qualifier(aliases: list[str]) -> bool:
+def _is_acronym_expansion(alias: str, keyword: str) -> bool:
+    """alias가 keyword(약어)의 영어 풀네임인지 판단.
+
+    예: alias='Java Persistence API', keyword='jpa' → True (J·P·A 매칭)
+        alias='HTTP cookie', keyword='cookie' → False (단어 첫 글자 H·c ≠ c·o·o·k·i·e)
+    """
+    words = alias.strip().split()
+    keyword_lower = keyword.strip().lower()
+    if len(words) != len(keyword_lower) or len(words) < 2:
+        return False
+    return all(
+        w and w[0].isascii() and w[0].isalpha() and w[0].lower() == c
+        for w, c in zip(words, keyword_lower)
+    )
+
+
+def aliases_has_qualifier(aliases: list[str], keyword: str) -> bool:
     """aliases 배열에 한정 수식어 prefix 변형이 있는지 검출.
 
-    예: ['쿠키', 'HTTP cookie', '웹 쿠키'] → True (HTTP, 웹 prefix 검출)
+    영어 약어 풀네임은 v1 alias 룰 (2)에 부합하므로 검출 제외.
+    예: ['쿠키', 'HTTP cookie', '웹 쿠키'] → True
+        ['Java Persistence API', '자바 영속성 API'] → False (전자는 약어 풀네임)
         ['뮤텍스', 'mutual exclusion'] → False
     """
     if not aliases:
         return False
-
     for alias in aliases:
+        if _is_acronym_expansion(alias, keyword):
+            continue
         for q in QUALIFIER_PREFIXES:
             if alias.startswith(q):
                 return True
@@ -155,7 +174,7 @@ def compute_metrics(response_json: dict, expected: dict) -> dict:
         metrics["category"] = tool_input.get("category", "")
         metrics["aliases"] = " | ".join(aliases)  # CSV 친화적
         metrics["aliases_count"] = len(aliases)
-        metrics["aliases_has_qualifier"] = aliases_has_qualifier(aliases)
+        metrics["aliases_has_qualifier"] = aliases_has_qualifier(aliases, expected["keyword"])
 
         summary = tool_input.get("summary", "") or ""
         etymology = tool_input.get("etymology", "") or ""
