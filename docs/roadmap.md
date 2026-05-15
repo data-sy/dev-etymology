@@ -6,11 +6,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 ## Now — 진행 중
 
-- **[AI] 시스템 프롬프트 v2 라운드** — 브랜치 `feat/ai-prompt-upgrade`
-  - v1 라운드(`docs/ai-quality/handoff-v1.md`) 위에서 측정 기반 v2 진행
-  - 자료 준비 완료: `prompt-review-brief-v2.md`(§6 2026-04-30 실측 5개 + §7 가설), `claude-ai-opening-prompt-v2.md`, `Scripts/probe_prompt.py`
-  - 다음: Claude.ai 대화 라운드 → `handoff-v2.md` 산출 → `ClaudeAPIService.swift` 반영 → PR
-  - 완료 시 ADR로 라운드 의사결정 흡수 권장
+_(없음 — v2 라운드 완료. 다음 차례는 Next에서 승격)_
 
 ---
 
@@ -40,6 +36,13 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 날짜·PR 번호는 git history 기준. 자세한 변경 내역은 각 PR 또는 관련 ADR 참조.
 
+- **AI 시스템 프롬프트 v2 라운드** — 2026-05-13~16 (PR 준비 중)
+  - **Path A 채택**: `alias_strict` 처방 + `null guard` ([도구 선택] 본문)
+  - **명시적 비채택**: `closing`·`selfcheck`는 MVP latency·cost 부담으로 v3 카드 — launch 후 retention 데이터 보고 재검토
+  - 측정 인프라: factorial probe 도구(`Scripts/prompt-probe/`) — closing × selfcheck × alias_strict 직교성 검증
+  - acceptance probe(1-cell × 15 keyword, 2026-05-16_0049 run): 차단 조건 6/6 통과, `null` 분기 회귀 정상화 확인
+  - 상세: `docs/ai-quality/probe-analysis-v2.md`(§7·§8 의사결정 흐름), `docs/ai-quality/handoff-v2.md`(반영 지시서)
+  - 후속: ADR로 `handoff-v2.md` 흡수 권장
 - **타이포그래피 마무리** — 2026-04-30 (PR [#17](https://github.com/data-sy/dev-etymology/pull/17), [#18](https://github.com/data-sy/dev-etymology/pull/18))
 - **Analytics + 데이터 수집 동의 + AppConfig 분리** — 2026-04-29 (PR [#16](https://github.com/data-sy/dev-etymology/pull/16))
   - Firebase Analytics 연동, PIPA 동의 온보딩, 설정 탭 데이터 수집 섹션, 외부 접점 `AppConfig`로 분리
