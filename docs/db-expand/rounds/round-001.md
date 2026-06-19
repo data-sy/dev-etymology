@@ -4,7 +4,7 @@
 - keyword 리스트: priority-inversion, aba-problem, merkle-tree, persistent-data-structure, sni, hsts, sharding, materialized-view, command-pattern, aggregate-root
 - Generator 라운드 수: 2 (cycle 1 생성 → cycle 2 재생성)
 - 최종 통과율: 10/10
-- 라운드당 사람 손 시간: _(TBD — 스톱워치 값 입력 필요)_
+- 라운드당 사람 손 시간: ≈60분 (어림치). **결정: Phase 7 자동화 무조건 진행 예정** — 트리거(>5분) 충족, 정밀 측정 불요.
 - API 비용·latency (Phase 2B 샘플): 미측정 (Phase 2 진행 시)
 
 ### 검증 결과
@@ -48,6 +48,6 @@
 
 ### 상태
 - [x] round-001.json 저장 + validator 통과
-- [ ] 사람 손 시간 기록 (값 입력 대기)
+- [x] 사람 손 시간 기록 (≈60분, 자동화 진행 결정)
 - [ ] Phase 2 일관성 점검
 - [ ] Phase 3 머지 + iOS smoke test
