@@ -22,13 +22,13 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **B. Phase 2 일관성 점검** (머지 전 안전장치 — 통과 못 하면 Phase 1 회귀)
 - [x] [AI] (A) 기존 `terms.json` 카테고리별 sample vs 신규 10개 비교 → `round-001-consistency-A.md` — **PASS** (3 gate 전부 통과, 2026-06-19)
-- [AI] (B) chat↔API drift: `api_sample.py`로 5~10개 API 재실행 비교 → `round-001-consistency-B.md` _(크레딧 확보됨 2026-06-19 ~$195, 진행 가능. API 비용 발생 — 사람 확인 대기)_
-- ⚠️ drift gate: 임계 초과 시 회귀 (건너뛸 수 없는 게이트)
+- [x] [AI] (B) chat↔API drift: `api_sample.py`로 10개 API 재실행 비교 → `round-001-consistency-B.md` — **임계값 FAIL·원인 식별** (2026-06-19). API 단발이 길이 룰 비순응(validator 1/10); drift는 "critic 후 cycle-2 최종본 vs API 단발" 비대칭 + 단발 길이 초과. round-001 자체 무결. stale paste/지침 누락 아님.
+- ⚠️ drift gate: **게이트 결정 미결** — (a) 원인 식별로 Done 인정→Phase 3 머지 / (b) API에 validator→재생성 루프 태운 공정 재검 / (c) Phase 1 회귀(비권장). 사람 결정 지점.
 
 **C. Phase 3 머지 + iOS smoke test** (← 사람 승인 게이트)
-- [AI] `merge.py`로 `terms.next.json` 생성 (충돌 assert 안전망)
-- [사람] Xcode 임시 swap 빌드 → 신규 keyword·alias 검색, 카테고리 필터, 재시작 캐시 확인
-- ⚠️ [사람→AI] smoke 통과 시 `terms.next.json` → `terms.json` swap + 커밋 (비가역적 번들 변경)
+- [x] [AI] `merge.py`로 `terms.next.json` 510개 생성 (충돌 0) → swap 적용(terms.json=510, 구 500은 terms.bak.json)
+- [x] [AI] iOS smoke test **PASS** (2026-06-19, iPhone 17 시뮬레이터): 빌드·번들(510)·런치 크래시 없음·재시작 로딩 정상 + 신규 keyword/alias(한+영)/카테고리 검색(실제 swap 번들, BundleDBService 경로 결정론 확인). 빌드용 누락 비밀파일은 더미로 통과(gitignore).
+- ⚠️ [사람→AI] **커밋 미결(비가역 번들 변경)** — terms.json(510) 커밋 + terms.bak.json 정리. 사람 승인 대기.
 
 **D. Phase 4 마감 결정** (다음 라운드 발주 — 사람 결정 지점)
 - [AI] 목표 N 산정안 제시 (round-001 throughput·품질 기준)
@@ -37,7 +37,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** Phase 2A 통과(2026-06-19). 다음은 **Phase 2B** (chat↔API drift) — `Scripts/db-expand/api_sample.py` 작성 후 API 5~10개 재실행. API 비용 발생이라 사람 확인 대기 중. 2B 통과 시 Phase 3 머지 게이트.
+**다음 행동:** Phase 2A PASS, **2B 실행 완료(임계값 FAIL·원인 식별, 2026-06-19)**. API 단발은 길이 룰 비순응 — drift는 루프-최종본 vs 단발 비대칭 + 단발 길이 초과이지 prompt mismatch 아님. round-001 무결. 다음은 **2B 게이트 사람 결정**: (a) Done 인정→Phase 3 머지 / (b) API 공정 재검(validator→재생성 루프) / (c) Phase 1 회귀(비권장). 상세 `round-001-consistency-B.md`.
 
 ---
 

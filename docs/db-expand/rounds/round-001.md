@@ -5,8 +5,8 @@
 - Generator 라운드 수: 2 (cycle 1 생성 → cycle 2 재생성)
 - 최종 통과율: 10/10
 - 라운드당 사람 손 시간: ≈60분 (어림치). **결정: Phase 7 자동화 무조건 진행 예정** — 트리거(>5분) 충족, 정밀 측정 불요.
-- API 비용·latency (Phase 2B 샘플): 미측정 (Phase 2B 진행 시)
-- 일관성 점검: (A) **PASS** (`round-001-consistency-A.md`, 2026-06-19) / (B) 미진행
+- API 비용·latency (Phase 2B 샘플): 10 keyword 1회 호출 (input 11~수천 토큰 / 출력 1배치), 단발. 상세 round-001-consistency-B-api.json.
+- 일관성 점검: (A) **PASS** (`round-001-consistency-A.md`) / (B) **임계값 FAIL·원인 식별** (`round-001-consistency-B.md`, 2026-06-19) — API 단발은 길이 룰 비순응(validator 1/10), drift는 "루프 최종본 vs 단발" 비대칭 + 단발 길이 초과. round-001 자체는 무결. 게이트 결정 미결(머지 vs 공정 재검).
 
 ### 검증 결과
 - **validator (결정론적, 최종 게이트)**: 10/10 통과 (`failed: []`). 길이·카테고리·null·alias 최소·keyword 형식 전부 통과.
@@ -51,5 +51,7 @@
 - [x] round-001.json 저장 + validator 통과
 - [x] 사람 손 시간 기록 (≈60분, 자동화 진행 결정)
 - [x] Phase 2A 일관성 점검 (기존 sample 베이스라인) — PASS (`round-001-consistency-A.md`)
-- [ ] Phase 2B 일관성 점검 (chat↔API drift) — `api_sample.py` 작성 후 (API 비용 발생, 사람 확인 대기)
-- [ ] Phase 3 머지 + iOS smoke test
+- [x] Phase 2B 일관성 점검 (chat↔API drift) — 실행 완료. 임계값 FAIL이나 **drift 원인 식별**(spec Done 후자 충족). `round-001-consistency-B.md`. 게이트 결정 미결.
+- [x] Phase 3 머지 — `merge.py`로 `terms.next.json` 510개(500+10) 생성, 충돌 0, 정렬·유니크·스키마 OK
+- [x] Phase 3 iOS smoke test — **PASS** (2026-06-19, iPhone 17 시뮬레이터). 빌드 성공·terms.json(510) 번들·런치 크래시 없음·재시작 로딩 정상. 신규 keyword/alias(한+영)/카테고리 검색은 실제 swap 번들에 대해 BundleDBService 경로로 결정론 확인. (워크트리 누락 비밀파일 Config.xcconfig·GoogleService-Info.plist는 더미로 빌드 통과, gitignore라 커밋 제외.)
+- [ ] terms.json swap 커밋 (비가역) — 사람 승인 대기

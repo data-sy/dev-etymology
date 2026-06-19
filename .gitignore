@@ -84,3 +84,8 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# 로컬 전용 API 키 (Phase 2B api_sample.py 등) — 절대 커밋 금지
+.env.local
+*.env.local
+Scripts/db-expand/.env.local
