@@ -37,9 +37,11 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**진행 상태 (2026-06-20):** 번들 DB **550개**. **round-002 종결·머지 완료** (510→550, 무손실 swap). 게이트 전부 PASS(validator 40/40 · critic-v2 0 fail · scope_leak 0 · dedup · smoke). **Phase 5 Done(새 흐름 실통과) 충족.** 분포: 자료구조 76·동시성 80·네트워크 86·패턴 86·DB 85·기타 137. 사람 손 시간 ≈10분(round-001 60분→6배↓). 상세·측정·관찰: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md).
+**진행 상태 (2026-06-20):** 번들 DB **550개**. **round-002 종결·머지 완료** (510→550, 무손실 swap). 게이트 전부 PASS(validator 40/40 · critic-v2 0 fail · scope_leak 0 · dedup · smoke). **Phase 5 Done(새 흐름 실통과) 충족.** 분포: 자료구조 76·동시성 80·네트워크 86·패턴 86·DB 85·기타 137. 사람 손 시간 ≈10분(round-001과 유사 — round-001.md "60분"은 임시 어림값, 사람 정정). 상세·측정·관찰: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md).
 
-**다음 행동:** **목표 N=650까지 +100(550→650).** 사람 손 시간이 10분으로 떨어졌으나 Phase 7 트리거(>5분)는 여전히 충족 — **Phase 7 자동화 착수 판단** 지점. loop: `Generator(API) → validator → 재생성 → critic(v2) → scope_diff → 머지`. 진입 전 의도적 **API 미니 run 1회**로 비용·latency 수집 → claude.ai 정액 유지 vs API 전환 손익 결정. round-002 변경 후보(round-002.md): dedup을 완전매칭 기준으로 / critic 격리 런북 명문화(임시챗+본문만) / summary 하한 여유 검토. 또는 수동 round-003 1회 더(자료구조·DB 보강) 후 자동화도 가능 — 사람 결정 지점.
+**Phase 7 방향 결정 (2026-06-20):** **자동화(API 전환) 보류 → claude.ai 정액 수동 유지.** claude.ai는 정액제(한계비용 0), API는 종량제. 잔여 +100은 수동으로 흡수 가능(라운드당 ≈10분). 자동화가 사는 건 비용 아닌 사람 시간인데 잔여 규모가 작아 이득 < API 비용. **재검토 조건**: 출시 후 analytics 기반 대량 확장(수백 개) 시에만.
+
+**다음 행동:** **수동 round-003으로 550→650(+100).** 자료구조(76, 여전히 long pole)·DB(85) 위주 보강, 기타 0. 흐름은 round-002와 동일(`Generator → validator → critic-v2 → 재생성 → scope_diff → 머지`). round-002 적용할 개선(round-002.md "다음 라운드 변경 후보"): ① **dedup을 완전매칭 기준으로**(정규화 비교는 informational 분리) ② **critic 격리 런북 명문화**(임시챗 + ─── 본문만 paste, JSON 외 메타 응답 = 오염 신호) ③ summary 하한 여유 검토. 발주는 오케스트레이터가 round-003 발주안으로.
 
 <details><summary>직전 (round-002 발주·실행)</summary>
 

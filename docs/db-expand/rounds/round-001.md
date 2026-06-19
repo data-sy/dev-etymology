@@ -4,7 +4,7 @@
 - keyword 리스트: priority-inversion, aba-problem, merkle-tree, persistent-data-structure, sni, hsts, sharding, materialized-view, command-pattern, aggregate-root
 - Generator 라운드 수: 2 (cycle 1 생성 → cycle 2 재생성)
 - 최종 통과율: 10/10
-- 라운드당 사람 손 시간: ≈60분 (어림치). **결정: Phase 7 자동화 무조건 진행 예정** — 트리거(>5분) 충족, 정밀 측정 불요.
+- 라운드당 사람 손 시간: ≈60분 (어림치). ⚠️ **정정(2026-06-20):** 이 "60분"은 임시 어림값이며 실제 손 시간은 round-002(≈10분)와 비슷한 수준이었음(사람 확인). 또한 당시 "Phase 7 자동화 무조건 진행" 판단은 **2026-06-20 '수동 유지' 결정으로 대체**됨(round-002.md 판정 참조) — claude.ai 정액 한계비용 0 > API 종량제.
 - API 비용·latency (Phase 2B 샘플): 10 keyword 1회 호출 (input 11~수천 토큰 / 출력 1배치), 단발. 상세 round-001-consistency-B-api.json.
 - 일관성 점검: (A) **PASS** (`round-001-consistency-A.md`) / (B) **임계값 FAIL·원인 식별** (`round-001-consistency-B.md`, 2026-06-19) — API 단발은 길이 룰 비순응(validator 1/10), drift는 "루프 최종본 vs 단발" 비대칭 + 단발 길이 초과. round-001 자체는 무결. 게이트 결정 미결(머지 vs 공정 재검).
 
