@@ -37,12 +37,15 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** A 완료. **다음 세션은 [핸드오프](docs/db-expand/handoff-phase2.md) 읽고 B(Phase 2 일관성 점검)부터.** 크레딧 확보로 A·B 둘 다 가능하나, Phase 2B는 `Scripts/db-expand/api_sample.py` 작성이 선행이라 Phase 2A(코드만)부터 시작 권장.
+**다음 행동:** A 완료. **순서 변경 — 독스 정리를 먼저** ([`handoff-docs-cleanup.md`](handoff-docs-cleanup.md)) → 그다음 **Phase 2 일관성 점검** ([`docs/db-expand/handoff-phase2.md`](docs/db-expand/handoff-phase2.md); A 코드만 먼저 → B는 `api_sample.py` 작성 후). ⚠️ 정리에서 `db-expand/`가 이동되면 Phase 2 핸드오프 경로도 갱신 필요.
 
 ---
 
 ## Next — 다음 분기 (착수 예정)
 
+- **[Ops/Docs] 독스 발행 범위 정리 + 재정돈** — 핸드오프: [`handoff-docs-cleanup.md`](handoff-docs-cleanup.md). **DB 확장 Phase 2보다 먼저 진행 결정.**
+  - 문제: `docs/`가 Jekyll(`_config.yml`, `exclude` 없음)로 통째 발행 → 내부 문서(spec·db-expand[spec·rounds·runbook·handoff]·ai-quality·adr·design-followup·typography-review·wireframe 등) 전부 공개
+  - 발행 의도 페이지(`index.md`·`privacy-policy.md`)와 내부 문서 분리(이동 또는 `_config.yml` `exclude:`) + `docs/` 전체 재정돈(중복·stale 정리)
 - **[UI] 검색 로딩 UI 개선 — 체감 latency 감소** — 새 브랜치 (예: `feat/loading-ui-perceived-latency`)
   - 목적: AI 호출 절대 latency 8s는 유지하되 *인지 길이*를 줄여 사용자 체감 개선. v2 라운드 시뮬레이터 테스트에서 latency가 핵심 UX 이슈로 확인됨
   - 적용 기법(조합):
@@ -69,9 +72,6 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 - **[Data] 번들 DB 추가 확장** — 출시 후 Firebase Analytics `search` 이벤트로 본 검색 빈도 데이터를 우선순위 입력으로 사용
 - **[UI] 디자인 후속** — `docs/design-followup.md` 참조 (다크모드 헤더 경계·섹션 라벨 인식성·라이트모드 폴리시·accent 변형값 등)
 - **[UX] 검색 UX 개선** — 자동완성 표시 정책·키워드 정규화 등 출시 후 사용 데이터 보고 결정
-- **[Ops/Docs] 독스 발행 범위 정리 + 재정돈** — `docs/`가 Jekyll(`_config.yml`, `exclude` 없음)로 통째 발행되는 구조라, 내부 문서(spec·db-expand[spec·rounds·runbook·handoff]·ai-quality·adr·design-followup·typography-review·wireframe 등)가 전부 공개됨
-  - 발행 의도 페이지(`index.md`·`privacy-policy.md`)와 내부 문서 분리: 내부용은 별도 폴더(루트 `internal/` 등 `docs/` 밖)로 이동하거나 `_config.yml`에 `exclude:` 명시
-  - 김에 `docs/` 전체 한 번 싹 훑어 재정돈 (중복·stale 문서 정리, 폴더 구조 일관화)
 - (아이디어 추가 시 여기로)
 
 ---
