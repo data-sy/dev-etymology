@@ -5,7 +5,8 @@
 - Generator 라운드 수: 2 (cycle 1 생성 → cycle 2 재생성)
 - 최종 통과율: 10/10
 - 라운드당 사람 손 시간: ≈60분 (어림치). **결정: Phase 7 자동화 무조건 진행 예정** — 트리거(>5분) 충족, 정밀 측정 불요.
-- API 비용·latency (Phase 2B 샘플): 미측정 (Phase 2 진행 시)
+- API 비용·latency (Phase 2B 샘플): 미측정 (Phase 2B 진행 시)
+- 일관성 점검: (A) **PASS** (`round-001-consistency-A.md`, 2026-06-19) / (B) 미진행
 
 ### 검증 결과
 - **validator (결정론적, 최종 게이트)**: 10/10 통과 (`failed: []`). 길이·카테고리·null·alias 최소·keyword 형식 전부 통과.
@@ -49,5 +50,6 @@
 ### 상태
 - [x] round-001.json 저장 + validator 통과
 - [x] 사람 손 시간 기록 (≈60분, 자동화 진행 결정)
-- [ ] Phase 2 일관성 점검
+- [x] Phase 2A 일관성 점검 (기존 sample 베이스라인) — PASS (`round-001-consistency-A.md`)
+- [ ] Phase 2B 일관성 점검 (chat↔API drift) — `api_sample.py` 작성 후 (API 비용 발생, 사람 확인 대기)
 - [ ] Phase 3 머지 + iOS smoke test

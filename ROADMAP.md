@@ -21,8 +21,8 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 - [x] [AI] `round-001.md` 갱신 완료
 
 **B. Phase 2 일관성 점검** (머지 전 안전장치 — 통과 못 하면 Phase 1 회귀)
-- [AI] (A) 기존 `terms.json` 카테고리별 sample vs 신규 10개 비교 → `round-001-consistency-A.md`
-- [AI] (B) chat↔API drift: `api_sample.py`로 5~10개 API 재실행 비교 → `round-001-consistency-B.md` _(크레딧 확보됨 2026-06-19 ~$195, 진행 가능)_
+- [x] [AI] (A) 기존 `terms.json` 카테고리별 sample vs 신규 10개 비교 → `round-001-consistency-A.md` — **PASS** (3 gate 전부 통과, 2026-06-19)
+- [AI] (B) chat↔API drift: `api_sample.py`로 5~10개 API 재실행 비교 → `round-001-consistency-B.md` _(크레딧 확보됨 2026-06-19 ~$195, 진행 가능. API 비용 발생 — 사람 확인 대기)_
 - ⚠️ drift gate: 임계 초과 시 회귀 (건너뛸 수 없는 게이트)
 
 **C. Phase 3 머지 + iOS smoke test** (← 사람 승인 게이트)
@@ -37,7 +37,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** A 완료. 독스 정리 완료(발행 분리 + 내부 재정돈, 2026-06-19; `db-expand/`는 미이동 → Phase 2 핸드오프 경로 그대로). 다음은 **Phase 2 일관성 점검** ([`docs/db-expand/handoff-phase2.md`](docs/db-expand/handoff-phase2.md); A 코드만 먼저 → B는 `api_sample.py` 작성 후).
+**다음 행동:** Phase 2A 통과(2026-06-19). 다음은 **Phase 2B** (chat↔API drift) — `Scripts/db-expand/api_sample.py` 작성 후 API 5~10개 재실행. API 비용 발생이라 사람 확인 대기 중. 2B 통과 시 Phase 3 머지 게이트.
 
 ---
 
