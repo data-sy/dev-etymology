@@ -37,7 +37,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** **Phase 2~3 완료(2026-06-19)** — 2A PASS / 2B 원인식별→결정(a) / 머지 510 커밋(`e11cf15`) / iOS smoke PASS. 번들 DB **510개**. 다음은 **Phase 4 회고**(critic 분리효용·길이오차·통신프로토콜·scope leak·분포 점검 → **목표 N 결정** → spec Done 신호·critic-v2 발주) — 사람 결정 지점. 이후 Phase 6 본 확장(30~50). API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
+**다음 행동:** **Phase 2~3 완료(2026-06-19)** — 2A PASS / 2B 원인식별→결정(a) / 머지 510 커밋(`e11cf15`) / iOS smoke PASS. 번들 DB **510개**. 다음은 **Phase 4 회고**(critic 분리효용·길이오차·통신프로토콜·scope leak·분포 점검 → **목표 N 결정** → spec Done 신호·critic-v2 발주) — 사람 결정 지점. 핸드오프: [`docs/db-expand/handoff-phase4.md`](docs/db-expand/handoff-phase4.md). 이후 Phase 6 본 확장(30~50). API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
 
 ---
 
