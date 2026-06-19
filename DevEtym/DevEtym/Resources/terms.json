@@ -10,6 +10,17 @@
     "namingReason": "비교-교환(CAS) 연산은 현재 값이 기대값과 같으면 갱신하는데, 값이 A→B→A로 순환하면 중간 변경을 보지 못하고 'A 그대로'라 판단해 잘못 성공한다. 이 값의 경로를 글자로 옮긴 것이 이름의 유래다. 락-프리 자료구조에서 주로 나타나며, 포인터에 버전 카운터를 덧붙이는 태그드 포인터 기법으로 흔히 방지한다."
   },
   {
+    "keyword": "abstract-factory",
+    "aliases": [
+      "추상 팩토리",
+      "추상 팩토리 패턴"
+    ],
+    "category": "패턴",
+    "summary": "서로 관련된 객체군을 생성하는 디자인 패턴",
+    "etymology": "'abstract'는 라틴어 abstractus(끌어내어진→추상화된)에서, factory는 라틴어 facere(만들다)에 뿌리를 둔 '제조소'에서 온 영어 단어다.",
+    "namingReason": "구체 클래스를 지정하지 않고 '추상(abstract)' 인터페이스를 통해 서로 관련된 객체 묶음을 생성하는 '공장(factory)' 역할을 한다. 객체를 찍어내되 어떤 구체 제품군을 만들지는 런타임에 결정한다. GoF의 1994년 디자인 패턴 23선 중 생성 패턴으로 분류된다."
+  },
+  {
     "keyword": "abstraction",
     "aliases": [
       "앱스트랙션",
@@ -346,6 +357,17 @@
     "namingReason": "1972년 Rudolf Bayer와 Ed McCreight가 고안. B가 Bayer·Boeing·balanced·broad 중 무엇인지 저자 본인이 공개하지 않아 지금도 추측만 있음"
   },
   {
+    "keyword": "backends-for-frontends",
+    "aliases": [
+      "BFF",
+      "프런트엔드를 위한 백엔드"
+    ],
+    "category": "패턴",
+    "summary": "클라이언트별 전용 백엔드를 두는 패턴",
+    "etymology": "Backends For Frontends의 머리글자 BFF로도 불린다. backend(뒤쪽 처리부)와 frontend(앞쪽 화면부)는 각각 back/front에 end(끝)를 붙인 합성어다.",
+    "namingReason": "하나의 범용 API를 두지 않고, 각 프런트엔드(웹·모바일 등) 클라이언트 유형마다 그에 맞춘 전용 백엔드를 둔다는 뜻을 이름이 그대로 서술한다. 화면별 요구가 달라 범용 API가 비대해지는 문제를 푼다. SoundCloud의 Phil Calçado가 정리해 알려졌다."
+  },
+  {
     "keyword": "backpressure",
     "aliases": [
       "백프레셔",
@@ -367,6 +389,17 @@
     "summary": "조건에 맞지 않으면 이전 단계로 되돌아가며 탐색하는 기법",
     "etymology": "영어 back(뒤로)과 track(경로, 자취)의 합성어에 동명사형 접미사 -ing가 붙은 형태. track은 라틴어 tractus(끌다, 당기다)에서 유래하며, '지나온 경로'라는 의미를 갖는다.",
     "namingReason": "'지나온 경로(track)를 거슬러 되돌아간다(back)'는 어원이 알고리즘의 핵심 동작을 그대로 설명한다. 후보 해를 탐색하다 막다른 길에 부딪히면 이전 분기점으로 되돌아가 다른 경로를 시도하는 방식이다. 1950년대 D. H. Lehmer와 이후 D. E. Knuth 등이 이 개념을 정형화하면서 'backtrack'이라는 용어가 알고리즘 분야에 정착했다."
+  },
+  {
+    "keyword": "bakery-algorithm",
+    "aliases": [
+      "베이커리 알고리즘",
+      "빵집 알고리즘"
+    ],
+    "category": "동시성",
+    "summary": "번호표로 진입 순서를 정하는 상호 배제 기법",
+    "etymology": "'bakery'는 고대 영어 bacan(굽다)에서 온 bake에 장소 접미사 -ery가 붙은 영어 단어로 '빵집'을 뜻한다.",
+    "namingReason": "빵집에서 손님이 번호표를 뽑아 순서대로 서비스받는 방식에서 따왔다. 각 스레드가 들어올 때 가장 큰 번호+1의 '번호표'를 받고, 번호가 작은 순으로 임계 구역에 진입해 상호 배제를 보장한다. 1974년 Leslie Lamport이 고안했으며 하드웨어 원자성 없이 동작하는 점이 특징이다."
   },
   {
     "keyword": "barrier",
@@ -626,6 +659,17 @@
     "namingReason": "정해진 크기의 버퍼를 '넘치도록' 데이터를 쓴다는 이미지. 이 넘친 데이터가 옆 메모리를 덮어써 보안 문제를 일으키는 대표적 취약점"
   },
   {
+    "keyword": "bufferbloat",
+    "aliases": [
+      "버퍼블로트",
+      "버퍼 비대"
+    ],
+    "category": "네트워크",
+    "summary": "과도한 버퍼링으로 네트워크 지연이 커지는 현상",
+    "etymology": "'bufferbloat'는 완충 영역을 뜻하는 buffer와, 부풀어 오름을 뜻하는 bloat(고대 영어 blawan, 불다)를 합친 영어 합성어다.",
+    "namingReason": "라우터·스위치가 패킷 손실을 막으려 과도하게 큰 버퍼를 두면, 혼잡 시 패킷이 그 버퍼에 길게 쌓여 지연이 비대하게(bloat) 커지는 현상이다. 버퍼가 '부풀어' 오히려 응답성을 해친다는 의미다. 2011년 Jim Gettys가 용어를 대중화했고 능동 큐 관리(AQM)가 대응책으로 쓰인다."
+  },
+  {
     "keyword": "bug",
     "aliases": [
       "버그",
@@ -701,6 +745,17 @@
     "namingReason": "원래는 사냥꾼이 음식을 숨겨두던 은닉처를 뜻함. 자주 쓸 데이터를 가까운 곳에 '숨겨두고' 빠르게 꺼내 쓴다는 이미지"
   },
   {
+    "keyword": "cache-aside",
+    "aliases": [
+      "캐시 어사이드",
+      "lazy loading"
+    ],
+    "category": "패턴",
+    "summary": "애플리케이션이 캐시를 직접 채우는 캐싱 패턴",
+    "etymology": "'cache'는 '숨기다'를 뜻하는 프랑스어 cacher에서 온 영어 단어로 '은닉처·임시 저장소'를, aside는 '곁에·옆으로 비켜'를 뜻한다.",
+    "namingReason": "캐시를 데이터 흐름의 주경로가 아니라 '옆에(aside)' 두고, 애플리케이션이 직접 캐시를 먼저 조회한 뒤 없으면(miss) DB에서 읽어 캐시에 채우는 방식이다. 캐시가 읽기 경로에 끼어들지 않고 보조로 비켜서 있다는 구조가 이름에 담겼다. 필요할 때만 적재해 lazy loading이라고도 불린다."
+  },
+  {
     "keyword": "callback",
     "aliases": [
       "콜백",
@@ -732,6 +787,17 @@
     "summary": "분산 시스템이 세 속성을 동시에 만족할 수 없다는 이론",
     "etymology": "Consistency(일관성), Availability(가용성), Partition Tolerance(분단 허용성) 세 단어의 첫 글자를 딴 두문자어에 수학적 명제를 의미하는 Theorem을 합성한 용어.",
     "namingReason": "2000년 에릭 브루어(Eric Brewer)가 PODC 기조연설에서 추측으로 제시하고, 2002년 길버트·린치가 수학적으로 증명하여 'theorem(정리)'이라는 단어가 붙었다. 일관성·가용성·분단허용성 세 속성의 첫 글자를 묶어 세 가지 선택지 중 두 가지만 보장 가능하다는 제약을 간결하게 표현한다. 분산 DB 설계 시 트레이드오프를 논의하는 기준 언어로 자리잡았다."
+  },
+  {
+    "keyword": "cartesian-tree",
+    "aliases": [
+      "카르테시안 트리",
+      "데카르트 트리"
+    ],
+    "category": "자료구조",
+    "summary": "수열을 힙·BST 순서로 담는 이진 트리",
+    "etymology": "'Cartesian'은 르네 데카르트의 라틴어식 이름 Cartesius에서 온 형용사로, '데카르트의' 곧 데카르트 좌표계와 관련됨을 뜻한다.",
+    "namingReason": "각 노드를 (위치=x, 우선순위=y)라는 2차원 좌표점으로 평면에 배치할 수 있어 데카르트 좌표 평면에 빗댄 이름이다. 위치에 대해 이진 탐색 트리 순서를, 우선순위에 대해 힙 순서를 동시에 만족한다. 1980년 Jean Vuillemin이 도입했으며, 무작위 우선순위를 부여한 변형이 treap으로 이어졌다."
   },
   {
     "keyword": "cas",
@@ -791,6 +857,17 @@
     "summary": "충돌한 항목들을 연결 리스트로 이어 같은 버킷에 저장하는 방식",
     "etymology": "라틴어 catena(사슬, 연결)에서 파생된 고대 프랑스어 chaîne(사슬)을 거쳐 영어 chain(사슬, 연속된 고리)이 되었고, 동명사형 chaining은 '사슬처럼 연결하는 행위'를 뜻한다.",
     "namingReason": "해시 충돌이 발생한 항목들을 같은 버킷에 사슬처럼 하나하나 연결(chain)하여 이어 붙이는 방식이다. 연결 리스트의 각 노드가 다음 노드를 가리키는 구조가 사슬 고리가 연속으로 이어진 모습과 닮아 있어 이 이름이 선택되었다. 각 버킷이 독립된 사슬을 가지므로 테이블 크기와 무관하게 항목을 추가할 수 있다는 점이 open addressing과의 핵심 차이다."
+  },
+  {
+    "keyword": "change-data-capture",
+    "aliases": [
+      "CDC",
+      "변경 데이터 캡처"
+    ],
+    "category": "DB",
+    "summary": "DB의 변경을 포착해 외부로 전파하는 기법",
+    "etymology": "Change Data Capture의 약어 CDC. Change(변경), Data(데이터), Capture(포착, 라틴어 capere '붙잡다')로 이루어진 서술형 명칭이다.",
+    "namingReason": "DB에 발생한 삽입·수정·삭제 같은 변경(change)을 포착(capture)해, 다른 시스템으로 실시간 전파하는 기법을 그대로 서술한 이름이다. 트랜잭션 로그를 읽어 변경만 추출하므로 전체 재적재보다 효율적이다. Debezium 등이 데이터 동기화·이벤트 스트리밍에 활용한다."
   },
   {
     "keyword": "channel",
@@ -892,6 +969,17 @@
     "summary": "마지막 노드가 첫 노드를 가리켜 순환하는 연결 리스트",
     "etymology": "circular는 라틴어 circularis(원 모양의)에서 왔으며, 그 뿌리는 circulus(작은 원, 고리)이다. circulus는 다시 circus(원형 공간)에서 파생되었다. linked와 list의 어원은 doubly-linked-list 항목과 동일하다.",
     "namingReason": "'원형으로 연결된 목록'이라는 의미로, 리스트의 꼬리 노드가 머리 노드를 다시 가리켜 끝이 없는 고리 형태를 이룬다. 라틴어 circulus(고리)의 이미지가 자료구조의 위상 구조를 직접 서술한다. 운영체제의 라운드 로빈 스케줄링처럼 순서를 계속 반복해야 하는 상황에서 활용되며, 순환(circular) 특성 자체가 이름의 핵심 근거이다."
+  },
+  {
+    "keyword": "claim-check",
+    "aliases": [
+      "클레임 체크",
+      "수하물 보관증 패턴"
+    ],
+    "category": "패턴",
+    "summary": "대용량은 외부 보관·참조만 전달하는 패턴",
+    "etymology": "'claim check'는 맡긴 짐을 되찾을 때 제시하는 '수하물 보관증'을 가리키는 영어 표현으로, claim(되찾다·청구하다)과 check(보관표)의 합성이다.",
+    "namingReason": "큰 데이터를 메시지에 직접 싣지 않고 외부 저장소에 보관한 뒤, 메시지에는 그것을 되찾을 참조(claim check)만 넣어 전달한다. 외투를 맡기고 번호표만 들고 다니다 나중에 제시해 되찾는 보관소 방식과 같다. 메시지 크기 제한과 대역폭 문제를 피하는 엔터프라이즈 통합 패턴이다."
   },
   {
     "keyword": "clean-architecture",
@@ -1048,6 +1136,17 @@
     "namingReason": "웅덩이(pool)가 물을 한곳에 모아두었다가 필요한 주체에게 나눠주듯, 미리 생성된 DB 연결 객체를 한 공간에 모아두고 요청이 올 때마다 빌려주고 반납받는 구조를 묘사한다. DB 연결 생성 비용(TCP 핸드셰이크, 인증 등)이 크기 때문에 매번 새로 만드는 대신 '공동 저수지'에서 꺼내 쓰는 방식을 pool이라는 은유로 표현한 것이다. 1990년대 웹 서버 다중 요청 처리가 보편화되면서 정착된 용어다."
   },
   {
+    "keyword": "consistent-hashing",
+    "aliases": [
+      "컨시스턴트 해싱",
+      "일관된 해싱"
+    ],
+    "category": "자료구조",
+    "summary": "노드가 바뀌어도 매핑이 거의 유지되는 해싱",
+    "etymology": "'consistent'는 '함께(con) 서다(sistere)'를 뜻하는 라틴어 consistere에서 온 영어 단어로 '일관된·변치 않는'을 의미한다.",
+    "namingReason": "노드가 추가·제거돼도 키 대부분의 매핑이 그대로 유지되도록(consistent) 설계된 해싱이다. 해시 공간을 원형 링으로 보고 키와 노드를 같은 링에 배치해, 변동 시 인접 구간의 키만 재배치된다. 1997년 Karger 등이 웹 캐시 분산을 위해 제안했고 분산 캐시·DB의 샤딩에 쓰인다."
+  },
+  {
     "keyword": "container",
     "aliases": [
       "컨테이너"
@@ -1146,6 +1245,16 @@
     "namingReason": "브라우저의 동일 출처 정책(Same-Origin Policy)은 기본적으로 다른 출처의 리소스 접근을 차단한다. CORS는 서버가 HTTP 헤더를 통해 특정 출처의 접근을 명시적으로 허용할 수 있게 하는 W3C 표준으로, 2014년 권고안으로 채택되었다. 'Cross-Origin'은 '출처를 가로지른다'는 의미로, 서로 다른 도메인·포트·스킴 간의 경계를 넘는 요청임을 직접 서술한다."
   },
   {
+    "keyword": "count-min-sketch",
+    "aliases": [
+      "카운트-민 스케치"
+    ],
+    "category": "자료구조",
+    "summary": "해시로 빈도를 근사하는 확률적 자료구조",
+    "etymology": "'sketch'는 이탈리아어 schizzo(즉흥 그림)를 거쳐 네덜란드어 schets에서 온 영어 단어로 '대략적 밑그림·요약'을 뜻하고, count-min은 '계수'와 '최솟값'의 합성이다.",
+    "namingReason": "여러 해시 행에 빈도를 누적(count)한 뒤, 조회 시 해당 항목이 매핑된 칸들의 최솟값(min)을 취해 해시 충돌로 인한 과대추정을 줄인다. 전체 데이터를 압축 요약한 '스케치'라는 점에서 이름이 붙었다. 2005년 Cormode와 Muthukrishnan이 제안했다."
+  },
+  {
     "keyword": "coupling",
     "aliases": [
       "커플링",
@@ -1240,6 +1349,17 @@
     "namingReason": "WITH 절로 정의하여 이후 동일 쿼리 내에서 여러 번 참조할 수 있는 '공통(Common)' 임시 테이블 형태의 표현식이다. 어원의 communis(공유)가 한 번 정의한 결과를 같은 쿼리 내 여러 곳에서 재사용한다는 특성을 직접 반영한다. SQL:1999 표준에 도입되었으며, 서브쿼리 중첩을 줄여 가독성을 높이고 재귀 쿼리(RECURSIVE CTE)를 가능하게 한다."
   },
   {
+    "keyword": "cuckoo-hashing",
+    "aliases": [
+      "쿠쿠 해싱",
+      "뻐꾸기 해싱"
+    ],
+    "category": "자료구조",
+    "summary": "충돌 시 기존 항목을 다른 자리로 밀어내는 해싱",
+    "etymology": "'cuckoo'는 뻐꾸기 울음소리 'cuckoo'를 흉내 낸 의성어에서 온 영어 단어로, 다른 새 둥지에 알을 맡기는 습성을 가진 뻐꾸기 새를 가리킨다.",
+    "namingReason": "새 항목이 들어갈 자리에 기존 항목이 있으면 그 기존 항목을 다른 해시 위치로 '밀어내는' 방식인데, 이는 뻐꾸기 새끼가 둥지의 다른 알을 밀어내고 자리를 차지하는 탁란 습성에서 따왔다. 밀려난 항목은 다시 자기 대체 위치로 옮겨가며 연쇄가 일어난다. 2001년 Pagh와 Rodler가 제안했다."
+  },
+  {
     "keyword": "cursor",
     "aliases": [
       "커서"
@@ -1292,6 +1412,17 @@
     "summary": "다수의 분산된 호스트로 대상 서버를 마비시키는 공격",
     "etymology": "Distributed Denial of Service의 약어. Distributed(분산된, 라틴어 distributus에서 유래, dis-는 '나누어', tribuere는 '할당하다'를 뜻함), Denial(거부, 라틴어 denegare에서 유래), Service(서비스)로 구성된 두문자어.",
     "namingReason": "정상적인 사용자가 서비스를 이용하지 못하도록 대량의 트래픽으로 서버 자원을 소진시키는 DoS(Denial of Service) 공격에서 파생된 개념이다. 'Distributed'는 단일 공격자가 아닌 수많은 감염된 호스트(봇넷)가 분산되어 공격에 참여한다는 점을 추가로 명시한다. 'Denial of Service'는 서비스를 '거부당하게 만든다'는 피해 결과를 직접 기술한 명칭으로, 1999년 Tribe Flood Network 도구를 통한 대규모 분산 공격 사례 이후 DoS와 구별하여 DDoS로 정착되었다."
+  },
+  {
+    "keyword": "dead-letter-queue",
+    "aliases": [
+      "데드 레터 큐",
+      "DLQ"
+    ],
+    "category": "패턴",
+    "summary": "처리에 실패한 메시지를 따로 모아두는 큐",
+    "etymology": "'dead letter'는 배달·반송이 모두 불가능한 우편물을 가리키던 우체국 용어로 '죽은 편지'를 뜻하며, queue는 '대기열'이다.",
+    "namingReason": "정상 처리·배달에 실패한 메시지를 버리지 않고 따로 모아두는 큐다. 수취인 불명으로 처리할 수 없는 우편물을 'dead letter office'에 모으던 관행에서 비유를 가져왔다. 재시도 한도를 넘긴 메시지가 이곳으로 보내져, 실패 원인 분석과 재처리를 가능하게 하는 메시징 시스템의 안전망 역할을 한다."
   },
   {
     "keyword": "deadlock",
@@ -1688,6 +1819,17 @@
     "namingReason": "라틴어 어원의 핵심은 '그 자체로 독립적으로 존재하는 것'이다. 개발에서 entity는 시간이 지나도, 속성이 바뀌어도, 동일한 식별자를 통해 '그것은 여전히 그것이다'라고 추적 가능한 객체를 가리킨다. Eric Evans의 DDD에서 Value Object와 대비되는 개념으로 정의되었으며, DB 설계의 ER 다이어그램에서도 같은 의미로 쓰인다. '독립적 존재'라는 어원이 식별자 기반 동등성이라는 설계 원칙을 자연스럽게 표현한다."
   },
   {
+    "keyword": "entity-component-system",
+    "aliases": [
+      "ECS",
+      "엔티티-컴포넌트-시스템"
+    ],
+    "category": "패턴",
+    "summary": "개체·데이터·로직을 분리한 게임 구조",
+    "etymology": "Entity-Component-System의 약어 ECS로도 불린다. Entity(개체), Component(구성요소, 라틴어 componere '함께 놓다'), System(체계)으로 이루어진 서술형 명칭이다.",
+    "namingReason": "게임 객체를 식별자인 엔티티(Entity), 순수 데이터인 컴포넌트(Component), 그 데이터를 처리하는 로직인 시스템(System)으로 분리한다는 세 축이 그대로 이름이 되었다. 상속 대신 조합으로 객체를 구성해 캐시 효율과 유연성을 높인다. 대규모 게임 엔진과 시뮬레이션에서 널리 쓰인다."
+  },
+  {
     "keyword": "event-driven",
     "aliases": [
       "이벤트 기반",
@@ -1764,6 +1906,17 @@
     "namingReason": "객체를 직접 new 하지 않고, 객체 생성을 전담하는 '공장'에게 요청한다는 비유. 생성 책임을 한곳에 몰아둔다는 구조적 의미를 담음"
   },
   {
+    "keyword": "false-sharing",
+    "aliases": [
+      "거짓 공유",
+      "폴스 셰어링"
+    ],
+    "category": "동시성",
+    "summary": "같은 캐시 라인 공유로 생기는 성능 저하",
+    "etymology": "'false'는 라틴어 falsus(거짓의·속이는)에서, share는 고대 영어 scearu(나눔·몫)에서 온 영어 단어다.",
+    "namingReason": "서로 다른 스레드가 논리적으로 무관한 별개 변수를 수정하는데도, 그 변수들이 같은 캐시 라인에 놓여 있어 마치 공유 데이터처럼 캐시 무효화가 반복되는 현상이다. 실제로는 공유하지 않는데 '공유하는 척' 성능이 떨어져 false가 붙었다. 변수 정렬·패딩으로 캐시 라인을 분리해 해소한다."
+  },
+  {
     "keyword": "feature-flag",
     "aliases": [
       "피처 플래그",
@@ -1808,6 +1961,16 @@
     "summary": "감소-키 연산이 빠른 우선순위 큐 자료구조",
     "etymology": "이탈리아 수학자 레오나르도 피보나치(Leonardo Fibonacci, c.1170~1250)의 이름에서 유래한 피보나치 수열(Fibonacci sequence)과, 쌓아 올린 더미를 뜻하는 영어 heap의 합성어다.",
     "namingReason": "1984년 마이클 프레드먼(Michael Fredman)과 로버트 타잔(Robert Tarjan)이 고안했다. 이 자료구조에서 노드를 지연 삭제한 뒤 정리(consolidation)하면, 각 차수(degree) d인 트리가 최소 F(d+2)개(F는 피보나치 수)의 노드를 포함함이 증명된다. 이 피보나치 수열 기반의 하한 분석이 시간 복잡도를 상각적으로 보장하는 핵심이므로, 구조의 정확성 증명 자체가 피보나치 수열에 의존한다는 사실에서 이름을 따왔다."
+  },
+  {
+    "keyword": "finger-tree",
+    "aliases": [
+      "핑거 트리"
+    ],
+    "category": "자료구조",
+    "summary": "양 끝 접근이 빠른 함수형 시퀀스 구조",
+    "etymology": "'finger'는 게르만조어에 뿌리를 둔 영어 단어로 '손가락'을 뜻하며, 비유적으로 무언가를 가리키는 지시점을 의미한다.",
+    "namingReason": "자주 접근하는 위치, 주로 양 끝에 '손가락을 대듯' 참조를 유지해 그 지점의 접근·갱신을 상수 시간에 가깝게 만든다. 탐색 트리에서 특정 위치를 가리키는 포인터를 finger라 부르던 관행에서 왔다. 2006년 Hinze와 Paterson이 함수형 deque·시퀀스 구현으로 정식화했다."
   },
   {
     "keyword": "firewall",
@@ -1941,6 +2104,17 @@
     "namingReason": "수학에서 함수는 동일 입력에 항상 동일 출력을 반환하며 외부 상태에 영향을 주지 않는다는 순수성(purity)을 지닌다. 함수형 프로그래밍은 이 수학적 함수 개념을 프로그램 구성의 기본 단위로 삼는다는 의미에서 'functional'이라 명명되었다. 1950년대 John McCarthy가 설계한 Lisp에서 개념이 시작되었고, Haskell·Scala·Clojure 등을 거쳐 현대 언어에서 부분 채택되었다. 부작용(side effect) 배제와 불변성(immutability)은 수학적 함수의 성질에서 직접 도출된 원칙이다."
   },
   {
+    "keyword": "futex",
+    "aliases": [
+      "퓨텍스",
+      "Fast Userspace Mutex"
+    ],
+    "category": "동시성",
+    "summary": "사용자 공간 기반으로 동작하는 빠른 잠금 기법",
+    "etymology": "Fast Userspace muTEX의 축약어. Fast(빠른), Userspace(사용자 공간), Mutex(상호 배제 잠금)를 합친 혼성 약어다.",
+    "namingReason": "락 경합이 없을 때는 커널로 진입하지 않고 사용자 공간(userspace)에서 원자적 연산만으로 빠르게 처리하고, 경합이 생길 때만 커널에 시스템 콜을 보내 대기·깨우기를 맡긴다. '사용자 공간의 빠른 뮤텍스'라는 설계 목표가 이름에 담겼다. 리눅스 2.5.7에서 도입되었다."
+  },
+  {
     "keyword": "future",
     "aliases": [
       "퓨처",
@@ -1962,6 +2136,16 @@
     "summary": "무작위·변형 입력으로 소프트웨어의 결함을 찾는 테스트 기법",
     "etymology": "정확한 어원은 불분명하나, 영어 fuzz(보풀, 불분명한 잡음)에서 유래한 것으로 알려져 있다. 전자공학에서 신호에 섞인 무작위 잡음을 fuzz라 불렀던 관례와 연관된다.",
     "namingReason": "1988년 위스콘신대학교 Barton Miller 교수가 Unix 유틸리티에 무작위 입력을 주입하는 실험을 진행하면서 '퍼즈(fuzz)'라는 표현을 사용한 것이 기원으로 알려져 있다. 전자 잡음처럼 예측 불가능하고 구조 없는 데이터를 프로그램에 던져 크래시·비정상 동작을 유발한다는 점에서 '잡음(fuzz)을 이용한 테스팅'이라는 이름이 붙었다. AFL·libFuzzer 등이 현대적 구현이다."
+  },
+  {
+    "keyword": "gap-buffer",
+    "aliases": [
+      "갭 버퍼"
+    ],
+    "category": "자료구조",
+    "summary": "커서 위치에 빈 틈을 둔 편집용 버퍼",
+    "etymology": "'gap'은 고대 노르드어 gap(틈·벌어진 입)에서 온 영어 단어로 '빈 공간·틈'을, buffer는 충격을 완화하는 'buff'에서 온 '완충 영역'을 뜻한다.",
+    "namingReason": "텍스트의 커서 위치에 빈 공간(gap)을 두어, 삽입·삭제 시 데이터 전체를 옮기지 않고 이 틈을 키우거나 줄이는 방식이다. 커서가 다른 곳으로 이동하면 gap도 그 위치로 함께 옮겨간다. 연속된 편집이 한곳에 몰린다는 지역성을 활용하며, Emacs를 비롯한 텍스트 에디터의 고전적 편집 버퍼 구현으로 잘 알려져 있다."
   },
   {
     "keyword": "garbage-collection",
@@ -2108,6 +2292,17 @@
     "namingReason": "레슬리 램포트(Leslie Lamport)가 1978년 논문 'Time, Clocks, and the Ordering of Events in a Distributed System'에서 분산 시스템의 이벤트 순서를 정형화하기 위해 도입한 개념이다. 'A happens-before B'는 'A가 B보다 먼저 발생한다'는 일상 표현을 그대로 논리적 편서(partial order) 관계로 격상시킨 것으로, 메모리 가시성 보장의 최소 조건을 기술한다. Java 메모리 모델을 포함한 현대 언어 명세들이 이 용어를 직접 차용하여 동기화 의미론을 정의한다."
   },
   {
+    "keyword": "happy-eyeballs",
+    "aliases": [
+      "해피 아이볼",
+      "Happy Eyeballs"
+    ],
+    "category": "네트워크",
+    "summary": "IPv4·IPv6 병행 시도로 빠른 연결",
+    "etymology": "'happy eyeballs'는 '행복한'을 뜻하는 happy와, 업계에서 사용자·시청자를 가리키는 속어 eyeballs(눈알)를 합친 표현이다.",
+    "namingReason": "IPv6와 IPv4 연결을 동시에 시도해 먼저 성공하는 쪽을 써서 사용자가 지연을 거의 못 느끼게 하는 기법이다. 사용자(eyeballs)를 '행복하게(happy)' 만든다는 익살스러운 작명이다. IETF RFC 6555(2012)에서 공식화되고 RFC 8305으로 갱신되었다."
+  },
+  {
     "keyword": "hash",
     "aliases": [
       "해시"
@@ -2149,6 +2344,28 @@
     "summary": "GROUP BY 결과에 조건을 적용해 그룹을 필터링하는 절",
     "etymology": "영어 동사 have의 현재분사형 having. 고대 영어 habban(소유하다·가지다)에서 유래하며, 여기서는 '~라는 특성을 지닌'이라는 수식 의미로 쓰인다.",
     "namingReason": "SQL에서 WHERE는 개별 행을 필터링하지만, 집계 함수가 적용된 그룹에는 사용할 수 없다. HAVING은 '이러이러한 집계값을 가지고 있는 그룹만 선택하라'는 뜻을 자연어에 가깝게 표현하기 위해 'having'을 채택한 것으로 해석된다. 예컨대 HAVING COUNT(*) > 5는 '개수가 5를 초과하는 특성을 지닌 그룹'이라는 영어 문장 구조에 대응한다. 1974년 IBM의 SEQUEL(SQL 전신) 명세에서 처음 등장했다."
+  },
+  {
+    "keyword": "hazard-pointer",
+    "aliases": [
+      "해저드 포인터",
+      "위험 포인터"
+    ],
+    "category": "동시성",
+    "summary": "lock-free 메모리 회수용 포인터 기법",
+    "etymology": "'hazard'는 주사위 놀이를 뜻하던 고대 프랑스어 hasard(아랍어 az-zahr, 주사위에서 유래)에서 온 영어 단어로 오늘날 '위험'을 뜻한다.",
+    "namingReason": "스레드가 접근 중인 객체를 가리키는 포인터를 공개해, 다른 스레드가 그 객체를 해제하면 '위험'하다고 표시하는 역할에서 이름이 나왔다. 이 포인터가 가리키는 객체는 안전하게 회수할 수 없으므로 해제를 미룬다. 2004년 Maged Michael이 lock-free 메모리 회수를 위해 제안했다."
+  },
+  {
+    "keyword": "head-of-line-blocking",
+    "aliases": [
+      "HOL 블로킹",
+      "행 선두 막힘"
+    ],
+    "category": "네트워크",
+    "summary": "큐의 맨 앞 항목이 막혀 뒤가 멈추는 현상",
+    "etymology": "'head of line'은 '줄(line)의 맨 앞(head)'을 뜻하는 표현이고 blocking은 '막힘'이다. 줄 맨 앞이 막혀 뒤가 못 나아가는 상황을 직역한 이름이다.",
+    "namingReason": "큐나 연결에서 맨 앞 항목의 처리가 지연되면 그 뒤의 모든 항목이 준비되어 있어도 함께 막히는 현상이다. 계산대 맨 앞 손님이 지체하면 줄 전체가 멈추는 것과 같다. HTTP/1.1의 순차 응답 제약이 대표 사례이며, HTTP/2 멀티플렉싱과 QUIC이 이를 완화하려 등장했다."
   },
   {
     "keyword": "heap",
@@ -2241,6 +2458,16 @@
     "summary": "TLS로 암호화된 HTTP",
     "etymology": "영어 HTTP + Secure의 'S'",
     "namingReason": "기존 HTTP에 보안(Secure) 계층을 더했다는 의미. 끝의 S는 'Secure'의 약자"
+  },
+  {
+    "keyword": "hyperloglog",
+    "aliases": [
+      "하이퍼로그로그"
+    ],
+    "category": "자료구조",
+    "summary": "원소 개수를 근사 추정하는 확률적 구조",
+    "etymology": "'hyper'는 그리스어 hyper(넘어서·초과)에서, log은 logarithm(로그)에서 왔다. 선행 알고리즘 LogLog의 개선판이라는 의미로 접두사 hyper가 붙었다.",
+    "namingReason": "집합의 원소 개수(cardinality)를 추정할 때 필요한 메모리가 원소 수의 로그의 로그(log log)에 비례한다는 데서 LogLog라는 이름이 나왔다. HyperLogLog는 조화평균을 도입해 정확도를 높인 판이라 hyper를 덧붙였다. 2007년 Flajolet 등이 발표했고 Redis의 근사 카운팅에 쓰인다."
   },
   {
     "keyword": "hypervisor",
@@ -2379,6 +2606,16 @@
     "summary": "CPU의 현재 실행 흐름을 강제로 멈추게 하는 신호",
     "etymology": "라틴어 interrumpere에서 유래. inter-(사이에)와 rumpere(끊다)의 합성으로, '진행 중인 것을 중간에 끊는다'는 뜻이다.",
     "namingReason": "하드웨어 장치나 예외 상황이 CPU의 현재 명령 흐름 '사이에 끊고 들어와' 처리를 요청하는 메커니즘이다. 1950년대 초기 컴퓨터에서 I/O 완료를 폴링 없이 통보하기 위해 도입되었고, 어원 그대로 실행 맥락을 '중간에 끊고' 제어권을 인터럽트 핸들러로 넘긴다는 개념이 이름에 담겼다."
+  },
+  {
+    "keyword": "interval-tree",
+    "aliases": [
+      "인터벌 트리"
+    ],
+    "category": "자료구조",
+    "summary": "구간을 저장해 겹침을 빠르게 찾는 트리",
+    "etymology": "'interval'은 라틴어 intervallum에서 온 영어 단어로, inter(사이)와 vallum(성벽·방벽)을 합쳐 '두 성벽 사이의 공간'을 뜻했다.",
+    "namingReason": "각 노드가 구간(interval, 시작~끝)을 저장하고, 어떤 점이나 구간과 겹치는 모든 구간을 효율적으로 찾도록 설계된 트리다. 어원의 '사이의 공간'이 수치 구간 개념으로 이어졌다. 노드마다 서브트리의 최대 끝값을 함께 저장해 겹침 질의를 가지치기하는 구현이 표준이다."
   },
   {
     "keyword": "inversion-of-control",
@@ -2791,6 +3028,17 @@
     "namingReason": "물리적 자물쇠가 문을 잠그듯, 자원을 한 스레드가 차지하는 동안 다른 스레드의 접근을 막는다는 직관적 비유"
   },
   {
+    "keyword": "lock-convoy",
+    "aliases": [
+      "락 호위",
+      "락 콘보이"
+    ],
+    "category": "동시성",
+    "summary": "락 경합으로 스레드가 줄서는 성능 문제",
+    "etymology": "'convoy'는 '호송하다'를 뜻하는 고대 프랑스어 convoier(라틴어 com-+via, 길을 함께함)에서 온 영어 단어로, 무리지어 함께 이동하는 행렬을 뜻한다.",
+    "namingReason": "여러 스레드가 같은 락을 두고 반복 경합하면서, 락을 놓고 다시 잡는 동안 줄지어 대기하는 행렬(convoy)을 형성해 처리량이 떨어지는 현상이다. 호송대가 가장 느린 차량 속도로 묶여 이동하듯 스레드들이 락 인계 속도에 묶인다. 잦은 컨텍스트 스위칭 비용이 누적되어 악화된다."
+  },
+  {
     "keyword": "lock-free",
     "aliases": [
       "락프리",
@@ -2834,6 +3082,17 @@
     "summary": "가장 오래 전에 사용된 항목부터 제거하는 캐시 교체 정책",
     "etymology": "Least Recently Used의 약어. Least(가장 적게, 최소), Recently(최근에), Used(사용된)의 세 단어로 구성된 두문자어로, 각 단어는 모두 일반 영어에서 차용되었다.",
     "namingReason": "캐시가 꽉 찼을 때 '가장 최근에 사용된 시점이 가장 오래된(Least Recently Used)' 항목, 즉 가장 오랫동안 접근되지 않은 항목을 먼저 퇴거시킨다는 정책을 이름 자체가 설명한다. 어원의 세 단어가 정렬 기준(사용 시점), 방향(최근→오래됨), 대상(사용 기록)을 직접 명시하여 동작 원리가 이름에 압축되어 있다. 지역성(locality) 원리에 기반해 최근에 자주 쓰인 데이터가 곧 다시 쓰일 가능성이 높다는 가정을 반영한 교체 전략이다."
+  },
+  {
+    "keyword": "lsm-tree",
+    "aliases": [
+      "LSM 트리",
+      "Log-Structured Merge-tree"
+    ],
+    "category": "DB",
+    "summary": "순차 쓰기와 주기적 병합 기반의 저장 구조",
+    "etymology": "Log-Structured Merge-tree의 약어. Log-Structured(로그 구조의), Merge(병합), tree(트리)를 합친 이름이다.",
+    "namingReason": "쓰기를 디스크에 순차 로그처럼 추가만 하며 쌓고(log-structured), 메모리의 정렬 버퍼를 주기적으로 디스크에 내려 여러 계층을 병합(merge)하는 트리 계열 구조다. 무작위 쓰기를 순차 쓰기로 바꿔 쓰기 성능을 높인다. 1996년 O'Neil 등이 제안했고 LevelDB·RocksDB·Cassandra의 저장 엔진 기반이다."
   },
   {
     "keyword": "mac-address",
@@ -3260,6 +3519,17 @@
     "namingReason": "ORM에서 부모 목록 1회 조회(1) 후 각 부모의 연관 데이터를 개별적으로 N번 조회하면 총 N+1회의 쿼리가 발생한다. 이 수식이 문제의 구조 자체를 이름으로 삼은 것이다. 조인이나 eager loading으로 쿼리를 1~2회로 줄일 수 있으나, lazy loading이 기본값인 ORM에서 무심코 작성한 코드가 이 패턴에 빠지기 쉽다."
   },
   {
+    "keyword": "nagles-algorithm",
+    "aliases": [
+      "네이글 알고리즘",
+      "Nagle's algorithm"
+    ],
+    "category": "네트워크",
+    "summary": "작은 TCP 패킷을 모아 보내는 기법",
+    "etymology": "고안자 John Nagle의 이름을 딴 명칭으로, 별도의 어원적 의미 없이 인명에서 온 eponym(이름 유래어)이다.",
+    "namingReason": "작은 데이터를 즉시 보내지 않고 모아서 한 번에 전송해, 헤더가 데이터보다 큰 '작은 패킷'(tinygram) 남발을 줄이는 TCP 기법이다. 1984년 John Nagle이 RFC 896에서 제안하며 그의 이름이 붙었다. 지연에 민감한 응용에서는 TCP_NODELAY 옵션으로 끄기도 한다."
+  },
+  {
     "keyword": "namespace",
     "aliases": [
       "네임스페이스",
@@ -3416,6 +3686,17 @@
     "summary": "객체 단위로 데이터와 동작을 묶어 프로그램을 구성하는 패러다임",
     "etymology": "영어 object는 라틴어 obiectum(앞에 던져진 것, 대상)에서 유래. oriented는 라틴어 oriens(떠오르는 해, 동쪽)에서 파생되어 '방향을 맞추다'라는 의미로 정착했다.",
     "namingReason": "'객체를 향해 방향을 맞춘다'는 뜻의 object-oriented는, 프로그램의 중심을 절차나 명령이 아닌 '객체(대상)'에 두겠다는 설계 철학을 직접 표현한다. Alan Kay가 1960년대 말 Simula에서 영감을 받아 Smalltalk를 설계하면서 이 용어를 사용했다. Kay는 객체를 '메시지를 주고받는 독립적 세포'로 비유했으며, 각 객체가 자신의 상태와 행동을 스스로 책임진다는 캡슐화 원칙이 '객체 중심'이라는 작명에 반영되어 있다."
+  },
+  {
+    "keyword": "object-pool",
+    "aliases": [
+      "오브젝트 풀",
+      "객체 풀"
+    ],
+    "category": "패턴",
+    "summary": "객체를 미리 모아두고 빌려 쓰는 재사용 패턴",
+    "etymology": "'pool'은 웅덩이를 뜻하던 고대 영어 pol에서 출발해, 자원을 한데 모아둔 '공동 저장소'라는 비유적 의미로 확장된 영어 단어다.",
+    "namingReason": "생성 비용이 큰 객체를 매번 만들고 버리는 대신, 미리 만들어 둔 객체 무리(pool)에서 빌려 쓰고 반납해 재사용함으로써 가비지 컬렉션 부담과 초기화 비용을 줄인다. 자원을 웅덩이처럼 모아두고 꺼내 쓴다는 비유다. DB 커넥션 풀과 스레드 풀이 대표 사례이며, 게임의 총알·파티클 재사용에도 흔히 쓰인다."
   },
   {
     "keyword": "observability",
@@ -3600,6 +3881,17 @@
     "namingReason": "큰 데이터를 작게 나누어 '꾸러미' 단위로 포장해 보낸다는 개념. 1960년대 Donald Davies가 'packet switching' 용어를 도입하며 굳어짐"
   },
   {
+    "keyword": "pairing-heap",
+    "aliases": [
+      "페어링 힙",
+      "쌍 힙"
+    ],
+    "category": "자료구조",
+    "summary": "트리를 둘씩 짝지어 병합하는 단순한 힙 구조",
+    "etymology": "'pairing'은 라틴어 par(같은·짝)에서 온 영어 pair(짝짓다)의 동명사로 '둘씩 짝지음'을 뜻한다.",
+    "namingReason": "최솟값을 삭제한 뒤 남은 트리들을 둘씩 짝지어(pairing) 병합하는 핵심 연산에서 이름이 나왔다. 구현이 매우 단순한데도 실측 성능이 우수해 피보나치 힙의 복잡함을 대체하는 실용적 대안으로 쓰인다. 1986년 Fredman, Sedgewick, Sleator, Tarjan이 함께 제안했다."
+  },
+  {
     "keyword": "parallelism",
     "aliases": [
       "패럴리즘",
@@ -3687,6 +3979,17 @@
     "summary": "같은 쿼리를 반복 실행할 때 없던 행이 나타나는 이상 현상",
     "etymology": "그리스어 phantasma(환영·유령)에서 유래한 영어 phantom(실체 없는 것, 유령)과 read(읽기)의 합성어. phantom은 '있지 않아야 하는데 보이는 것'을 뜻한다.",
     "namingReason": "한 트랜잭션 내에서 동일한 SELECT를 두 번 실행했을 때, 첫 번째에는 없던 행이 두 번째에 갑자기 나타나는 현상이다. 중간에 다른 트랜잭션이 새 행을 INSERT하고 커밋했기 때문이다. 처음 조회 때 분명 존재하지 않았는데 재조회 시 홀연히 나타난다는 점에서 '유령(phantom)'이라는 표현이 쓰였다. 어원의 '실체 없이 갑자기 나타나는 존재'라는 의미가 예기치 않게 등장하는 새 행이라는 개념에 빗대어진 것이다."
+  },
+  {
+    "keyword": "piece-table",
+    "aliases": [
+      "피스 테이블",
+      "조각 테이블"
+    ],
+    "category": "자료구조",
+    "summary": "원본·추가본을 조각 목록으로 잇는 편집 구조",
+    "etymology": "'piece'는 고대 프랑스어 piece(조각·부분)에서, table은 라틴어 tabula(판·목록)에서 온 영어 단어다.",
+    "namingReason": "원본 텍스트와 추가 버퍼를 가리키는 '조각(piece)'들의 목록(table)으로 문서를 표현한다. 편집은 원본을 직접 고치지 않고 조각 목록만 재배열·삽입하므로 되돌리기와 변경 기록 관리가 쉽다. Microsoft Word 초기 버전과 VS Code의 텍스트 모델이 이 구조를 기반으로 삼은 것으로 알려져 있다."
   },
   {
     "keyword": "ping",
@@ -4114,6 +4417,17 @@
     "namingReason": "'단위 시간당 비율에 경계를 긋는다'는 어원 그대로, 특정 클라이언트나 IP가 일정 시간 안에 보낼 수 있는 요청 횟수에 상한을 두는 기법이다. API 게이트웨이나 역방향 프록시에서 남용 방지·공정 사용 보장을 위해 적용된다. 토큰 버킷(token bucket)이나 리키 버킷(leaky bucket) 알고리즘이 대표적인 구현 방식이며, throttling이 시스템 내부 자원을 보호하는 뉘앙스라면 rate-limiting은 외부 접근 제어에 더 집중된 개념이다."
   },
   {
+    "keyword": "rcu",
+    "aliases": [
+      "Read-Copy-Update",
+      "읽기-복사-갱신"
+    ],
+    "category": "동시성",
+    "summary": "읽기를 막지 않는 리눅스 커널의 동기화 기법",
+    "etymology": "Read-Copy-Update의 약어. Read(읽기), Copy(복사), Update(갱신)의 세 단계 동작을 그대로 딴 두문자어다.",
+    "namingReason": "갱신 시 기존 데이터를 그대로 두고 복사본(Copy)을 수정(Update)한 뒤 포인터를 교체하므로, 읽기(Read) 측은 잠금 없이 기존 데이터를 계속 읽을 수 있다. 이름이 곧 동작 순서다. 읽기가 압도적으로 많은 상황을 위해 설계되어 리눅스 커널에 널리 쓰이며 McKenney 등이 발전시켰다."
+  },
+  {
     "keyword": "reactive",
     "aliases": [
       "리액티브",
@@ -4505,6 +4819,17 @@
     "namingReason": "철도에서 열차 통행을 신호로 제어하던 세마포 장치에서 유래. 자원 접근 가능 여부를 신호처럼 알려준다는 점에서 이름이 붙음"
   },
   {
+    "keyword": "seqlock",
+    "aliases": [
+      "시퀀스 락",
+      "sequence lock"
+    ],
+    "category": "동시성",
+    "summary": "순서 카운터로 읽기를 막지 않는 잠금 기법",
+    "etymology": "sequence lock의 축약어. sequence는 라틴어 sequi(뒤따르다)에서 온 '순서·연속'을, lock은 '잠금'을 뜻한다.",
+    "namingReason": "쓰기 시작과 끝에 순서 카운터(sequence counter)를 증가시키고, 읽기 측은 읽기 전후의 카운터 값이 같고 짝수인지 확인해 도중에 쓰기가 끼어들었는지 판별한다. 이 '순서 번호' 검사가 이름의 핵심이다. 읽기를 막지 않으면서 쓰기 일관성을 보장해 리눅스 커널의 시간 갱신 등에 쓰인다."
+  },
+  {
     "keyword": "sequence",
     "aliases": [
       "시퀀스",
@@ -4669,6 +4994,17 @@
     "namingReason": "상위 층에서 원소를 여러 개씩 '건너뛰며' 빠르게 접근한다는 동작에서 유래. 1989년 William Pugh가 명명"
   },
   {
+    "keyword": "slow-start",
+    "aliases": [
+      "슬로 스타트",
+      "느린 시작"
+    ],
+    "category": "네트워크",
+    "summary": "윈도를 점차 키우는 TCP 혼잡 제어",
+    "etymology": "'slow start'는 '느린'을 뜻하는 slow와 '시작·출발'을 뜻하는 start를 합친 영어 표현으로, 처음에 신중하게 천천히 출발한다는 의미를 담는다.",
+    "namingReason": "TCP 연결 초기에 혼잡 윈도를 작게 잡아 '느리게 시작'한 뒤, 정상 수신이 확인될 때마다 윈도를 지수적으로 키워 가용 대역폭을 탐색한다. 처음을 신중하게 출발한다는 의미에서 slow가 붙었으나 증가 자체는 빠르다. 1988년 Van Jacobson이 혼잡 붕괴 대응책으로 도입했다."
+  },
+  {
     "keyword": "smtp",
     "aliases": [
       "SMTP",
@@ -4700,6 +5036,17 @@
     "summary": "TLS에서 접속할 서버 호스트명을 알리는 확장",
     "etymology": "Server Name Indication의 약어다. Server(서버), Name(이름), Indication(표시·알림; 라틴어 indicare 가리켜 보이다에서 유래)으로 이루어진 두문자어다.",
     "namingReason": "하나의 IP에 여러 도메인이 호스팅될 때, 서버는 클라이언트가 어느 호스트의 인증서를 원하는지 알 수 없다. 이를 풀기 위해 클라이언트가 TLS 핸드셰이크 초기에 접속하려는 서버 이름을 명시적으로 '가리켜 알리는(indicate)' 확장이 SNI다. 이 이름이 평문으로 노출되는 문제를 보완하려 Encrypted Client Hello(ECH)가 후속으로 제안되었다."
+  },
+  {
+    "keyword": "snowflake-schema",
+    "aliases": [
+      "스노우플레이크 스키마",
+      "눈송이 스키마"
+    ],
+    "category": "DB",
+    "summary": "차원 테이블을 정규화해 가지를 뻗은 스키마",
+    "etymology": "'snowflake'는 눈(snow)과 얇은 조각(flake, 고대 노르드어 flak)을 합친 영어 단어로 '눈송이'를 뜻한다.",
+    "namingReason": "데이터 웨어하우스에서 차원 테이블을 정규화해 하위 차원으로 가지를 뻗으면, 중심 사실 테이블에서 여러 갈래로 분기하는 모양이 눈송이의 결정 구조를 닮아 붙은 이름이다. 정규화로 중복은 줄지만 조인이 늘어난다. 분기가 없는 star schema와 대비되는 정규화 변형이다."
   },
   {
     "keyword": "soa",
@@ -4786,6 +5133,17 @@
     "summary": "최근 접근 노드를 루트로 이동시키는 자기 조정 BST",
     "etymology": "영어 splay는 '넓게 펼치다', '벌리다'를 뜻하는 동사다. 중세 영어 esplaien(펼치다)에서 축약된 형태로, 안쪽을 바깥으로 드러내도록 벌린다는 의미를 지닌다.",
     "namingReason": "1985년 대니얼 슬레이터(Daniel Sleator)와 로버트 타잔(Robert Tarjan)이 고안했다. 노드에 접근할 때마다 해당 노드를 루트까지 회전(rotation)시키는 'splaying' 연산이 핵심이다. 트리 내부의 깊숙한 노드를 루트 방향으로 '펼쳐 올린다'는 동작이 splay의 어원인 '벌려서 드러낸다'는 의미와 연결된다. 자주 접근되는 노드가 루트 근처에 모이는 캐시 효과로, 상각 O(log n)의 성능을 보장한다."
+  },
+  {
+    "keyword": "spurious-wakeup",
+    "aliases": [
+      "스퓨리어스 웨이크업",
+      "허위 깨어남"
+    ],
+    "category": "동시성",
+    "summary": "신호가 없는데도 대기 스레드가 깨어나는 현상",
+    "etymology": "'spurious'는 라틴어 spurius(사생아의·가짜의)에서 온 영어 단어로 '근거 없는·허위의'를 뜻한다.",
+    "namingReason": "조건 변수에서 대기하던 스레드가 명시적 신호(signal) 없이도 깨어나는 현상으로, 신호가 없었으니 '근거 없는' 깨어남이라 불린다. 따라서 대기 코드는 반드시 조건을 while 루프로 재검사해야 한다는 관용이 자리 잡았다. 다수 OS의 조건 변수 명세가 이 가능성을 공식적으로 허용한다."
   },
   {
     "keyword": "spy",
@@ -4876,6 +5234,17 @@
     "summary": "호출 스택이 허용 크기를 넘어 발생하는 오류",
     "etymology": "영어 stack + overflow(넘침)",
     "namingReason": "정해진 크기의 스택 공간을 넘치도록(overflow) 함수 호출이 쌓였다는 물리적 이미지. 무한 재귀의 대표적 증상"
+  },
+  {
+    "keyword": "star-schema",
+    "aliases": [
+      "스타 스키마",
+      "별 스키마"
+    ],
+    "category": "DB",
+    "summary": "사실 테이블을 중심에 둔 별 모양 스키마",
+    "etymology": "'star'는 별을 뜻하는 고대 영어 steorra에서 온 영어 단어로 게르만조어 sternô에 뿌리를 둔다. schema는 그리스어 skhēma(형태)에서 왔다.",
+    "namingReason": "중심에 사실(fact) 테이블을 두고 비정규화된 차원(dimension) 테이블들이 그 주위를 직접 둘러싸는 모양이, 가운데서 빛살이 뻗는 별을 닮아 붙은 이름이다. 차원을 더 쪼개지 않아 조인이 단순하고 조회가 빠르다. 차원을 정규화해 가지를 뻗는 snowflake schema의 기준점이 된다."
   },
   {
     "keyword": "starvation",
@@ -4974,6 +5343,17 @@
     "summary": "미리 정해진 값을 반환하는 단순 대체 객체",
     "etymology": "영어 stub은 '짧게 남은 나머지 부분, 그루터기, 연필 토막'을 뜻하는 고대 영어 stybb에서 유래. 전체가 아닌 최소한의 일부만 남긴 형태를 가리킨다.",
     "namingReason": "전기공학에서는 배선의 미완성 끝부분에 임시로 연결해두는 단자를 stub이라 불렀다. 소프트웨어에서는 실제 구현이 없거나 아직 완성되지 않은 함수·모듈 자리에 최소한의 코드만 채워두는 임시 대체물을 의미하게 되었다. '짧게만 남아 있는 토막'이라는 원의미처럼, 복잡한 동작 없이 고정된 값만 반환하는 최소 구현체라는 개념에 그 의미가 그대로 이어진다."
+  },
+  {
+    "keyword": "stun",
+    "aliases": [
+      "스턴",
+      "Session Traversal Utilities for NAT"
+    ],
+    "category": "네트워크",
+    "summary": "NAT 통과를 돕는 네트워크 프로토콜",
+    "etymology": "Session Traversal Utilities for NAT의 약어다. NAT는 Network Address Translation(네트워크 주소 변환)으로, NAT를 통과하는 유틸리티 모음을 뜻한다.",
+    "namingReason": "NAT 뒤에 있는 단말이 자신의 공인 IP·포트를 알아내 NAT를 '통과(traversal)'하도록 돕는다. 일반 단어 stun(기절시키다)과 철자가 같아 기억하기 쉽게 맞춘 두문자어다. 본래 RFC 3489의 'Simple Traversal of UDP through NATs'였다가 RFC 5389에서 현재 이름으로 재정의되었고, WebRTC의 P2P 연결 수립에 쓰인다."
   },
   {
     "keyword": "submodule",
@@ -5123,6 +5503,17 @@
     "namingReason": "사용자와 컴퓨터 통신 회선의 '끝단(단말)'에 위치하는 장치라는 의미. 메인프레임 시대의 물리 단말기가 소프트웨어 터미널로 계승"
   },
   {
+    "keyword": "ternary-search-tree",
+    "aliases": [
+      "삼진 탐색 트리",
+      "터너리 서치 트리"
+    ],
+    "category": "자료구조",
+    "summary": "세 갈래 자식을 갖는 문자열 탐색 트리",
+    "etymology": "'ternary'는 라틴어 ternarius(셋으로 이루어진)에서 온 영어 단어로 '3진·세 갈래'를 뜻한다.",
+    "namingReason": "각 노드가 한 문자를 담고 '작다·같다·크다' 세 갈래(ternary) 자식을 가져, 이진 탐색 트리와 트라이(trie)의 장점을 결합한다. 문자열 키를 효율적으로 저장하면서 트라이보다 메모리를 절약한다. 1997년 Bentley와 Sedgewick이 정리해 널리 알려졌다."
+  },
+  {
     "keyword": "thread",
     "aliases": [
       "스레드",
@@ -5154,6 +5545,17 @@
     "summary": "자원 사용량을 제한해 과부하를 방지하는 패턴",
     "etymology": "영어 throttle은 15세기 단어로 '목을 조르다'를 뜻하며, 이후 엔진의 연료 공급을 조절하는 밸브를 가리키는 기계 용어로 확장되었다. -ing는 동명사·현재진행형 접미사.",
     "namingReason": "엔진 스로틀이 연료 흐름을 물리적으로 '조여' 출력을 조절하듯, 소프트웨어에서는 특정 시간 내 처리 가능한 요청 수나 자원 소비량을 상한선으로 제한한다. 서비스가 과부하 상태일 때 들어오는 요청 속도를 강제로 늦춰 시스템을 보호하는 행위가 '목을 조른다'는 물리적 은유와 맞닿는다. rate-limiting이 주로 외부 클라이언트 제어에 초점을 맞추는 반면, 스로틀링은 내부 자원 보호 관점에서 쓰이는 경향이 있다."
+  },
+  {
+    "keyword": "thundering-herd",
+    "aliases": [
+      "썬더링 허드",
+      "우레와 같은 무리"
+    ],
+    "category": "동시성",
+    "summary": "대기 프로세스가 한꺼번에 깨어나는 문제",
+    "etymology": "'thundering herd'는 천둥(thunder, 고대 영어 thunor)과 가축 떼(herd, 고대 영어 heord)를 합친 표현으로, 우르르 몰려와 땅을 울리는 짐승 무리를 뜻한다.",
+    "namingReason": "하나의 자원이나 이벤트를 기다리던 다수의 프로세스·스레드가 동시에 깨어나 한꺼번에 경쟁하지만 결국 하나만 처리되고 나머지는 다시 잠드는 비효율을 가리킨다. 들소 떼가 굉음을 내며 한 방향으로 몰려가는 모습에 빗댔다. 캐시 만료나 accept() 호출 경합에서 흔히 나타난다."
   },
   {
     "keyword": "thunk",
@@ -5197,6 +5599,17 @@
     "summary": "문자열을 의미 단위인 토큰으로 분리하는 도구",
     "etymology": "라틴어 signum(표시, 징표)에서 유래한 고대 영어 token(징표, 표식)에, 동사화 접미사 -ize와 행위자 접미사 -er이 순서대로 붙은 형태. token은 '식별 가능한 최소 단위'를 뜻하는 의미로 전이되었다.",
     "namingReason": "token은 본래 동전 대용품이나 신분 확인 표식처럼 '의미를 지닌 최소 식별 단위'를 가리켰다. 컴파일러·NLP·LLM 분야에서 문자열을 의미 있는 최소 조각으로 나누는 행위가 이 단어의 원의미와 맞아떨어진다. lexer와 기능상 유사하지만, tokenizer는 컴파일러보다 텍스트 처리·머신러닝 분야에서 더 자주 쓰이는 경향이 있으며 구현 수준에서의 토큰 분리 작업 자체를 강조하는 표현이다."
+  },
+  {
+    "keyword": "tombstone",
+    "aliases": [
+      "툼스톤",
+      "묘비"
+    ],
+    "category": "DB",
+    "summary": "삭제 사실을 알리는 분산 DB의 삭제 표식",
+    "etymology": "'tombstone'은 무덤을 뜻하는 그리스어 tymbos에서 온 tomb과 stone(돌)의 합성어로 '묘비'를 뜻한다.",
+    "namingReason": "분산 DB에서 데이터를 즉시 물리 삭제하지 않고 '삭제됨'을 알리는 표식을 남기는데, 죽음을 알리는 묘비에 빗대 tombstone이라 부른다. 복제본들이 삭제 사실을 전파받기 전까지 이 표식이 삭제를 기억한다. 일정 기간 후 압축(compaction)에서 실제 제거되며, 쌓이면 조회 성능을 떨어뜨린다."
   },
   {
     "keyword": "tracing",
@@ -5526,6 +5939,17 @@
     "namingReason": "기존 객체들을 바꾸지 않고, 외부에서 '방문자'가 찾아와 각 객체에 맞는 처리를 수행한다는 비유"
   },
   {
+    "keyword": "vlan",
+    "aliases": [
+      "브이랜",
+      "Virtual LAN"
+    ],
+    "category": "네트워크",
+    "summary": "물리망을 논리적으로 나눈 가상 LAN",
+    "etymology": "Virtual LAN의 약어로, Virtual(가상의)과 LAN(Local Area Network, 근거리 통신망)을 합쳤다. LAN 자체도 Local·Area·Network의 두문자어다.",
+    "namingReason": "하나의 물리적 네트워크 장비를 논리적으로 분할해, 물리적 배선과 무관하게 '가상의(Virtual)' 근거리 통신망을 여러 개 구성하는 기술이다. 같은 스위치에 연결돼도 다른 VLAN에 속하면 서로 분리된 브로드캐스트 도메인이 된다. IEEE 802.1Q 표준이 프레임에 VLAN을 식별하는 태깅 방식을 정의한다."
+  },
+  {
     "keyword": "void",
     "aliases": [
       "보이드",
@@ -5716,5 +6140,15 @@
     "summary": "실행 흐름을 일시 중단하고 값 또는 제어권을 호출자에게 반환하는 키워드",
     "etymology": "고대 영어 gieldan(지불하다, 넘겨주다)에서 유래. 본래 '빚을 갚다', '소출을 바치다'는 뜻이었으며, 이후 '양보하다', '포기하다'는 의미로 확장되었다.",
     "namingReason": "'소출을 바친다', '상대방에게 자리를 내준다'는 원의미가 두 가지 개발 맥락에 각각 적용되었다. 제너레이터에서는 현재까지 생산한 값을 호출자에게 '바치고' 일시 정지하는 동작을 묘사한다. 동시성에서는 스레드·코루틴이 CPU 사용권을 스케줄러에 '양보'하는 동작을 묘사한다. 두 경우 모두 '내가 가진 것을 상대에게 넘기고 기다린다'는 원의미가 실행 흐름의 일시 이전이라는 개념으로 자연스럽게 이어진다. Python, JavaScript, C# 등이 동일한 키워드를 채택하며 이 의미가 언어를 초월한 공통 어휘로 정착했다."
+  },
+  {
+    "keyword": "zipper",
+    "aliases": [
+      "지퍼"
+    ],
+    "category": "자료구조",
+    "summary": "불변 구조를 초점 기준으로 순회·갱신하는 기법",
+    "etymology": "'zipper'는 빠른 소리를 흉내 낸 의성어 'zip'에서 파생한 영어 단어로, 1925년 옷의 잠금 장치 상표명으로 정착했다.",
+    "namingReason": "자료구조의 한 지점에 '초점(focus)'을 두고 그 주변 문맥을 분리해 들고 다니는 모습이, 옷의 지퍼를 특정 위치까지 열었다 닫는 동작과 닮았다. 초점 이동은 지퍼를 위아래로 여닫는 것에 대응한다. 1997년 Gérard Huet이 트리 순회·갱신을 위해 명명했다."
   }
 ]

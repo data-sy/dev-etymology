@@ -37,7 +37,14 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** **Phase 6 round-002 발주됨(2026-06-19) — 실행 대기.** 발주안: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md). batch **40개**(510→550), 카테고리 결손 비례 배분(자료구조+11·동시성+9·네트워크+7·패턴+7·DB+6, 기타 0), 게이트 = validator 100% / critic-v2 / scope_leak 0 / dedup / 분포 보정 / 비가역은 smoke 후 사람 승인. 성격: **마지막 수동 라운드** — Phase 5 Done(흐름 실통과) 충족 + Phase 7 판단 데이터 확보. 나머지 +100(550→650)은 Phase 7 자동화로 흡수. 실행 세션이 `handoff-phase6.md` + round-002 발주안으로 굴린 뒤 `rounds/round-002.{json,md}`에 결과·"오케스트레이터 결정 필요" 기록 → 오케스트레이터가 적대적 검증·게이트 판정.
+**진행 상태 (2026-06-20):** 번들 DB **550개**. **round-002 종결·머지 완료** (510→550, 무손실 swap). 게이트 전부 PASS(validator 40/40 · critic-v2 0 fail · scope_leak 0 · dedup · smoke). **Phase 5 Done(새 흐름 실통과) 충족.** 분포: 자료구조 76·동시성 80·네트워크 86·패턴 86·DB 85·기타 137. 사람 손 시간 ≈10분(round-001 60분→6배↓). 상세·측정·관찰: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md).
+
+**다음 행동:** **목표 N=650까지 +100(550→650).** 사람 손 시간이 10분으로 떨어졌으나 Phase 7 트리거(>5분)는 여전히 충족 — **Phase 7 자동화 착수 판단** 지점. loop: `Generator(API) → validator → 재생성 → critic(v2) → scope_diff → 머지`. 진입 전 의도적 **API 미니 run 1회**로 비용·latency 수집 → claude.ai 정액 유지 vs API 전환 손익 결정. round-002 변경 후보(round-002.md): dedup을 완전매칭 기준으로 / critic 격리 런북 명문화(임시챗+본문만) / summary 하한 여유 검토. 또는 수동 round-003 1회 더(자료구조·DB 보강) 후 자동화도 가능 — 사람 결정 지점.
+
+<details><summary>직전 (round-002 발주·실행)</summary>
+
+**Phase 6 round-002 발주(2026-06-19)→실행·머지(2026-06-20).** 발주안: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md). batch 40개, 카테고리 결손 비례 배분. 흐름 `Generator → validator → critic(v2) → 재생성 → scope_diff → 머지` 첫 실통과. generator cycle 2회(cycle1 16/40 길이실패 → cycle2 24재생성 전부통과). critic-v2 고유검출 0(round-001도 0, 2연속). consistent-hashing 자료구조 확정(발주 DB→long pole 보강). alias 충돌: 구간 트리 제거(실충돌)/lazy loading 복원(false-positive). critic 격리 함정 1건(메모리 오염→임시챗 재실행).
+</details>
 
 <details><summary>직전 (Phase 4·5 마감)</summary>
 

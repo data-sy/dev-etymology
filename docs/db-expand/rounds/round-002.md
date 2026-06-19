@@ -1,7 +1,7 @@
 # 라운드 002 — 발주 (Phase 6 본 확장, 오케스트레이터 작성)
 
-> **상태: 발주됨 (2026-06-19). 실행 대기.** 이 문서는 오케스트레이터가 작성한 *발주안*이다.
-> 실행 세션이 `handoff-phase6.md` + 이 발주안으로 굴린 뒤, 아래 "라운드 결과"·"오케스트레이터 결정 필요" 섹션을 채운다.
+> **상태: 종결 (2026-06-20). 머지 완료 (510→550), 게이트 전부 PASS.** 발주(2026-06-19) → 실행·머지(2026-06-20).
+> 결과·측정·판정은 아래 "라운드 결과"·"오케스트레이터 결정 필요/판정" 섹션 참조.
 > 진행 상태 정본은 디스크 — 충돌 시 `ROADMAP.md` "Now" · `spec.md` · 이 문서를 신뢰.
 
 ## 성격 (왜 이 라운드인가)
@@ -68,10 +68,61 @@
 - 판단 메모(비블로킹): `consistent-hashing` DB 배정은 분산/네트워크 경계 용어. enum 위반 아니라 게이트는 아님. 2탭에서 어색하면 네트워크 재배정 여지.
 - **결정: 3단계(claude.ai 2탭) 진행 승인.** 이후 게이트(validator 100% / critic-v2 / scope_leak 0)는 생성 산출물 도착 시 판정.
 
-## 라운드 결과 (실행 세션이 채움)
+## 라운드 결과 (2026-06-20, 통과·머지 완료)
 
-> (미실행 — 2탭 생성 대기)
+- batch size: 40 → **terms.json 510 → 550** (무손실 swap, 기존 510 변경 0·소실 0)
+- Generator 라운드 수: **2** (cycle1 생성 → cycle2 재생성)
+- 최종 통과율: **40/40**
+- 라운드당 사람 손 시간: **≈10분** (round-001 ≈60분 → 6배↓. 룰 안정화 + critic-v2 정량룰 제거 효과. 트리거 >5분은 여전히 충족.)
+  - 단, critic 격리 삽질(탭 B가 .md 주석부까지 paste되어 메모리 오염 → 임시챗 재실행)에 추가 시간 소요. 아래 관찰③.
+- API 비용·latency (Phase 2B 샘플): 이번 라운드 미측정(생성 전량 claude.ai 정액). Phase 7 진입 전 의도적 API 미니 run에서 수집 예정.
 
-## 오케스트레이터 결정 필요 (실행 세션이 채움)
+### 검증 결과
+- **validator (결정론, 최종 게이트)**: cycle1 **16/40**(실패 24건 전부 길이) → cycle2 24개 재생성 **24/24** → 합본 **40/40**.
+  - cycle1 실패 24건 분류: SUMMARY_LEN(<20자) 19건 / NAMING_LEN(<150자) 4건 / ETYMOLOGY_LEN 2건. (pairing-heap 2룰 중복)
+- **critic-v2 (격리 탭, nuanced 4종)**: **40 passed / 0 failed.** passed∪failed = 입력 40 정확 일치(무결성 OK).
+- **scope_diff**: cycle1→합본 재생성 `clean=true`, scope_leak 0, missing_change 0 — 깨진 24개만 변경, 통과 16개 무변경.
 
-> (미실행)
+### critic 고유 검출 = 0 (Phase 5 축소 신호 누적)
+- critic-v2가 validator 외 유니크하게 잡은 nuanced 문제: **0건** (round-001도 0 → **2라운드 연속 0**).
+- → critic 추가 축소/제거 검토 신호 누적. 단 critic은 cross-batch가 아닌 batch-내 의미판단 담당이라, 표본 더 쌓고 결정(Phase 6 누적).
+
+### 길이 카운팅 오차 (critic)
+- critic이 길이를 오판한 사례 0 (정량 룰을 아예 안 봄 — validator 단일 정본 설계대로). cycle1 길이 실패는 전부 validator가 잡음.
+
+### Scope leak
+- 0건 (scope_diff 도구 검증). 30~50 batch라 눈 검수 불가 → 도구가 정상 작동 확인(Phase 5 scope_diff 실통과).
+
+### dedup / 충돌 (코드 게이트)
+- HARD(신규 keyword == 기존 keyword): 0.
+- SOFT-A(신규 alias == 기존 keyword/alias, 정규화 비교): 2건 검출 → 처리:
+  - `interval-tree`의 `구간 트리` ↔ 기존 `segment-tree`의 `구간 트리` — **완전매칭상 실제 충돌**(동일 문자열). interval-tree에서 제거(인터벌 트리 유지).
+  - `cache-aside`의 `lazy loading` ↔ 기존 `lazy-loading`(keyword) — **false positive**(공백≠하이픈, 앱은 완전매칭이라 안 부딪힘). 제거했다가 smoke에서 `lazy loading`(공백) 무결과 회귀 발견 → **복원**.
+
+### smoke (코드 레벨 결정론, BundleDBService 복제)
+- 디코딩: 550 전부 6필드·타입·카테고리 OK (Codable 디코딩 실패 0).
+- 검색 결정론: 신규 keyword·alias(한+영 풀네임)·autocomplete prefix·정렬·유니크 전부 PASS. 모호성 해소 확인(`구간 트리`→segment-tree, `lazy loading`→cache-aside, `lazy-loading`→기존 일반).
+- (워크트리 비밀파일 부재로 풀 Xcode 빌드 대신 디코딩·검색 경로 결정론 검증 — handoff 규칙 준수.)
+
+### 분포
+- 카테고리(누적): 자료구조 **76**(+12) / 동시성 **80**(+9) / 네트워크 **86**(+7) / 패턴 **86**(+7) / DB **85**(+5) / 기타 137(불변). 합 550.
+  - long pole 자료구조(64) 최대 보강. 기타 비중 26.9%→24.9%.
+- 길이 평균: validator 범위 내(별도 측정 생략 — 전수 통과로 갈음).
+
+### 관찰
+- **①** generator가 **summary 20자 하한을 상습 미달**(cycle1 실패 24건 중 19건이 16~19자). round-001엔 없던 신규 패턴 — 표본 작아 단정은 이르나 누적 관찰 대상.
+- **②** 코드 dedup이 **정규화(공백·하이픈 제거) 비교**라 앱의 **완전매칭**보다 공격적 → false-positive 1건. dedup을 검색 의미와 맞춰야 함(다음 라운드 변경 후보).
+- **③** critic **격리 운용 함정**: critic-v2.md를 통째로(─── 위 주석부 포함) paste하면 탭이 파이프라인 메타·dev-etym 맥락을 들고 와 **격리 위반** → 판정 대신 메타 응답. 해소: **임시챗 + ─── 사이 본문만** paste. 런북에 명문화 필요.
+
+### 다음 라운드 변경 후보
+1. **dedup을 완전매칭 기준으로** (정규화 비교는 informational로 분리). 관찰② 근거.
+2. **v2-batch 프롬프트에 summary 하한 여유** 문구("최소 22자 이상 권장") 검토 — 관찰① 누적 시. 지금은 기록만.
+3. **critic 격리 런북 항목 추가** — "임시챗 + 본문만 paste, JSON 외 메타 응답 시 오염 신호". 관찰③.
+4. **Phase 7 진입 판단** — 사람 손 시간 10분으로 하락했으나 트리거 충족. API 미니 run으로 비용 수집 후 claude.ai 정액 유지 vs API 전환 결정.
+
+## 오케스트레이터 결정 필요 / 판정 (2026-06-20)
+
+- **머지 승인(비가역)**: 사람 승인 완료 → swap·커밋 진행.
+- **consistent-hashing 카테고리**: 발주안 DB → generator 자료구조. **자료구조 유지로 확정**(사람) — long pole 보강에 유리, 분산/자료구조 경계 용어로 타당.
+- **alias 충돌 2건**: 위 처리대로 확정(사람) — 구간 트리 제거(실충돌) / lazy loading 복원(false-positive).
+- **게이트 종합 판정: PASS.** validator·critic-v2·scope_diff·dedup·smoke 전부 통과. **Phase 5 Done(새 흐름 실통과) 충족.**
