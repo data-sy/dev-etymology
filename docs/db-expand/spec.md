@@ -41,7 +41,7 @@
 - **Batch generation prompt 출처**: `generate_db.py`의 `SYSTEM_PROMPT` (line 50-87)를 base로 fork. **runtime tool prompt(`build_prompt(...)`)는 사용하지 않음** — tool-call 강제 + 단일 entry 응답용이라 batch와 정면 충돌.
 - **`prompts.components` import 제한**: `GOAL_AND_TOOL_SECTION`과 `NULL_GUARD_EXTRA`는 batch에 import 금지 (둘 다 `return_term_entry` 도구 호출 강제). 재사용 가능한 atom은 `PERSONA`와 `ACCURACY_AND_CATEGORY`뿐. v2 acceptance의 `ALIAS_STRICT_EXTRA`·`CLOSING_EXTRA`는 텍스트 발췌해서 batch prompt에 통합. `THINKING_BLOCK_SELFCHECK`는 chat에서 thinking이 안 보여 검증 불가 → Phase 2B(API 비교)에서 차이 측정 후 결정(Phase 0-5 참조).
 - **Validator scope**: 신규 batch entry 전용. 머지된 `terms.next.json` 전체엔 적용하지 않음 (기존 500개는 grandfather).
-- **기존 500개 length 비순응 처리: grandfather (재생성 안 함)**. 현재 500개를 새 길이 룰(summary 20~30 / etymology 60~120 / namingReason 150~270)로 재면 47~63% 위반 — `generate_db.py`의 기존 validate()가 길이를 검사하지 않았기 때문. 본 마일스톤 목표는 "확장"이지 "재생성"이 아님. → **2-tier DB**(legacy 500 + 신규 compliant) 의도된 상태. backfill은 별도 작업으로 분리.
+- **기존 500개 length 비순응 처리: grandfather (재생성 안 함)**. 현재 500개를 새 길이 룰(summary 20~30 / etymology 60~120 / namingReason 150~270)로 재면 **비순응률 79.2% (전수 실측: 통과 104/500 = 20.8%; 위반 분포 ETYMOLOGY_LEN 313 / SUMMARY_LEN 233 / NAMING_LEN 226)** — `generate_db.py`의 기존 validate()가 길이를 검사하지 않았기 때문. (사전 추정 "47~63%"은 과소평가였음 — round-001 전수 교차검증으로 정정, `rounds/round-001-consistency-A.md`.) 본 마일스톤 목표는 "확장"이지 "재생성"이 아님. → **2-tier DB**(legacy 500 + 신규 compliant) 의도된 상태로 회귀 사유 아님. 단 실측 비순응이 추정보다 높아 **legacy backfill 우선순위 상향 근거**. backfill은 별도 작업으로 분리.
 - **재생성 루프 한계**: 3회 고정.
 - **alias 룰 충돌 해소 (v2.1, round-001 POC 발견)**: `RULE_ALIAS_MIN1`(한글 alias 필수) ∧ `RULE_ALIAS_STRICT`(번역 금지)가 음차 없는 용어(priority-inversion·persistent-data-structure·sni·hsts 등 — 한글 형태가 표준 번역어뿐)에서 **동시 충족 불가 모순**. Generator·Critic 두 탭이 독립적으로 같은 진단 도달. → STRICT에 **(4) 정착된 한국어 이름** 범주 추가. 판별 축을 "음차 유무"가 아닌 **"이름이냐 설명이냐"**로 잡음 — 그 개념을 부르는 표준 명칭(음차 병기 가능, 예: "커맨드 패턴"+"명령 패턴")은 허용, 서술적 풀이·정의·상위개념·한정수식어 변형은 계속 금지. 근거: BundleDBService가 alias로 검색하는 한국어 사전이라 정당한 동의어 보존 = 검색 적중률. `v2-batch.md`·`critic-v1.md` 동일 문구 동기화 + jpa few-shot closing 위반 교체. validator는 무변경(STRICT는 critic 전담). round-001은 이 룰로 재실행.
   - **v2.1.1 후속(round-001 critic 결과)**: 닫힌 화이트리스트("4범주 중 하나에만")가 "이름이냐 설명이냐" 원칙과 충돌 — merkle-tree의 "hash tree"처럼 정식 영어 동의어(=또 다른 이름)가 4범주 밖이라 false-positive. → 범주 목록을 **닫힌 화이트리스트가 아닌 예시**로 강등하고 원칙이 지배하게, **(5) 다른 언어의 정식 동의어** 허용 명시. 정식 동의어 보존 = alias 검색 적중률.
@@ -125,9 +125,11 @@
 #### (A) 기존 terms.json 베이스라인 비교
 - 입력: `round-001.json` + 기존 terms.json 500개에서 **카테고리별 균등 sample** (예: 카테고리당 5개씩 30개)
 - **drift gate (실패 시 회귀)**:
-  - validator 통과율: 신규 batch와 sample 둘 다 측정 — 신규는 100%여야 함. sample은 47~63% 비순응 예상(legacy grandfather), **비교 대상 아님**.
+  - validator 통과율: 신규 batch와 sample 둘 다 측정 — 신규는 100%여야 함. sample은 legacy grandfather라 **비교 대상 아님** (전수 실측 비순응률 79.2% — 아래 grandfather 항 참조, 기록만).
   - alias 개수 중앙값 동일
   - 톤 빈도(부사·감탄사·과장 형용사) 신규가 sample 대비 명백히 증가하지 않음
+- **게이트 민감도 비대칭 (권장 점검 절차)**: 3개 gate 중 베이스라인 샘플 선택에 민감한 건 gate 2(alias 중앙값)뿐이다. gate 1은 신규 batch가 고정이라, gate 3은 신규 tone=0이 바닥이라 샘플과 무관하게 구조적으로 불변. → **다음 라운드부터는 무거운 샘플 스윕을 매번 돌릴 필요 없이 gate 2만 전수(또는 충분히 큰 per-cat)로 확인하면 충분.** 근거: round-001 교차검증(전수 500 + 25샘플 스윕에서 gate 2 불변, gate 2 flip 0건) — `rounds/round-001-consistency-A.md` 교차검증 섹션.
+  - ⚠️ open(검토 필요, 아직 정의 변경 안 함): gate 2가 현재 '중앙값 정확히 일치(==)'라 모집단이 얇은 카테고리/라운드에선 ±1로 흔들릴 수 있음. 허용 오차(예: ±1) 도입 여부는 **별도 결정 게이트** — 여기선 기록만.
 - **informational only (기록만, gate 아님)**:
   - 길이 평균·분포 — 베이스라인 자체가 길이 룰 비순응(평균 summary 29 / etymology 84 / namingReason 164)이라 ±% 비교 신뢰도 낮음. 시계열 추세 추적용으로만 기록.
 - 산출물: `docs/db-expand/rounds/round-001-consistency-A.md`
