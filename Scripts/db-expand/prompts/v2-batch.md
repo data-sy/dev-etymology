@@ -4,6 +4,8 @@
 > base: `Scripts/generate_db.py` SYSTEM_PROMPT (line 50-87)
 > 갱신: namingReason 150~300 → **150~270** / `aliases` 룰 v2 acceptance 기준으로 강화 (한정 수식어 변형 금지) / `namingReason` 룰에 closing 추가 (결론 멘트 금지) / batch 내 keyword 중복 금지 명시
 > 제외: `THINKING_BLOCK_SELFCHECK` (chat thinking 비가시, Phase 2B에서 차이 측정 후 결정)
+> v2.1 (round-001 POC 발견): `aliases` 룰에 (4) 정착된 한국어 이름 허용 추가 — MIN1(한글 alias 필수) ∧ STRICT(번역 금지)가 음차 없는 용어에서 충족 불가 모순이었음. 축을 "음차 유무"가 아닌 "이름이냐 설명이냐"로 잡음. critic-v1.md와 동일 문구로 동기화. jpa few-shot의 closing 위반 문장도 새 정보로 교체.
+> v2.1.1 (round-001 critic 결과): 닫힌 화이트리스트("~중 하나에만")가 "이름이냐 설명이냐" 원칙과 충돌 — merkle-tree의 "hash tree" 같은 정식 영어 동의어가 4범주 밖이라 걸림. 목록을 예시로 강등하고 원칙이 지배하게, (5) 다른 언어 정식 동의어 허용 명시.
 
 ---
 
@@ -13,6 +15,11 @@
 - 독자는 한국 개발자이며, 라틴어·그리스어 등 어원 배경지식이 없다고 가정합니다.
 - 어원을 나열하는 것이 아니라, "그 어원이 왜 이 개발 개념의 이름이 되었는가"를 납득시키는 것이 목표입니다.
 
+[격리 원칙]
+- 생성은 **지금 입력된 keyword 리스트와 이 지침만을** 근거로 합니다. 다른 대화방·세션·저장된 메모리·이전 배치의 맥락(이전에 만든 entry, 합의된 예외, 직전 라운드의 피드백 등)을 끌어오거나 참조하지 않습니다.
+- 매 배치를 독립적으로 생성합니다 — 이번 입력에 없는 keyword를 임의로 추가하지 않습니다.
+- 예외: 어원·작명 서술에 필요한 언어학적·역사적 일반 지식은 사용합니다(그것이 본 과업의 핵심). 단 아래 [정확성 원칙]을 따르며, 불확실하면 단정하지 말 것.
+
 [응답 형식 — 매우 중요]
 - 응답은 반드시 JSON 배열로 시작하고 끝납니다: `[ {...}, {...}, ... ]`
 - 배열 각 요소는 아래 필드를 가진 객체입니다: keyword, aliases, category, summary, etymology, namingReason
@@ -21,12 +28,10 @@
 - keyword는 입력과 동일한 영문 소문자 표기를 그대로 사용하세요.
 
 [필드별 작성 기준]
-- aliases: 동일 개념을 지칭하는 대체 표기의 배열. 최소 1개, 한글 표기를 반드시 1개 이상 포함. 허용:
-  (1) 한글 음차 (예: "뮤텍스", "데몬")
-  (2) 약어의 풀네임 (예: "Java Persistence API")
-  (3) 철자 변이 (예: "demon")
-  정의·번역·상위 개념은 포함하지 않는다 (예: "소프트웨어 결함"은 alias가 아님).
-  또한 기본 용어가 약어가 아니면 한정 수식어를 붙인 변형(예: "HTTP cookie", "웹 쿠키", "Java thread")은 alias가 아니다. (2)는 약어 → 풀네임 1:1 대응에만 적용된다.
+- aliases: 동일 개념을 지칭하는 대체 표기의 배열. 최소 1개, 한글 표기를 반드시 1개 이상 포함.
+  원칙: 그 개념을 **부르는 또 다른 정식 명칭**이면 허용, 개념을 **풀어 설명하는 말**이면 금지. (아래 형태는 대표 예시이며 닫힌 목록이 아니다 — 예시에 없어도 '이름'이면 허용된다.)
+  허용 예: (1) 한글 음차("뮤텍스", "데몬") (2) 약어의 풀네임("Java Persistence API") (3) 철자 변이("demon") (4) 정착된 한국어 이름 — 음차가 따로 있어도 병기 가능("command-pattern"의 "커맨드 패턴"과 "명령 패턴", "priority-inversion"의 "우선순위 역전") (5) 그 개념의 또 다른 정식 명칭 — 다른 언어의 정식 동의어 포함("merkle-tree"의 "hash tree").
+  금지: 개념을 풀어 쓴 서술·정의·상위 개념(예: "소프트웨어 결함"은 alias가 아님), 기본 용어가 약어가 아닐 때 한정 수식어를 붙인 변형(예: "HTTP cookie", "웹 쿠키", "Java thread"). (2)는 약어 → 풀네임 1:1 대응에만 적용된다.
   보통 1~3개.
 - category: 아래 6개 중 하나만 사용: "동시성", "자료구조", "네트워크", "DB", "패턴", "기타"
 - summary: 20~30자. 한 줄 요약. "무엇을 하는/무엇인" 수준.
@@ -49,6 +54,6 @@
 응답:
 [
   {"keyword":"mutex","aliases":["뮤텍스","mutual exclusion"],"category":"동시성","summary":"여러 스레드의 동시 접근을 막는 잠금 장치","etymology":"라틴어 mutuus(상호의)와 exclusio(배제)를 합친 영어 'mutual exclusion'의 축약어. 서로 다른 주체가 서로를 배제하는 상태를 뜻한다.","namingReason":"한 스레드가 공유 자원을 사용하는 동안 다른 스레드의 접근을 '상호 배제'하여 경쟁 조건(race condition)을 막는 동기화 기본형이다. 어원의 '서로를 배제한다'는 의미가 동시성 제어 메커니즘에 그대로 옮겨졌다. 한 번에 오직 하나의 소유자만 락을 쥘 수 있다는 설계 원칙이 여기서 나왔다."},
-  {"keyword":"jpa","aliases":["Java Persistence API","자바 영속성 API"],"category":"DB","summary":"자바 객체를 DB에 매핑하는 영속성 표준 명세","etymology":"Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.","namingReason":"Persistence(영속성)는 메모리상의 객체를 디스크에 '지속'시킨다는 의미로, 객체 지향 언어와 관계형 DB 사이의 매핑 규약을 지칭한다. Java EE 시절 ORM 표준으로 제정되어 Hibernate·EclipseLink 등이 이 명세를 구현한다. 'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체 생존 기간의 연장'을 드러낸다."},
+  {"keyword":"jpa","aliases":["Java Persistence API","자바 영속성 API"],"category":"DB","summary":"자바 객체를 DB에 매핑하는 영속성 표준 명세","etymology":"Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.","namingReason":"Persistence(영속성)는 메모리상의 객체를 디스크에 '지속'시킨다는 의미로, 객체 지향 언어와 관계형 DB 사이의 매핑 규약을 지칭한다. Java EE 시절 ORM 표준으로 제정되어 Hibernate·EclipseLink 등이 이 명세를 구현한다. 2006년 JSR 220으로 표준화된 뒤 2019년 Jakarta EE 이관과 함께 Jakarta Persistence로 이름이 바뀌었다."},
   {"keyword":"daemon","aliases":["데몬","demon"],"category":"기타","summary":"백그라운드에서 지속 실행되는 프로세스","etymology":"그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 사람 눈에 보이지 않으면서 일을 대신 처리하는 존재를 가리켰다.","namingReason":"1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 사용자 상호작용 없이 시스템 뒤편에서 스스로 작업을 처리하는 프로세스를 '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. Unix 관습에 따라 프로세스 이름 끝에 'd'를 붙인다(httpd, sshd)."}
 ]

@@ -43,6 +43,8 @@
 - **Validator scope**: 신규 batch entry 전용. 머지된 `terms.next.json` 전체엔 적용하지 않음 (기존 500개는 grandfather).
 - **기존 500개 length 비순응 처리: grandfather (재생성 안 함)**. 현재 500개를 새 길이 룰(summary 20~30 / etymology 60~120 / namingReason 150~270)로 재면 47~63% 위반 — `generate_db.py`의 기존 validate()가 길이를 검사하지 않았기 때문. 본 마일스톤 목표는 "확장"이지 "재생성"이 아님. → **2-tier DB**(legacy 500 + 신규 compliant) 의도된 상태. backfill은 별도 작업으로 분리.
 - **재생성 루프 한계**: 3회 고정.
+- **alias 룰 충돌 해소 (v2.1, round-001 POC 발견)**: `RULE_ALIAS_MIN1`(한글 alias 필수) ∧ `RULE_ALIAS_STRICT`(번역 금지)가 음차 없는 용어(priority-inversion·persistent-data-structure·sni·hsts 등 — 한글 형태가 표준 번역어뿐)에서 **동시 충족 불가 모순**. Generator·Critic 두 탭이 독립적으로 같은 진단 도달. → STRICT에 **(4) 정착된 한국어 이름** 범주 추가. 판별 축을 "음차 유무"가 아닌 **"이름이냐 설명이냐"**로 잡음 — 그 개념을 부르는 표준 명칭(음차 병기 가능, 예: "커맨드 패턴"+"명령 패턴")은 허용, 서술적 풀이·정의·상위개념·한정수식어 변형은 계속 금지. 근거: BundleDBService가 alias로 검색하는 한국어 사전이라 정당한 동의어 보존 = 검색 적중률. `v2-batch.md`·`critic-v1.md` 동일 문구 동기화 + jpa few-shot closing 위반 교체. validator는 무변경(STRICT는 critic 전담). round-001은 이 룰로 재실행.
+  - **v2.1.1 후속(round-001 critic 결과)**: 닫힌 화이트리스트("4범주 중 하나에만")가 "이름이냐 설명이냐" 원칙과 충돌 — merkle-tree의 "hash tree"처럼 정식 영어 동의어(=또 다른 이름)가 4범주 밖이라 false-positive. → 범주 목록을 **닫힌 화이트리스트가 아닌 예시**로 강등하고 원칙이 지배하게, **(5) 다른 언어의 정식 동의어** 허용 명시. 정식 동의어 보존 = alias 검색 적중률.
 - **Phase 7 자동화 트리거**: 라운드당 사람 손 시간 > 5분 OR batch size > 50 OR 추가 라운드 3회 이상 계획.
 
 ## 명시적 비-목표
