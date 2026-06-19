@@ -39,9 +39,9 @@
 
 ## 실행 흐름 (handoff-phase6.md 착수 순서)
 
-1. [AI] `Scripts/db-expand/keywords-round-002.txt` 큐레이션 — 위 배분대로 40개, 코어 위주(자료구조 보강), 기타 0.
-2. [AI] dedup (게이트 4).
-3. [사람] 2탭 실행 — A=`prompts/v2-batch.md`, B=`prompts/critic-v2.md`. Generator → validator(정량 1차) → critic(v2) → 재생성(최대 3회) → 통과.
+1. [AI] `Scripts/db-expand/keywords-round-002.txt` 큐레이션 — 위 배분대로 40개, 코어 위주(자료구조 보강), 기타 0. ✅ **완료 (2026-06-19)**.
+2. [AI] dedup (게이트 4). ✅ **완료** — 기존 510의 `{keyword} ∪ {모든 alias}` 정규화(소문자·기호제거) 차집합으로 **충돌 0건**. 후보 내부 중복 0. 부분일치 17건은 별개 복합어(토큰 공유)라 게이트 아님.
+3. [사람] 2탭 실행 — A=`prompts/v2-batch.md`, B=`prompts/critic-v2.md`. Generator → validator(정량 1차) → critic(v2) → 재생성(최대 3회) → 통과. ◀ **현재 대기 (사람만 가능: claude.ai 탭)**
 4. [AI] scope_diff (게이트 3).
 5. [AI] merge + iOS smoke → 사람 승인 후 swap·커밋 (게이트 6).
 6. [AI] 이 문서 "라운드 결과" 채움 + "오케스트레이터 결정 필요" 섹션.
@@ -58,9 +58,19 @@
 
 ---
 
+## 오케스트레이터 사전 검증 — 큐레이션·dedup (2026-06-19)
+
+> 2탭 생성 전 단계 게이트. validator/critic/scope_diff는 생성 산출물이 없어 아직 판정 대상 아님.
+
+- **PASS.** dedup "충돌 0" 주장을 오케스트레이터가 독립 재현(terms.json 510의 `{keyword}∪{모든 alias}` 정규화 차집합) → **정확 충돌 0 / 후보 내부 중복 0** 확인.
+- batch 40 / 배분(자11·동9·네7·패7·DB6, 기타0) 발주와 정확히 일치. terms.json 베이스 510·코어 분포 일치.
+- 부분일치: 오케스트레이터 집계 22건(실행 세션 17건). 차이는 카운팅 방식뿐, 전부 토큰 공유 별개 개념(`abstract-factory↔factory` 등) — 게이트 아님.
+- 판단 메모(비블로킹): `consistent-hashing` DB 배정은 분산/네트워크 경계 용어. enum 위반 아니라 게이트는 아님. 2탭에서 어색하면 네트워크 재배정 여지.
+- **결정: 3단계(claude.ai 2탭) 진행 승인.** 이후 게이트(validator 100% / critic-v2 / scope_leak 0)는 생성 산출물 도착 시 판정.
+
 ## 라운드 결과 (실행 세션이 채움)
 
-> (미실행)
+> (미실행 — 2탭 생성 대기)
 
 ## 오케스트레이터 결정 필요 (실행 세션이 채움)
 
