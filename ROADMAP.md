@@ -28,7 +28,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 **C. Phase 3 머지 + iOS smoke test** (← 사람 승인 게이트)
 - [x] [AI] `merge.py`로 `terms.next.json` 510개 생성 (충돌 0) → swap 적용(terms.json=510, 구 500은 terms.bak.json)
 - [x] [AI] iOS smoke test **PASS** (2026-06-19, iPhone 17 시뮬레이터): 빌드·번들(510)·런치 크래시 없음·재시작 로딩 정상 + 신규 keyword/alias(한+영)/카테고리 검색(실제 swap 번들, BundleDBService 경로 결정론 확인). 빌드용 누락 비밀파일은 더미로 통과(gitignore).
-- ⚠️ [사람→AI] **커밋 미결(비가역 번들 변경)** — terms.json(510) 커밋 + terms.bak.json 정리. 사람 승인 대기.
+- [x] [사람→AI] swap+커밋 완료 (`e11cf15` feat: 500→510, 기존 무손실·신규 10만 추가). terms.bak.json 정리됨. **번들 DB 510개로 갱신.**
 
 **D. Phase 4 마감 결정** (다음 라운드 발주 — 사람 결정 지점)
 - [AI] 목표 N 산정안 제시 (round-001 throughput·품질 기준)
@@ -37,7 +37,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** Phase 2A PASS, **2B 실행 완료(임계값 FAIL·원인 식별, 2026-06-19)**. API 단발은 길이 룰 비순응 — drift는 루프-최종본 vs 단발 비대칭 + 단발 길이 초과이지 prompt mismatch 아님. round-001 무결. 다음은 **2B 게이트 사람 결정**: (a) Done 인정→Phase 3 머지 / (b) API 공정 재검(validator→재생성 루프) / (c) Phase 1 회귀(비권장). 상세 `round-001-consistency-B.md`.
+**다음 행동:** **Phase 2~3 완료(2026-06-19)** — 2A PASS / 2B 원인식별→결정(a) / 머지 510 커밋(`e11cf15`) / iOS smoke PASS. 번들 DB **510개**. 다음은 **Phase 4 회고**(critic 분리효용·길이오차·통신프로토콜·scope leak·분포 점검 → **목표 N 결정** → spec Done 신호·critic-v2 발주) — 사람 결정 지점. 이후 Phase 6 본 확장(30~50). API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
 
 ---
 

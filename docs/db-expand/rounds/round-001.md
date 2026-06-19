@@ -54,4 +54,4 @@
 - [x] Phase 2B 일관성 점검 (chat↔API drift) — 실행 완료. 임계값 FAIL이나 **drift 원인 식별**(spec Done 후자 충족). `round-001-consistency-B.md`. 게이트 결정 미결.
 - [x] Phase 3 머지 — `merge.py`로 `terms.next.json` 510개(500+10) 생성, 충돌 0, 정렬·유니크·스키마 OK
 - [x] Phase 3 iOS smoke test — **PASS** (2026-06-19, iPhone 17 시뮬레이터). 빌드 성공·terms.json(510) 번들·런치 크래시 없음·재시작 로딩 정상. 신규 keyword/alias(한+영)/카테고리 검색은 실제 swap 번들에 대해 BundleDBService 경로로 결정론 확인. (워크트리 누락 비밀파일 Config.xcconfig·GoogleService-Info.plist는 더미로 빌드 통과, gitignore라 커밋 제외.)
-- [ ] terms.json swap 커밋 (비가역) — 사람 승인 대기
+- [x] terms.json swap 커밋 (비가역) — 완료 (`e11cf15` feat: 500→510). round-001 라운드 종결.
