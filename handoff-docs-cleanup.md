@@ -3,6 +3,10 @@
 > **사용법.** 새 세션에서 *"이 파일(`handoff-docs-cleanup.md`) 읽고 진행해줘"* 라고 하면 된다.
 > 이 작업은 [번들 DB 확장 Phase 2](docs/db-expand/handoff-phase2.md)보다 **먼저** 하기로 결정됨 (발행 노출을 빨리 막고, 이후 산출물이 올바른 위치에 생기도록).
 
+> **✅ 발행 누출 차단은 완료됨 (2026-06-19).** 아래 "접근 옵션"의 *이동/exclude* 대신 **발행 모델 인버전**을 채택:
+> 발행을 GitHub Actions(`.github/workflows/pages.yml`)로 전환하고 **공개 전용 `site/`**(`index.md`·`privacy-policy.md`)만 발행한다. 차단-기본(default-deny) — `site/` 밖(=`docs/` 전체)은 발행되지 않는다. 내부 문서는 `docs/`에 그대로 둠(이동 0, 링크 무손상).
+> **남은 선택 작업은 아래 "목표 2"의 `docs/` 내부 재정돈(중복·stale 정리)뿐.** 발행 범위 분리(목표 1)는 끝났다.
+
 ## 왜 (문제)
 
 - `docs/`가 GitHub Pages(Jekyll, `docs/_config.yml`에 `exclude` **없음**)로 **통째 발행**됨 → 내부 문서가 전부 공개됨.

@@ -43,9 +43,10 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 ## Next — 다음 분기 (착수 예정)
 
-- **[Ops/Docs] 독스 발행 범위 정리 + 재정돈** — 핸드오프: [`handoff-docs-cleanup.md`](handoff-docs-cleanup.md). **DB 확장 Phase 2보다 먼저 진행 결정.**
-  - 문제: `docs/`가 Jekyll(`_config.yml`, `exclude` 없음)로 통째 발행 → 내부 문서(spec·db-expand[spec·rounds·runbook·handoff]·ai-quality·adr·design-followup·typography-review·wireframe 등) 전부 공개
-  - 발행 의도 페이지(`index.md`·`privacy-policy.md`)와 내부 문서 분리(이동 또는 `_config.yml` `exclude:`) + `docs/` 전체 재정돈(중복·stale 정리)
+- **[Ops/Docs] 독스 발행 범위 정리** — ✅ 발행 모델 인버전 완료 (2026-06-19).
+  - 기존 문제: `docs/`가 Jekyll로 통째 발행 → 내부 문서 전부 공개 (Pages가 실제 라이브였음).
+  - 해결: 발행을 GitHub Actions 워크플로(`.github/workflows/pages.yml`)로 전환, **공개 전용 `site/`**(`index.md`·`privacy-policy.md`)만 발행. 차단-기본(default-deny) — `site/` 밖은 발행 안 됨. `docs/`는 순수 내부 문서함.
+  - 남은 일(선택): `docs/` 내부 재정돈(중복·stale 정리)은 별도 진행 가능. 핸드오프 [`handoff-docs-cleanup.md`](handoff-docs-cleanup.md) 참조.
 - **[UI] 검색 로딩 UI 개선 — 체감 latency 감소** — 새 브랜치 (예: `feat/loading-ui-perceived-latency`)
   - 목적: AI 호출 절대 latency 8s는 유지하되 *인지 길이*를 줄여 사용자 체감 개선. v2 라운드 시뮬레이터 테스트에서 latency가 핵심 UX 이슈로 확인됨
   - 적용 기법(조합):
@@ -61,9 +62,9 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
   - 절차: 샘플 10~15개 재생성 비교(~$0.20) → 체감되면 전체(~$2) → 미미하면 스킵
   - 크레딧: 충전됨 (2026-06-19, ~$195 보유) — 재개 가능. (claude.ai batch로 대체 가능 여부도 검토)
 - **[Ops] 출시 전 수동 작업 정리** — `AGENTS.md`의 "머지 후·출시 전 남은 수동 작업" 흡수
-  - GitHub Pages Source 활성화(`main /docs`)
+  - ~~GitHub Pages Source 활성화(`main /docs`)~~ → 완료. Pages는 GitHub Actions 워크플로로 `site/`만 발행 (2026-06-19)
   - Firebase DebugView 이벤트 수신 확인 (`-FIRDebugEnabled`)
-  - `AppConfig.supportEmail` 실제 값 교체, `docs/privacy-policy.md` 연락처 이메일 교체
+  - `AppConfig.supportEmail` 실제 값 교체, `site/privacy-policy.md` 연락처 이메일 교체
 
 ---
 
