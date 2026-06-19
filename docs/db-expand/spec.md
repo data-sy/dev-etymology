@@ -25,7 +25,9 @@
 
 ## Done 신호
 
-- [ ] terms.json 목표 크기 도달 (목표 N: **TBD — round-001 완료 후 결정 게이트 (Phase 4 회고에서 산정)**)
+- [ ] terms.json 목표 크기 도달 (**목표 N = 650**, Phase 4 확정 2026-06-19). 현재 510 → +140.
+  - **배분 원리**: 추가분은 **기타(현재 137) 제외**, 5개 코어 카테고리(동시성·자료구조·네트워크·DB·패턴)에 배분해 코어를 ≈100개 동등선으로 끌어올린다. 자료구조(64)가 long pole. 자연 도달 시 기타 비중 26.9%→21.1%.
+  - **근거**: round throughput(round-001 = 10kw/2cycle, 룰 설계 일회성 비용 제외) + critic-v2(정량 룰 제거)·룰 안정화로 keyword당 손 시간↓ + Phase 7 자동화(트리거 충족)로 도달 가능. 수동 Phase 6 ~1라운드 + 자동화로 +140 흡수. 산정 상세: `rounds/round-001.md` "목표 N 결정".
 - [ ] 모든 신규 entry deterministic validator 통과 (round-001부터 적용)
 - [ ] 라운드별 측정 데이터(통과율·재시도·사람 손 시간) 누적
 - [ ] iOS smoke test 통과 (Phase 3 체크리스트)
@@ -172,6 +174,8 @@
 **Done**: Phase 5 발주 항목 확정 + 목표 N 결정.
 
 ### Phase 5 — Critic 책임 축소 + scope_diff [코드]
+
+> **상태 (2026-06-19): 산출물 작성·기능검증 완료.** `critic-v2.md`(정량 룰 제거, nuanced 4종만) + `scope_diff.py`(6/6 기능검증). **Phase 5 Done(아래)은 Phase 6 첫 라운드가 새 흐름으로 실제 통과해야 충족** — 산출물은 준비됐고 실통과 미확인.
 
 (validator는 Phase 0에 이미 있으므로 이 단계는 critic 축소 + helper 추가에 집중)
 

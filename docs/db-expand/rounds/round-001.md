@@ -42,10 +42,16 @@
 - 2탭(Generator/Critic) 분리가 룰셋 모순을 잡아낸 것이 이 POC의 최대 수확 — entry 품질이 아니라 룰 설계 결함을 노출.
 - generator는 closing 룰(마지막 문장 새 정보)을 10개 모두 준수. few-shot(jpa) closing 위반은 v2.1에서 교체 완료.
 
+### 목표 N 결정 (Phase 4, 2026-06-19 — 사람 확정)
+- **확정: 목표 N = 650** (현재 510 → +140).
+- **배분 원리**: 추가분은 기타(137, 26.9%) 제외, 5개 코어 카테고리에 배분해 코어를 ≈100 동등선으로. 현재 코어 DB 80 / 패턴 79 / 네트워크 79 / 동시성 71 / 자료구조 64 — 전부 100으로 맞추면 +127(→637), 650은 그 동등선을 여유 있게 포함. 자연 도달 시 기타 비중 26.9%→21.1%.
+- **산정 근거 (throughput·품질)**: round-001 = 10kw / 2 cycle / ≈60분이나 그 시간 대부분은 일회성 룰 설계(alias v2.1·v2.1.1). critic-v2(정량 룰 제거)·룰 안정화 후 keyword당 손 시간이 떨어지고, Phase 7 자동화(트리거 이미 충족)가 나머지를 흡수 → +140은 수동 Phase 6 ~1라운드 + 자동화 범위 내. 검토 대안: 600(+90, 빠른 출시) / 700(+190, 자동화 비용효율 전제). 650 채택 = 분포 균형·효율 균형점.
+- spec Done 신호에 반영 완료(`spec.md`).
+
 ### 다음 라운드 변경 후보
-1. **critic-v2 (Phase 5)**: 정량 룰 전부 제거, nuanced 룰(ALIAS_STRICT 의미판단·ETYMOLOGY_FACT·NAMING_COHERENCE)만 유지. 근거: 이 라운드 critic 고유 검출 0.
-2. **Phase 2 일관성 점검** 먼저 수행 (기존 terms.json sample 베이스라인 비교 A + chat↔API drift B) 후 머지.
-3. **목표 N 결정**: round당 throughput(생성 2 cycle, 사람 손 시간 TBD) 기준 출시 전 도달 가능 N 산정 → spec Done 신호 갱신.
+1. **critic-v2 (Phase 5)**: 정량 룰 전부 제거, nuanced 룰(ALIAS_STRICT 의미판단·ETYMOLOGY_FACT·NAMING_COHERENCE·NAMING_CLOSING)만 유지. 근거: 이 라운드 critic 고유 검출 0. → **작성 완료** (`prompts/critic-v2.md`, 2026-06-19).
+2. **Phase 2 일관성 점검** 먼저 수행 (기존 terms.json sample 베이스라인 비교 A + chat↔API drift B) 후 머지. → 완료(2A PASS / 2B 원인식별).
+3. **scope_diff.py (Phase 5)**: 30~50 batch는 눈 검수 불가 → 도구로 scope leak 검출. → **작성·기능검증 완료** (`scope_diff.py`, 2026-06-19).
 
 ### 상태
 - [x] round-001.json 저장 + validator 통과
@@ -55,3 +61,5 @@
 - [x] Phase 3 머지 — `merge.py`로 `terms.next.json` 510개(500+10) 생성, 충돌 0, 정렬·유니크·스키마 OK
 - [x] Phase 3 iOS smoke test — **PASS** (2026-06-19, iPhone 17 시뮬레이터). 빌드 성공·terms.json(510) 번들·런치 크래시 없음·재시작 로딩 정상. 신규 keyword/alias(한+영)/카테고리 검색은 실제 swap 번들에 대해 BundleDBService 경로로 결정론 확인. (워크트리 누락 비밀파일 Config.xcconfig·GoogleService-Info.plist는 더미로 빌드 통과, gitignore라 커밋 제외.)
 - [x] terms.json swap 커밋 (비가역) — 완료 (`e11cf15` feat: 500→510). round-001 라운드 종결.
+- [x] Phase 4 회고 마감 — 목표 N=650 확정(사람), spec Done 신호 갱신. 회고 6항(분리효용 0·길이오차 0·통신프로토콜·scope leak 0·분포보정·N) 전부 답함.
+- [x] Phase 5 산출물 작성 — `prompts/critic-v2.md`(정량 룰 제거) + `scope_diff.py`(기능검증 6/6). Phase 5 Done(흐름 실통과)은 Phase 6에서 확인.

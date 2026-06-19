@@ -30,14 +30,14 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 - [x] [AI] iOS smoke test **PASS** (2026-06-19, iPhone 17 시뮬레이터): 빌드·번들(510)·런치 크래시 없음·재시작 로딩 정상 + 신규 keyword/alias(한+영)/카테고리 검색(실제 swap 번들, BundleDBService 경로 결정론 확인). 빌드용 누락 비밀파일은 더미로 통과(gitignore).
 - [x] [사람→AI] swap+커밋 완료 (`e11cf15` feat: 500→510, 기존 무손실·신규 10만 추가). terms.bak.json 정리됨. **번들 DB 510개로 갱신.**
 
-**D. Phase 4 마감 결정** (다음 라운드 발주 — 사람 결정 지점)
-- [AI] 목표 N 산정안 제시 (round-001 throughput·품질 기준)
-- [사람] 목표 N 확정 + Phase 5 critic-v2(정량 룰 제거) 진행 여부 결정
-- [AI] spec Done 신호 갱신, critic-v2 작성
+**D. Phase 4 마감 결정** ✅ (다음 라운드 발주 — 사람 결정 지점)
+- [x] [AI] 목표 N 산정안 제시 (round-001 throughput·품질 기준) — 분포 기준 600/650/700 3안
+- [x] [사람] **목표 N = 650 확정** (2026-06-19) + Phase 5 critic-v2(정량 룰 제거) 진행
+- [x] [AI] spec Done 신호 갱신(N=650), `prompts/critic-v2.md` + `scope_diff.py` 작성·기능검증(6/6)
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** **Phase 2~3 완료(2026-06-19)** — 2A PASS / 2B 원인식별→결정(a) / 머지 510 커밋(`e11cf15`) / iOS smoke PASS. 번들 DB **510개**. 다음은 **Phase 4 회고**(critic 분리효용·길이오차·통신프로토콜·scope leak·분포 점검 → **목표 N 결정** → spec Done 신호·critic-v2 발주) — 사람 결정 지점. 핸드오프: [`docs/db-expand/handoff-phase4.md`](docs/db-expand/handoff-phase4.md). 이후 Phase 6 본 확장(30~50). API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
+**다음 행동:** **Phase 4 마감(2026-06-19)** — 목표 **N=650** 확정(현 510 → +140, 기타 제외 코어 동등화), spec Done 신호 갱신. Phase 5 산출물 완성: `critic-v2.md`(정량 룰 제거, nuanced 4종만) + `scope_diff.py`(scope leak 검출, 기능검증 통과). Phase 5 Done(흐름 실통과)은 Phase 6 첫 라운드에서 확인. 다음은 **Phase 6 본 확장** — Phase 0-1 keyword 큐레이션부터(기존 소진, 신규 후보 30~50 작성 + dedup, 기타 비중↓), 흐름 `Generator → validator → critic(v2) → 재생성 → scope_diff → 머지`. API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
 
 ---
 
