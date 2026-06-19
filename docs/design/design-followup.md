@@ -1,7 +1,7 @@
 # DevEtym Design Followup
 
 타이포그래피·컬러·다크모드 라운드(`feat/typography-contrast-pass` 외)에서 다루지 않았거나 의도적으로 미룬 디자인 후속 항목 backlog.
-프로젝트 전역 로드맵은 `../ROADMAP.md` 참조 — 이 문서는 거기 Later 섹션에서 링크된다.
+프로젝트 전역 로드맵은 `../../ROADMAP.md` 참조 — 이 문서는 거기 Later 섹션에서 링크된다.
 새 항목 추가 시 한 줄 요약 + 배경 + 후보 액션 형식 유지.
 
 ---

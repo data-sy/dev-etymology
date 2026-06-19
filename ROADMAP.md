@@ -37,16 +37,16 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** A 완료. **순서 변경 — 독스 정리를 먼저** ([`handoff-docs-cleanup.md`](handoff-docs-cleanup.md)) → 그다음 **Phase 2 일관성 점검** ([`docs/db-expand/handoff-phase2.md`](docs/db-expand/handoff-phase2.md); A 코드만 먼저 → B는 `api_sample.py` 작성 후). ⚠️ 정리에서 `db-expand/`가 이동되면 Phase 2 핸드오프 경로도 갱신 필요.
+**다음 행동:** A 완료. 독스 정리 완료(발행 분리 + 내부 재정돈, 2026-06-19; `db-expand/`는 미이동 → Phase 2 핸드오프 경로 그대로). 다음은 **Phase 2 일관성 점검** ([`docs/db-expand/handoff-phase2.md`](docs/db-expand/handoff-phase2.md); A 코드만 먼저 → B는 `api_sample.py` 작성 후).
 
 ---
 
 ## Next — 다음 분기 (착수 예정)
 
-- **[Ops/Docs] 독스 발행 범위 정리** — ✅ 발행 모델 인버전 완료 (2026-06-19).
+- **[Ops/Docs] 독스 발행 범위 정리 + 내부 재정돈** — ✅ 완료 (2026-06-19).
   - 기존 문제: `docs/`가 Jekyll로 통째 발행 → 내부 문서 전부 공개 (Pages가 실제 라이브였음).
-  - 해결: 발행을 GitHub Actions 워크플로(`.github/workflows/pages.yml`)로 전환, **공개 전용 `site/`**(`index.md`·`privacy-policy.md`)만 발행. 차단-기본(default-deny) — `site/` 밖은 발행 안 됨. `docs/`는 순수 내부 문서함.
-  - 남은 일(선택): `docs/` 내부 재정돈(중복·stale 정리)은 별도 진행 가능. 핸드오프 [`handoff-docs-cleanup.md`](handoff-docs-cleanup.md) 참조.
+  - 발행: GitHub Actions 워크플로(`.github/workflows/pages.yml`)로 전환, **공개 전용 `site/`**(`index.md`·`privacy-policy.md`)만 발행. 차단-기본(default-deny) — `site/` 밖은 발행 안 됨. `docs/`는 순수 내부 문서함.
+  - 내부 재정돈: `e2e-checklist.md`→`docs/`, 느슨한 설계 문서→`docs/design/`, stale 참조 정리(`CHECKLIST.md`·wireframe 경로), 임시 핸드오프(`handoff-docs-cleanup.md`) 삭제.
 - **[UI] 검색 로딩 UI 개선 — 체감 latency 감소** — 새 브랜치 (예: `feat/loading-ui-perceived-latency`)
   - 목적: AI 호출 절대 latency 8s는 유지하되 *인지 길이*를 줄여 사용자 체감 개선. v2 라운드 시뮬레이터 테스트에서 latency가 핵심 UX 이슈로 확인됨
   - 적용 기법(조합):
@@ -71,7 +71,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 ## Later — 백로그 (아직 미착수, 검토 단계)
 
 - **[Data] 번들 DB 추가 확장** — 출시 후 Firebase Analytics `search` 이벤트로 본 검색 빈도 데이터를 우선순위 입력으로 사용
-- **[UI] 디자인 후속** — `docs/design-followup.md` 참조 (다크모드 헤더 경계·섹션 라벨 인식성·라이트모드 폴리시·accent 변형값 등)
+- **[UI] 디자인 후속** — `docs/design/design-followup.md` 참조 (다크모드 헤더 경계·섹션 라벨 인식성·라이트모드 폴리시·accent 변형값 등)
 - **[UX] 검색 UX 개선** — 자동완성 표시 정책·키워드 정규화 등 출시 후 사용 데이터 보고 결정
 - (아이디어 추가 시 여기로)
 
