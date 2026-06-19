@@ -37,7 +37,12 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**다음 행동:** **Phase 4 마감(2026-06-19)** — 목표 **N=650** 확정(현 510 → +140, 기타 제외 코어 동등화), spec Done 신호 갱신. Phase 5 산출물 완성: `critic-v2.md`(정량 룰 제거, nuanced 4종만) + `scope_diff.py`(scope leak 검출, 기능검증 통과). Phase 5 Done(흐름 실통과)은 Phase 6 첫 라운드에서 확인. 다음은 **Phase 6 본 확장** — Phase 0-1 keyword 큐레이션부터(기존 소진, 신규 후보 30~50 작성 + dedup, 기타 비중↓), 흐름 `Generator → validator → critic(v2) → 재생성 → scope_diff → 머지`. API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
+**다음 행동:** **Phase 6 round-002 발주됨(2026-06-19) — 실행 대기.** 발주안: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md). batch **40개**(510→550), 카테고리 결손 비례 배분(자료구조+11·동시성+9·네트워크+7·패턴+7·DB+6, 기타 0), 게이트 = validator 100% / critic-v2 / scope_leak 0 / dedup / 분포 보정 / 비가역은 smoke 후 사람 승인. 성격: **마지막 수동 라운드** — Phase 5 Done(흐름 실통과) 충족 + Phase 7 판단 데이터 확보. 나머지 +100(550→650)은 Phase 7 자동화로 흡수. 실행 세션이 `handoff-phase6.md` + round-002 발주안으로 굴린 뒤 `rounds/round-002.{json,md}`에 결과·"오케스트레이터 결정 필요" 기록 → 오케스트레이터가 적대적 검증·게이트 판정.
+
+<details><summary>직전 (Phase 4·5 마감)</summary>
+
+**Phase 4 마감(2026-06-19)** — 목표 **N=650** 확정(현 510 → +140, 기타 제외 코어 동등화), spec Done 신호 갱신. Phase 5 산출물 완성: `critic-v2.md`(정량 룰 제거, nuanced 4종만) + `scope_diff.py`(scope leak 검출, 기능검증 통과). Phase 5 Done(흐름 실통과)은 Phase 6 첫 라운드에서 확인. 흐름 `Generator → validator → critic(v2) → 재생성 → scope_diff → 머지`. API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
+</details>
 
 ---
 
