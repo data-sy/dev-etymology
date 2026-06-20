@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEtym — 검색 & 결과 뷰 목업</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #222222;
+    --accent: #c8f060;
+    --accent2: #60c8f0;
+    --text: #f0f0f0;
+    --text-muted: #666666;
+    --text-dim: #999999;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    padding: 40px;
+    flex-wrap: wrap;
+  }
+
+  /* ── 공통 폰 프레임 ── */
+  .phone {
+    width: 320px;
+    height: 680px;
+    background: var(--surface);
+    border-radius: 44px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* 노치 */
+  .notch {
+    width: 100px;
+    height: 26px;
+    background: var(--bg);
+    border-radius: 0 0 18px 18px;
+    margin: 0 auto;
+    flex-shrink: 0;
+  }
+
+  /* 상단 레이블 */
+  .screen-label {
+    position: absolute;
+    top: -28px;
+    left: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .phone-wrapper {
+    position: relative;
+    padding-top: 36px;
+  }
+
+  /* ── 스크린 내부 ── */
+  .screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 20px 28px;
+    overflow: hidden;
+  }
+
+  /* 앱 타이틀 */
+  .app-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .app-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    margin-bottom: 24px;
+  }
+
+  /* 검색창 */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 13px 44px 13px 16px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { border-color: var(--accent); }
+
+  .search-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+
+  /* 최근 검색 칩 */
+  .recent-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 28px;
+  }
+
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* 추천 카드 */
+  .suggest-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .suggest-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .suggest-card:hover { border-color: var(--accent2); }
+
+  .suggest-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--accent2);
+    margin-bottom: 3px;
+  }
+
+  .suggest-preview {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .suggest-arrow { color: var(--text-muted); font-size: 16px; }
+
+  /* ── 결과 화면 ── */
+  .result-header {
+    margin-bottom: 18px;
+  }
+
+  .back-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .result-term {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .result-term em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .result-tag {
+    display: inline-block;
+    background: rgba(200, 240, 96, 0.08);
+    border: 1px solid rgba(200, 240, 96, 0.2);
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .etymology-block {
+    background: var(--surface2);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+
+  .etymology-lang {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .etymology-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .explanation {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+  }
+
+  .explanation strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* 로딩 상태 */
+  .loading-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .loading-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  .loading-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  .loading-msg {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* 페이지 타이틀 */
+  .page-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── 뷰 1: 검색 화면 ── -->
+<div class="phone-wrapper">
+  <span class="screen-label">View 1 — 검색</span>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="app-title">DevEtym</div>
+      <div class="app-subtitle">// 개발 용어 어원 사전</div>
+
+      <div class="search-wrap">
+        <input class="search-input" type="text" placeholder="mutex, semaphore, daemon...">
+        <span class="search-icon">⌕</span>
+      </div>
+
+      <div class="recent-label">최근 검색</div>
+      <div class="chips">
+        <div class="chip">mutex</div>
+        <div class="chip">kernel</div>
+        <div class="chip">daemon</div>
+        <div class="chip">fork</div>
+      </div>
+
+      <div class="suggest-label">오늘의 용어</div>
+      <div class="suggest-card">
+        <div>
+          <div class="suggest-term">semaphore</div>
+          <div class="suggest-preview">그리스어 σῆμα (신호) +<br>φορός (운반자)</div>
+        </div>
+        <div class="suggest-arrow">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 뷰 2: 로딩 화면 ── -->
+<div class="phone-wrapper">
+  <span class="screen-label">View 2 — 로딩</span>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="back-btn">‹ 검색으로</div>
+      <div class="loading-screen">
+        <div class="loading-term">mutex</div>
+        <div class="loading-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="loading-msg">어원을 분석하는 중...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 뷰 3: 결과 화면 ── -->
+<div class="phone-wrapper">
+  <span class="screen-label">View 3 — 결과</span>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="back-btn">‹ 검색으로</div>
+
+      <div class="result-header">
+        <div class="result-term"><em>mu</em>tex</div>
+        <div class="result-tag">동시성 · Concurrency</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-label">어원</div>
+      <div class="etymology-block">
+        <div class="etymology-lang">라틴어</div>
+        <div class="etymology-text">
+          <strong>mut</strong>uus (상호의) + <strong>ex</strong>clusio (배제)<br>
+          → <em>Mutual Exclusion</em>의 줄임말
+        </div>
+      </div>
+
+      <div class="section-label">왜 이 이름인가</div>
+      <div class="explanation">
+        <strong>mutex</strong>는 두 개 이상의 스레드가 동시에 같은 자원에 접근하지 못하도록 <strong>상호 배제</strong>하는 잠금 장치입니다. 라틴어 mutuus(서로)와 exclusio(차단)에서 왔으며, 한 스레드가 잠그면 다른 스레드는 기다려야 합니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
