@@ -1,7 +1,7 @@
 # spec.md — DevEtym 구현 명세서 (Claude Code 전용)
 
 > 이 문서는 Claude Code가 참조하는 구현 명세입니다
-> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 CHECKLIST.md를 참조하세요
+> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 `AGENTS.md`의 "머지 후·출시 전 남은 수동 작업" 절을 참조하세요
 > CLAUDE.md의 코딩 규칙을 반드시 준수하세요
 
 ---
