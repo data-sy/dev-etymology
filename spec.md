@@ -487,7 +487,7 @@ toggleBookmark(for entry) →
 
 ### 3-0-1. 디자인 시스템
 
-참고: `devetym-wireframe-v2.html` (레포 루트)
+참고: `docs/wireframe/wireframe-v2.html`
 
 **컬러 팔레트 (다크모드 우선, Asset Catalog에 등록):**
 - `bg` = `#0a0a0a` — 앱 배경
