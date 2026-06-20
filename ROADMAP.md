@@ -37,11 +37,11 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 **▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
 
-**진행 상태 (2026-06-20):** 번들 DB **590개**. **round-003 종결·머지 완료** (550→590, 무손실 swap). 게이트 전부 PASS(validator 40/40 · critic-v2 0 fail · scope_leak 0 · dedup 완전매칭 0 · smoke). 분포: 자료구조 87·동시성 90·DB 92·네트워크 93·패턴 91·기타 137. ⭐ **critic 최초 고유 검출 1건**(split-horizon alias '수평 분할' 오역 — round-001·002 연속 0 깨짐, critic 유지 근거 확보). round-002 개선 3종 유효 확인(완전매칭 dedup·`*.paste.md` 격리·summary 하한 보정 → cycle1 39/40). 상세·측정·관찰: [`rounds/round-003.md`](docs/db-expand/rounds/round-003.md).
+**진행 상태 (2026-06-20):** 번들 DB **650개 — 목표 N=650 도달, Phase 6 확장 종결.** **round-004 종결·머지 완료** (590→650, 무손실 swap, batch 60 = A안 마지막 라운드). 게이트 전부 PASS(validator 60/60 · critic-v2 0 fail · scope_leak 0 · dedup 완전매칭 0 · smoke · 무손실). 분포(코어 균등화 완료): 자료구조 **103**·동시성 **103**·패턴 **103**·DB **102**·네트워크 **102**·기타 137. 기타 비중 23.2%→**21.1%**. generator는 탭A 30+30 분할 paste(batch 60 출력 품질 관리), 머지 1회. critic 고유검출 0(누적 001·002·004=0, 003=1). 상세·측정·관찰: [`rounds/round-004.md`](docs/db-expand/rounds/round-004.md).
 
-**Phase 7 방향 결정 (2026-06-20):** **자동화(API 전환) 보류 → claude.ai 정액 수동 유지.** claude.ai는 정액제(한계비용 0), API는 종량제. 잔여 +60은 수동으로 흡수 가능. 자동화가 사는 건 비용 아닌 사람 시간인데 잔여 규모가 작아 이득 < API 비용. **재검토 조건**: 출시 후 analytics 기반 대량 확장(수백 개) 시에만.
+**Phase 7 방향 (유지):** **자동화(API 전환) 미진입 → claude.ai 정액 수동으로 목표 완주.** 잔여 규모상 API 종량 < 정액 한계비용 0 판단. **재검토 조건**: 출시 후 analytics 기반 대량 확장(수백 개) 시에만.
 
-**다음 행동:** **수동 round-004로 590→650(+60).** 자료구조(87, 여전히 long pole, 목표 103까지 +16)·패턴 우선 보강, 기타 0. 흐름·게이트는 round-003과 동일(`Generator → validator → critic-v2 → 재생성 → scope_diff → 머지`, 완전매칭 dedup, `*.paste.md` 격리). 발주는 오케스트레이터가 round-004 발주안으로.
+**다음 행동:** **Phase 6 번들 DB 확장 작업 종결.** 목표 650 달성으로 이 [Data] 항목은 Done 이관 대상. 추가 확장은 출시 후 Firebase Analytics `search` 빈도 기반(Later 백로그 "[Data] 번들 DB 추가 확장")으로 이관 — round-005 핸드오프 불필요. 남은 출시 전 작업은 Next의 "[Data] 기존 200개 품질 재생성"·"[Ops] 출시 전 수동 작업 정리" 참조.
 
 <details><summary>직전 (round-003 발주·실행)</summary>
 
