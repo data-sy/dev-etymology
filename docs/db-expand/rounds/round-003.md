@@ -2,7 +2,7 @@
 
 > **상태: 종결 (2026-06-20). 머지 완료 (550→590), 게이트 전부 PASS.**
 > 진행 상태 정본은 디스크 — 충돌 시 `ROADMAP.md` "Now" · `spec.md` · 이 문서를 신뢰.
-> 핸드오프: `docs/db-expand/handoff-round-003.md`. 흐름: `Generator(claude.ai 탭A) → validator → critic-v2(탭B 격리) → 재생성 → scope_diff → merge → swap`.
+> 핸드오프: `docs/db-expand/archive/handoff-round-003.md`. 흐름: `Generator(claude.ai 탭A) → validator → critic-v2(탭B 격리) → 재생성 → scope_diff → merge → swap`.
 
 ## 성격 (왜 이 라운드인가)
 

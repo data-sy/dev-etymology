@@ -1,7 +1,7 @@
 # 세션 프롬프트 — Phase 6 실행자 (번들 DB 확장)
 
 > **새 세션에 붙여넣을 한 줄:**
-> *"`docs/db-expand/session-phase6-executor.md` 읽고 Phase 6 실행자로 진행해줘."*
+> *"`docs/db-expand/archive/session-phase6-executor.md` 읽고 Phase 6 실행자로 진행해줘."*
 
 ## 너의 역할 (이 세션 = 실행자)
 
@@ -22,8 +22,8 @@ Phase 0-1 (round-002용 재실행): keyword 큐레이션(신규 후보, 기존 �
 | 무엇 | 경로 |
 |---|---|
 | **작업 명세(이 세션의 정본)** | [`handoff-phase6.md`](handoff-phase6.md) |
-| 단계 상세 | [`spec.md`](spec.md) (Phase 6) |
-| 직전 라운드(템플릿·교훈) | [`rounds/round-001.md`](rounds/round-001.md) |
+| 단계 상세 | [`spec.md`](../spec.md) (Phase 6) |
+| 직전 라운드(템플릿·교훈) | [`rounds/round-001.md`](../rounds/round-001.md) |
 | 도구 | `Scripts/db-expand/{validator,merge,scope_diff,consistency_a,api_sample}.py` |
 | 프롬프트 | `Scripts/db-expand/prompts/{v2-batch,critic-v2}.md` (critic은 **v2** 사용) |
 

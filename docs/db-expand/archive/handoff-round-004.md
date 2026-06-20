@@ -1,7 +1,7 @@
 # 핸드오프 — 번들 DB 수동 확장 라운드 (round-004~, 오케스트레이터+밸리데이터 세션)
 
-> **새 세션 시작 한 줄:** *"`docs/db-expand/handoff-round-004.md` 읽고 이어서 진행해줘."*
-> 진행 상태 정본은 디스크 — 충돌 시 [`ROADMAP.md`](../../ROADMAP.md) "Now" · [`spec.md`](spec.md) · [`rounds/round-003.md`](rounds/round-003.md)를 신뢰.
+> **새 세션 시작 한 줄:** *"`docs/db-expand/archive/handoff-round-004.md` 읽고 이어서 진행해줘."*
+> 진행 상태 정본은 디스크 — 충돌 시 [`ROADMAP.md`](../../../ROADMAP.md) "Now" · [`spec.md`](../spec.md) · [`rounds/round-003.md`](../rounds/round-003.md)를 신뢰.
 
 ## 이 세션(Claude Code)의 역할
 

@@ -6,57 +6,7 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 ## Now — 진행 중
 
-### [Data] 번들 DB 출시 전 확장 (claude.ai batch) — `feat/bundle-db-pre-launch-expand`
-
-- **목적:** launch 전 캐시된 번들 DB를 늘려 초기 사용자의 AI 호출 빈도·레이턴시 비용 감소.
-- **방식:** claude.ai 2탭(Generator/Critic) batch 생성 → validator(코드) 결정론적 최종 검사 → `terms.json` 머지. 상세: [`docs/db-expand/spec.md`](docs/db-expand/spec.md) · 런북: [`docs/db-expand/runbook-manual-round.md`](docs/db-expand/runbook-manual-round.md).
-- **진행 상태 (2026-06-19):** Phase 0 도구 완료. **round-001(10 keyword POC) 통과·커밋(`c0ee991`), `terms.json` 머지 전.** alias 룰 v2.1.1까지 개정(닫힌 목록→원칙 지배). 라운드 기록: [`docs/db-expand/rounds/round-001.md`](docs/db-expand/rounds/round-001.md).
-
-#### 착수까지 준비 체크리스트 (→ Phase 6 본격 확장 직전까지)
-
-> 태그: **[AI]** = Claude Code 실행 / **[사람]** = 당신만 가능(claude.ai 탭·Xcode·승인) / **[사람→AI]** = 당신이 열어주면 AI 실행
-
-**A. round-001 마감** ✅ (Phase 7 자동화 판단 데이터 완성)
-- [x] [사람] 사람 손 시간 ≈60분 기록 → **Phase 7 자동화 무조건 진행 결정**
-- [x] [AI] `round-001.md` 갱신 완료
-
-**B. Phase 2 일관성 점검** (머지 전 안전장치 — 통과 못 하면 Phase 1 회귀)
-- [x] [AI] (A) 기존 `terms.json` 카테고리별 sample vs 신규 10개 비교 → `round-001-consistency-A.md` — **PASS** (3 gate 전부 통과, 2026-06-19)
-- [x] [AI] (B) chat↔API drift: `api_sample.py`로 10개 API 재실행 비교 → `round-001-consistency-B.md` — **임계값 FAIL·원인 식별** (2026-06-19). API 단발이 길이 룰 비순응(validator 1/10); drift는 "critic 후 cycle-2 최종본 vs API 단발" 비대칭 + 단발 길이 초과. round-001 자체 무결. stale paste/지침 누락 아님.
-- ⚠️ drift gate: **게이트 결정 미결** — (a) 원인 식별로 Done 인정→Phase 3 머지 / (b) API에 validator→재생성 루프 태운 공정 재검 / (c) Phase 1 회귀(비권장). 사람 결정 지점.
-
-**C. Phase 3 머지 + iOS smoke test** (← 사람 승인 게이트)
-- [x] [AI] `merge.py`로 `terms.next.json` 510개 생성 (충돌 0) → swap 적용(terms.json=510, 구 500은 terms.bak.json)
-- [x] [AI] iOS smoke test **PASS** (2026-06-19, iPhone 17 시뮬레이터): 빌드·번들(510)·런치 크래시 없음·재시작 로딩 정상 + 신규 keyword/alias(한+영)/카테고리 검색(실제 swap 번들, BundleDBService 경로 결정론 확인). 빌드용 누락 비밀파일은 더미로 통과(gitignore).
-- [x] [사람→AI] swap+커밋 완료 (`e11cf15` feat: 500→510, 기존 무손실·신규 10만 추가). terms.bak.json 정리됨. **번들 DB 510개로 갱신.**
-
-**D. Phase 4 마감 결정** ✅ (다음 라운드 발주 — 사람 결정 지점)
-- [x] [AI] 목표 N 산정안 제시 (round-001 throughput·품질 기준) — 분포 기준 600/650/700 3안
-- [x] [사람] **목표 N = 650 확정** (2026-06-19) + Phase 5 critic-v2(정량 룰 제거) 진행
-- [x] [AI] spec Done 신호 갱신(N=650), `prompts/critic-v2.md` + `scope_diff.py` 작성·기능검증(6/6)
-
-**▶ 경계: Phase 6 — 30~50 keyword 확장 batch 시작** (여기부터 본 작업, 체크리스트 범위 밖)
-
-**진행 상태 (2026-06-20):** 번들 DB **650개 — 목표 N=650 도달, Phase 6 확장 종결.** **round-004 종결·머지 완료** (590→650, 무손실 swap, batch 60 = A안 마지막 라운드). 게이트 전부 PASS(validator 60/60 · critic-v2 0 fail · scope_leak 0 · dedup 완전매칭 0 · smoke · 무손실). 분포(코어 균등화 완료): 자료구조 **103**·동시성 **103**·패턴 **103**·DB **102**·네트워크 **102**·기타 137. 기타 비중 23.2%→**21.1%**. generator는 탭A 30+30 분할 paste(batch 60 출력 품질 관리), 머지 1회. critic 고유검출 0(누적 001·002·004=0, 003=1). 상세·측정·관찰: [`rounds/round-004.md`](docs/db-expand/rounds/round-004.md).
-
-**Phase 7 방향 (유지):** **자동화(API 전환) 미진입 → claude.ai 정액 수동으로 목표 완주.** 잔여 규모상 API 종량 < 정액 한계비용 0 판단. **재검토 조건**: 출시 후 analytics 기반 대량 확장(수백 개) 시에만.
-
-**다음 행동:** **Phase 6 번들 DB 확장 작업 종결.** 목표 650 달성으로 이 [Data] 항목은 Done 이관 대상. 추가 확장은 출시 후 Firebase Analytics `search` 빈도 기반(Later 백로그 "[Data] 번들 DB 추가 확장")으로 이관 — round-005 핸드오프 불필요. 남은 출시 전 작업은 Next의 "[Data] 기존 200개 품질 재생성"·"[Ops] 출시 전 수동 작업 정리" 참조.
-
-<details><summary>직전 (round-003 발주·실행)</summary>
-
-**수동 round-003 발주·실행·머지(2026-06-20).** 발주안: [`rounds/round-003.md`](docs/db-expand/rounds/round-003.md). batch 40개(550→590), 코어 균등화 결손 비례. cycle1 validator 39/40(HAMT etymology 상한만 실패 — summary 미달 0, round-002 개선 효과). **critic 고유 검출 1건**(split-horizon '수평 분할' 오역, 3라운드 만의 첫 검출 → critic 유지 근거). balking은 generator가 동시성 분류(디자인 패턴으로 타당, 유지). round-002 개선 3종(완전매칭 dedup·paste 격리·summary 보정) 전부 유효 확인.
-</details>
-
-<details><summary>직전 (round-002 발주·실행)</summary>
-
-**Phase 6 round-002 발주(2026-06-19)→실행·머지(2026-06-20).** 발주안: [`rounds/round-002.md`](docs/db-expand/rounds/round-002.md). batch 40개, 카테고리 결손 비례 배분. 흐름 `Generator → validator → critic(v2) → 재생성 → scope_diff → 머지` 첫 실통과. generator cycle 2회(cycle1 16/40 길이실패 → cycle2 24재생성 전부통과). critic-v2 고유검출 0(round-001도 0, 2연속). consistent-hashing 자료구조 확정(발주 DB→long pole 보강). alias 충돌: 구간 트리 제거(실충돌)/lazy loading 복원(false-positive). critic 격리 함정 1건(메모리 오염→임시챗 재실행).
-</details>
-
-<details><summary>직전 (Phase 4·5 마감)</summary>
-
-**Phase 4 마감(2026-06-19)** — 목표 **N=650** 확정(현 510 → +140, 기타 제외 코어 동등화), spec Done 신호 갱신. Phase 5 산출물 완성: `critic-v2.md`(정량 룰 제거, nuanced 4종만) + `scope_diff.py`(scope leak 검출, 기능검증 통과). Phase 5 Done(흐름 실통과)은 Phase 6 첫 라운드에서 확인. 흐름 `Generator → validator → critic(v2) → 재생성 → scope_diff → 머지`. API 단발 길이 비순응은 Phase 7 loop(validator→재생성 필수) 근거로 흡수.
-</details>
+_(번들 DB 확장 완료 → Done 이관. 현재 Now에 활성 작업 없음 — 다음 착수는 Next 참조.)_
 
 ---
 
@@ -99,6 +49,11 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 ## Done — 완료
 
 날짜·PR 번호는 git history 기준. 자세한 변경 내역은 각 PR 또는 관련 ADR 참조.
+
+- **번들 DB 출시 전 확장 (500→650)** — 2026-06-20 (PR [#21](https://github.com/data-sy/dev-etymology/pull/21))
+  - claude.ai 2탭(Generator/Critic) batch 생성 + 결정론 코드 게이트(validator·critic-v2·scope_diff·merge·smoke) 파이프라인. round-001~004 무손실 확장, 코어 5개 카테고리 균등화(자료구조·동시성·패턴 103 / DB·네트워크 102 / 기타 137). 기타 비중 27%→21%.
+  - 결정: 목표 N=650 / Phase 7 자동화 미진입(claude.ai 정액 수동 유지, API 종량 회피) / dedup 완전매칭. 추가 확장은 출시 후 Firebase Analytics 검색 빈도 기반(Later).
+  - 문서함: `docs/db-expand/`(spec·rounds·runbook·archive·README). 상세: [`rounds/round-004.md`](docs/db-expand/rounds/round-004.md).
 
 - **AI 시스템 프롬프트 v2 라운드** — 2026-05-13~16 (PR 준비 중)
   - **Path A 채택**: `alias_strict` 처방 + `null guard` ([도구 선택] 본문)

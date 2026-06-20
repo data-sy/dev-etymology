@@ -1,7 +1,7 @@
 # 핸드오프 — 번들 DB 확장: Phase 6(본 확장 batch)부터
 
-> **사용법.** 새 세션에서 *"이 파일(`docs/db-expand/handoff-phase6.md`) 읽고 이어서 진행해줘"* 라고 하면 된다.
-> 진행 상태의 정본은 디스크다 — 충돌 시 이 핸드오프가 아니라 [`ROADMAP.md`](../../ROADMAP.md) "Now"와 [`spec.md`](spec.md), [`rounds/round-001.md`](rounds/round-001.md)를 신뢰할 것.
+> **사용법.** 새 세션에서 *"이 파일(`docs/db-expand/archive/handoff-phase6.md`) 읽고 이어서 진행해줘"* 라고 하면 된다.
+> 진행 상태의 정본은 디스크다 — 충돌 시 이 핸드오프가 아니라 [`ROADMAP.md`](../../../ROADMAP.md) "Now"와 [`spec.md`](../spec.md), [`rounds/round-001.md`](../rounds/round-001.md)를 신뢰할 것.
 
 ## 지금 어디까지 (2026-06-19)
 
@@ -17,9 +17,9 @@
 
 | 무엇 | 경로 |
 |---|---|
-| 마스터 상태·체크리스트 | [`ROADMAP.md`](../../ROADMAP.md) "Now" (현재 다음=Phase 6) |
-| 단계 상세·Phase 6 | [`spec.md`](spec.md) (Phase 6 섹션, Done 신호 N=650) |
-| round-001 회고·목표 N 산정 | [`rounds/round-001.md`](rounds/round-001.md) |
+| 마스터 상태·체크리스트 | [`ROADMAP.md`](../../../ROADMAP.md) "Now" (현재 다음=Phase 6) |
+| 단계 상세·Phase 6 | [`spec.md`](../spec.md) (Phase 6 섹션, Done 신호 N=650) |
+| round-001 회고·목표 N 산정 | [`rounds/round-001.md`](../rounds/round-001.md) |
 | 도구 | `Scripts/db-expand/{validator.py, merge.py, scope_diff.py, consistency_a.py, consistency_a_robust.py, api_sample.py}` |
 | 프롬프트 | `Scripts/db-expand/prompts/{v2-batch.md, critic-v1.md, critic-v2.md}` |
 
