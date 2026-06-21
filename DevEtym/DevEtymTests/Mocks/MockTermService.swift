@@ -12,6 +12,8 @@ final class MockTermService: TermServiceProtocol {
     var fetchResult: TermResult?
     /// fetch가 throw할 에러 (테스트용)
     var fetchError: Error?
+    /// fetch 반환 전 인위적 지연(나노초) — 로딩 단계/최소 표시 시간 검증용
+    var fetchDelayNanoseconds: UInt64 = 0
     /// fetchResult가 nil일 때 .found에 함께 실어 보낼 source 문자열
     var defaultSource: String = "bundle"
     /// 자동완성 후보
@@ -44,6 +46,9 @@ final class MockTermService: TermServiceProtocol {
     // MARK: - TermServiceProtocol
 
     func fetch(keyword: String) async throws -> TermResult {
+        if fetchDelayNanoseconds > 0 {
+            try await Task.sleep(nanoseconds: fetchDelayNanoseconds)
+        }
         if let fetchError { throw fetchError }
         if let fetchResult { return fetchResult }
         let normalized = keyword.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
