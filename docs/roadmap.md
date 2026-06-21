@@ -6,7 +6,11 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 ## Now — 진행 중
 
-_(없음 — v2 라운드 완료. 다음 차례는 Next에서 승격)_
+- **[UI] 검색 로딩 UI 개선 — 체감 latency 감소** — `feat/loading-ui-perceived-latency`
+  - 목적: AI 호출 절대 latency 8s는 유지하되 *인지 길이*를 줄여 사용자 체감 개선
+  - **디자인 결정**: 시안 A(스켈레톤형) vs B(중앙 집중형) HTML 비교 후 **B 중앙 집중형 채택** (심플함이 이 화면에 적합). 시안 보존: `docs/loading-ui-mockup.html`
+  - 적용 기법(조합): 단계별 메시지 · dot pulse 진행 애니메이션 · 최소 표시 시간 ~350ms(캐시 hit 깜빡임 방지) · 정당화 텍스트
+  - 영향 범위: `DetailView.loadingView`(UI) + `DetailViewModel`(단계 진행·최소 표시 시간 로직)
 
 ---
 
@@ -18,16 +22,6 @@ _(없음 — v2 라운드 완료. 다음 차례는 Next에서 승격)_
   - 검증 게이트: 카테고리 ∈ {동시성, 자료구조, 네트워크, DB, 패턴, 기타} · 필드 길이(summary 20~30 / etymology 60~120 / namingReason 150~270) · alias_strict 룰(한정 수식어 없음). 자동 validator 스크립트 도입 권장
   - 선택: claude.ai vs API 일관성 비교 실험 10 keyword (~$0.05·30분) — 톤 차이 실측 후 본격 batch 결정
   - 의존: v2 PR 머지 (claude.ai에 깔 시스템 프롬프트가 v2 production이어야 함)
-- **[UI] 검색 로딩 UI 개선 — 체감 latency 감소** — 새 브랜치 (예: `feat/loading-ui-perceived-latency`)
-  - 목적: AI 호출 절대 latency 8s는 유지하되 *인지 길이*를 줄여 사용자 체감 개선. v2 라운드 시뮬레이터 테스트에서 latency가 핵심 UX 이슈로 확인됨
-  - 적용 기법(조합):
-    - **단계별 메시지** — "어원을 찾고 있어요" → "정리하고 있어요" → "마무리 중" 시간 분할 인지
-    - **skeleton placeholder** — 어원·작명 이유 영역 회색 박스로 결과 도착 위치 미리 표시
-    - **진행감 애니메이션** — 정적 spinner 대신 dot pulse·progress 채움 등 변화 있는 모션
-    - **최소 표시 시간 300~500ms** — 캐시 hit 시 플래시 방지
-    - **명시적 정당화 텍스트** — "AI가 분석 중" 등 *왜 기다리는지* 설명
-  - 영향 범위: `SearchView`·`DetailView`의 loading state. 디자인 시스템 컬러·폰트 토큰 재사용
-  - 의존: 없음 (v2 PR 머지 후 별도 진행 가능). 번들 DB 확장과 병행 가능
 - **[Data] 번들 DB 기존 200개 품질 재생성** — `AGENTS.md` backlog 참조
   - 신규 300개는 개선 프롬프트로 생성됐으나 기존 200개는 구 프롬프트 결과 잔존 → 톤 일관성 보강
   - 절차: 샘플 10~15개 재생성 비교(~$0.20) → 체감되면 전체(~$2) → 미미하면 스킵
