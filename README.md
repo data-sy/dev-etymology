@@ -57,8 +57,8 @@ docs/                 # privacy policy, wireframes, icon design history
 - [spec.md](spec.md) — implementation specification (models, services, views, tests)
 - [CLAUDE.md](CLAUDE.md) — coding conventions, architecture rules, dependency policy
 - [AGENTS.md](AGENTS.md) — multi-agent development workflow (services / data / ui / settings / ai)
-- [docs/privacy-policy.md](docs/privacy-policy.md) — data collection policy (Firebase Analytics, opt-in)
-- [docs/wireframe-v2.html](docs/wireframe-v2.html) — UI wireframe reference
+- [site/privacy-policy.md](site/privacy-policy.md) — data collection policy (Firebase Analytics, opt-in) — published
+- [docs/wireframe/wireframe-v2.html](docs/wireframe/wireframe-v2.html) — UI wireframe reference
 - [docs/icon/](docs/icon/) — app icon design iterations
 
 ## License
