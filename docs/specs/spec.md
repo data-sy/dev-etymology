@@ -1,7 +1,7 @@
 # spec.md — DevEtym 구현 명세서 (Claude Code 전용)
 
 > 이 문서는 Claude Code가 참조하는 구현 명세입니다
-> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 `AGENTS.md`의 "머지 후·출시 전 남은 수동 작업" 절을 참조하세요
+> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 `docs/handoff/h3-prelaunch-manual.md`를 참조하세요
 > CLAUDE.md의 코딩 규칙을 반드시 준수하세요
 
 ---
@@ -487,7 +487,7 @@ toggleBookmark(for entry) →
 
 ### 3-0-1. 디자인 시스템
 
-참고: `docs/wireframe/wireframe-v2.html`
+참고: `docs/design/wireframe.html`
 
 **컬러 팔레트 (다크모드 우선, Asset Catalog에 등록):**
 - `bg` = `#0a0a0a` — 앱 배경
@@ -728,8 +728,8 @@ ViewModel 불필요 (로직 없음, 순수 UI + 시스템 API 호출만).
 
 ### 4-4. 앱 아이콘 적용
 
-> 디자인 자산: `docs/icon/assets/v2/icon.svg` (v2 최종판)
-> 검토 자료: `docs/icon/icon_candidate_v2.html`
+> 디자인 자산: `docs/design/icon/assets/v2/icon.svg` (v2 최종판)
+> 검토 자료: `docs/design/icon/icon_candidate_v2.html`
 > 색상: 딥 그린 `#2E5D3A` / 크림 `#F7E8D0`
 > 앱 표시 이름: "개발 어원 사전" (CLAUDE.md 기준) — 아이콘 타이포와 일치
 
@@ -738,7 +738,7 @@ ViewModel 불필요 (로직 없음, 순수 UI + 시스템 API 호출만).
 v2는 단일 SVG가 1024→28px 모든 사이즈에서 식별 가능하도록 설계되어, 사이즈별 최적화 없이 1024×1024 PNG 하나만 제작하고 Xcode가 자동으로 다운스케일하도록 위임한다.
 
 ```bash
-rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
+rsvg-convert -w 1024 -h 1024 docs/design/icon/assets/v2/icon.svg \
   -o DevEtym/DevEtym/Assets.xcassets/AppIcon.appiconset/icon.png
 ```
 
@@ -763,7 +763,7 @@ rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
 
 ### 4-5. 런치 스크린 (Launch Screen)
 
-> 디자인 자산: `docs/icon/assets/v2/launch-logo.svg` (투명 배경, 로고만)
+> 디자인 자산: `docs/design/icon/assets/v2/launch-logo.svg` (투명 배경, 로고만)
 > 배경 색상: `#2E5D3A` (Theme/brand)
 > 목적: 앱 아이콘 → 런치 화면 → 첫 화면의 시각 연속성 확보. 흰 화면(Xcode 자동 생성 빈 dict) 방지.
 
@@ -789,9 +789,9 @@ rsvg-convert -w 1024 -h 1024 docs/icon/assets/v2/icon.svg \
 **자산 익스포트**
 
 ```bash
-rsvg-convert -w 480 -h 480 docs/icon/assets/v2/launch-logo.svg \
+rsvg-convert -w 480 -h 480 docs/design/icon/assets/v2/launch-logo.svg \
   -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@2x.png
-rsvg-convert -w 720 -h 720 docs/icon/assets/v2/launch-logo.svg \
+rsvg-convert -w 720 -h 720 docs/design/icon/assets/v2/launch-logo.svg \
   -o DevEtym/DevEtym/Assets.xcassets/LaunchLogo.imageset/launch-logo@3x.png
 ```
 

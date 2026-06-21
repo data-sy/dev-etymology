@@ -35,7 +35,7 @@ MVP에서 아이콘의 성공 기준은 오직 **카테고리 인식**이다.
 - 추출 결과: primary / accent / background / surface (라이트·다크 모드 분리)
 
 **앱 무드 파악:**
-- `spec.md`, `CLAUDE.md`, `README.md`, 주요 View를 훑어서
+- `docs/specs/spec.md`, `CLAUDE.md`, `README.md`, 주요 View를 훑어서
 - 폰트 성향, 레이아웃 밀도, 전반 톤을 한 줄로 요약
 
 색상이 명확히 정의되어 있지 않으면 추측하지 말고 나에게 물어봐.

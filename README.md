@@ -49,17 +49,16 @@ DevEtym/
 └── Tests/            # unit tests + mocks
 
 Scripts/              # generate_db.py — batch bundle DB generator
-docs/                 # privacy policy, wireframes, icon design history
+docs/                 # internal docs — specs, design assets, ADRs, handoffs
 ```
 
 ## Documentation
 
-- [spec.md](spec.md) — implementation specification (models, services, views, tests)
+- [docs/specs/spec.md](docs/specs/spec.md) — implementation specification (models, services, views, tests)
 - [CLAUDE.md](CLAUDE.md) — coding conventions, architecture rules, dependency policy
-- [AGENTS.md](AGENTS.md) — multi-agent development workflow (services / data / ui / settings / ai)
 - [site/privacy-policy.md](site/privacy-policy.md) — data collection policy (Firebase Analytics, opt-in) — published
-- [docs/wireframe/wireframe-v2.html](docs/wireframe/wireframe-v2.html) — UI wireframe reference
-- [docs/icon/](docs/icon/) — app icon design iterations
+- [docs/design/wireframe.html](docs/design/wireframe.html) — UI wireframe reference
+- [docs/design/icon/](docs/design/icon/) — app icon design iterations
 
 ## License
 
