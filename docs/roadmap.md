@@ -6,16 +6,19 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 ## Now — 진행 중
 
-- **[UI] 검색 로딩 UI 개선 — 체감 latency 감소** — `feat/loading-ui-perceived-latency`
-  - 목적: AI 호출 절대 latency 8s는 유지하되 *인지 길이*를 줄여 사용자 체감 개선
-  - **디자인 결정**: 시안 A(스켈레톤형) vs B(중앙 집중형) HTML 비교 후 **B 중앙 집중형 채택** (심플함이 이 화면에 적합). 시안 보존: `docs/loading-ui-mockup.html`
-  - 적용 기법(조합): 단계별 메시지 · dot pulse 진행 애니메이션 · 최소 표시 시간 ~350ms(캐시 hit 깜빡임 방지) · 정당화 텍스트
-  - 영향 범위: `DetailView.loadingView`(UI) + `DetailViewModel`(단계 진행·최소 표시 시간 로직)
+_(없음 — 로딩 UI 라운드 완료. 다음 차례는 Next에서 승격)_
 
 ---
 
 ## Next — 다음 분기 (착수 예정)
 
+- **[UI] 검색창 하단 재배치 — 한 손 도달성** — 새 브랜치 (예: `feat/search-bar-bottom-placement`)
+  - 목적: 상단 검색창이 엄지로 멀어 불편 → 하단으로 내려 한 손 조작성 개선 (Safari iOS 15+ 하단 주소창 선례)
+  - **디자인 결정**: 상단 vs 하단·탭바 상단 HTML 비교 후 **A안(하단 검색 + 하단 탭바 유지) 채택** — iOS 관례(하단 탭바) 유지가 상단 탭바 이탈 비용보다 나음. 시안 보존: `docs/search-placement-mockup.html`
+  - 동반 변경: **최근검색을 필드 바로 위(하단)로 정렬** (도달성 일관성 — 칩이 엄지 존에 들어오고 입력 시 자동완성으로 자연 전환)
+  - 처리 필요: ⓐ 자동완성 **위로 펼침**(메신저식) ⓑ 입력 시작 시 키보드 회피 ⓒ mini에서 바닥 2층 크롬 압박 — 입력 중 탭바 숨김 검토
+  - 영향 범위: `SearchView` 레이아웃. 디자인 토큰 재사용
+  - 의존: 없음. 설계·시안은 `ios-ux-design` 에이전트 참고
 - **[Data] 번들 DB 출시 전 확장 (claude.ai batch)** — 새 브랜치 (예: `feat/bundle-db-pre-launch-expand`)
   - 목적: launch 전 캐시된 번들 DB 양 늘려서 초기 사용자의 AI 호출 빈도·레이턴시 비용 감소
   - 방식: **claude.ai 대화창 사용** (요금제 내 처리, API 비용 우회). v2 production 시스템 프롬프트(`ClaudeAPIService.swift` 또는 `Scripts/prompt-probe`)를 system message로 깔고 batch JSON 받기. tool_use 강제 못 하므로 사용자 메시지에 "필드명·카테고리 enum·길이 기준 엄수" 명시
@@ -50,6 +53,10 @@ DevEtym(개발 어원 사전) 중장기 작업 계획. 세부 실행 지시는 `
 
 날짜·PR 번호는 git history 기준. 자세한 변경 내역은 각 PR 또는 관련 ADR 참조.
 
+- **검색 로딩 UI 개선 — 체감 latency 감소** — 2026-06-21 (`feat/loading-ui-perceived-latency`)
+  - **B 중앙 집중형 채택** (시안 A 스켈레톤형 대비): 단계별 메시지(찾는 중→정리 중→마무리) · dot pulse 애니메이션 · 최소 표시 시간 ~350ms(캐시 hit 깜빡임 방지) · 정당화 텍스트
+  - **남은 시간 숫자(8초) 미표기** 결정 — 기대치 박으면 더 길게 느껴지고 초과 시 고장처럼 보임
+  - `DetailViewModel`에 `LoadingPhase` 진행/최소 표시 시간 로직 + 테스트 6종. 시안 보존: `docs/loading-ui-mockup.html`
 - **AI 시스템 프롬프트 v2 라운드** — 2026-05-13~16 (PR 준비 중)
   - **Path A 채택**: `alias_strict` 처방 + `null guard` ([도구 선택] 본문)
   - **명시적 비채택**: `closing`·`selfcheck`는 MVP latency·cost 부담으로 v3 카드 — launch 후 retention 데이터 보고 재검토
