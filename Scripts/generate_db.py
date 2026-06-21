@@ -7,7 +7,7 @@ DevEtym 번들 DB 배치 생성 스크립트.
     python Scripts/generate_db.py \\
         --input DevEtym/DevEtym/Resources/terms.json \\
         --output DevEtym/DevEtym/Resources/terms.json \\
-        --keywords Scripts/keywords.txt
+        --keywords Scripts/db-expand/keywords-round-004.txt   # keyword 목록(한 줄 1개)
 
 동작:
     1) --keywords 파일에서 영문 소문자 keyword 목록을 읽는다
