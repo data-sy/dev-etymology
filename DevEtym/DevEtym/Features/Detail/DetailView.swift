@@ -54,19 +54,33 @@ struct DetailView: View {
     // MARK: - 상태별 View
 
     private var loadingView: some View {
-        VStack(spacing: 14) {
+        let phase = viewModel.loadingPhase
+        return VStack(spacing: 18) {
             Text(keyword)
                 .typoCodeHero()
                 .foregroundStyle(Theme.Palette.accent)
-            ProgressView()
-                .tint(Theme.Palette.accent)
-            Text("어원을 분석하는 중...")
+
+            PulsingDots()
+
+            // 단계 메시지 — 전환 시 부드럽게 교체
+            Text(phase.message)
+                .typoBodySub()
+                .foregroundStyle(Theme.Palette.text)
+                .id(phase)
+                .transition(.opacity)
+
+            // 왜 기다리는지 설명하는 정당화 텍스트
+            // (남은 시간을 숫자로 알리지 않음 — 기대치를 박으면 오히려 길게 느껴지고 초과 시 고장처럼 보임)
+            Text(phase.justification)
                 .typoLabel()
                 .foregroundStyle(Theme.Palette.textMuted)
+                .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .animation(.easeInOut(duration: 0.35), value: phase)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(keyword) 어원을 분석하는 중")
+        .accessibilityLabel("\(keyword) \(phase.message). \(phase.justification)")
     }
 
     @ViewBuilder
@@ -324,6 +338,33 @@ struct DetailView: View {
             URLQueryItem(name: "body", value: body)
         ]
         return components.url
+    }
+}
+
+/// 로딩 진행감 표시 — 정적 spinner 대신 좌→우로 번갈아 커지는 dot pulse
+/// 결과를 기다리는 동안 "멈춰있지 않다"는 신호를 줘 체감 latency를 낮춘다.
+private struct PulsingDots: View {
+    @State private var animating = false
+    private let count = 3
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<count, id: \.self) { index in
+                Circle()
+                    .fill(Theme.Palette.accent)
+                    .frame(width: 8, height: 8)
+                    .scaleEffect(animating ? 1.0 : 0.6)
+                    .opacity(animating ? 1.0 : 0.3)
+                    .animation(
+                        .easeInOut(duration: 0.6)
+                            .repeatForever(autoreverses: true)
+                            .delay(Double(index) * 0.2),
+                        value: animating
+                    )
+            }
+        }
+        .onAppear { animating = true }
+        .accessibilityHidden(true)
     }
 }
 

@@ -10,24 +10,64 @@ final class DetailViewModel: ObservableObject {
     @Published var state: State = .loading
     @Published var errorMessage: String?
     @Published var isBookmarked: Bool = false
+    /// 로딩 중 표시할 단계 — 시간 분할로 진행되며 *체감* latency를 줄인다.
+    @Published var loadingPhase: LoadingPhase = .searching
 
     enum State {
         case loading
         case loaded(TermResult)
     }
 
+    /// 로딩 단계 — fetch는 단일 await라 실제 진행률을 알 수 없으므로 시간 기반으로 전환한다.
+    /// 캐시/번들 hit은 즉시 반환되어 .searching 단계까지만 보이고 결과로 전환된다.
+    enum LoadingPhase: CaseIterable {
+        case searching   // 0s~
+        case organizing  // ~2.5s
+        case finishing   // ~5s
+
+        /// 단계 전환 시각(나노초). load 시작 기준 경과 시간.
+        var startNanoseconds: UInt64 {
+            switch self {
+            case .searching:  return 0
+            case .organizing: return 2_500 * 1_000_000
+            case .finishing:  return 5_000 * 1_000_000
+            }
+        }
+
+        /// 사용자에게 보이는 단계 메시지
+        var message: String {
+            switch self {
+            case .searching:  return "어원을 찾고 있어요"
+            case .organizing: return "어원을 정리하고 있어요"
+            case .finishing:  return "마무리하고 있어요"
+            }
+        }
+
+        /// 왜 기다리는지 설명하는 정당화 텍스트
+        var justification: String {
+            "✦ AI가 어원을 분석하고 있어요"
+        }
+    }
+
+    /// 캐시/번들 hit 즉시 반환 시 스피너가 깜빡이는 것을 막기 위한 최소 표시 시간(나노초).
+    /// 테스트에서 0으로 낮춰 타이밍 의존을 제거할 수 있도록 주입 가능하게 둔다.
+    var minimumLoadingNanoseconds: UInt64 = 350 * 1_000_000
+
     var termService: (any TermServiceProtocol)?
 
     private var currentSearchTask: Task<Void, Never>?
+    private var phaseTask: Task<Void, Never>?
     private var loadedKeyword: String?
 
     deinit {
         currentSearchTask?.cancel()
+        phaseTask?.cancel()
     }
 
     /// View가 사라질 때 호출 — 진행 중인 fetch 취소
     func cancelLoading() {
         currentSearchTask?.cancel()
+        phaseTask?.cancel()
     }
 
     /// 주어진 keyword로 fetch 수행 (중복 호출 시 기존 Task cancel)
@@ -36,22 +76,52 @@ final class DetailViewModel: ObservableObject {
         if case .loaded = state, loadedKeyword == keyword { return }
 
         currentSearchTask?.cancel()
+        phaseTask?.cancel()
         state = .loading
+        loadingPhase = .searching
         errorMessage = nil
+        startPhaseProgression()
 
         currentSearchTask = Task { [weak self] in
             guard let self, let service = self.termService else { return }
+            let startedAt = DispatchTime.now().uptimeNanoseconds
             do {
                 let result = try await service.fetch(keyword: keyword)
                 guard !Task.isCancelled else { return }
+                await self.enforceMinimumLoading(since: startedAt)
+                guard !Task.isCancelled else { return }
+                self.phaseTask?.cancel()
                 self.loadedKeyword = keyword
                 self.state = .loaded(result)
                 self.isBookmarked = self.computeBookmarkStatus(for: result, service: service)
             } catch {
                 guard !Task.isCancelled else { return }
+                self.phaseTask?.cancel()
                 self.errorMessage = Self.message(for: error)
             }
         }
+    }
+
+    /// 시간 기반으로 loadingPhase를 .searching → .organizing → .finishing 전환
+    private func startPhaseProgression() {
+        phaseTask = Task { [weak self] in
+            guard let self else { return }
+            // .searching은 즉시 적용된 상태이므로 이후 단계만 직전 단계와의 간격만큼 대기 후 전환
+            var previousStart: UInt64 = LoadingPhase.searching.startNanoseconds
+            for phase in LoadingPhase.allCases where phase != .searching {
+                try? await Task.sleep(nanoseconds: phase.startNanoseconds - previousStart)
+                guard !Task.isCancelled else { return }
+                self.loadingPhase = phase
+                previousStart = phase.startNanoseconds
+            }
+        }
+    }
+
+    /// 결과가 최소 표시 시간보다 일찍 도착하면 남은 시간만큼 대기 (깜빡임 방지)
+    private func enforceMinimumLoading(since startedAt: UInt64) async {
+        let elapsed = DispatchTime.now().uptimeNanoseconds - startedAt
+        guard elapsed < minimumLoadingNanoseconds else { return }
+        try? await Task.sleep(nanoseconds: minimumLoadingNanoseconds - elapsed)
     }
 
     /// 북마크 토글 — 성공 시 isBookmarked 갱신

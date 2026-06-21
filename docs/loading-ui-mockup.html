@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEtym 로딩 UI 시안 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* DevEtym dark theme tokens (Assets.xcassets/Theme, dark appearance) */
+    --bg:#0A0A0A; --surface:#111111; --surface2:#1A1A1A; --border:#363636;
+    --accent:#C8F060; --accent2:#60C8F0; --accentAI:#F0A060;
+    --text:#ECECEC; --textDim:#B4B4B4; --textMuted:#8A8A8A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:#161616; color:var(--text);
+    font-family:'DM Sans',-apple-system,sans-serif;
+    padding:32px 20px 60px; min-height:100vh;
+  }
+  h1{font-family:'DM Serif Display',serif; font-weight:400; font-size:26px; text-align:center; margin-bottom:6px;}
+  .sub{text-align:center; color:var(--textMuted); font-size:14px; margin-bottom:24px;}
+  .controls{display:flex; gap:12px; justify-content:center; align-items:center; margin-bottom:8px; flex-wrap:wrap;}
+  button.ctl{
+    font-family:'DM Mono',monospace; font-size:14px; cursor:pointer;
+    background:var(--surface2); color:var(--accent); border:1px solid var(--accent);
+    border-radius:10px; padding:10px 18px;
+  }
+  button.ctl.secondary{color:var(--textDim); border-color:var(--border);}
+  .timeline{text-align:center; color:var(--textMuted); font-family:'DM Mono',monospace; font-size:13px; margin-bottom:28px; height:18px;}
+
+  .stage{display:flex; gap:40px; justify-content:center; flex-wrap:wrap;}
+  .col{display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .col-title{font-family:'DM Mono',monospace; font-size:14px; color:var(--accent2); letter-spacing:1px;}
+  .col-desc{font-size:12.5px; color:var(--textMuted); max-width:300px; text-align:center; line-height:1.5; min-height:36px;}
+
+  /* phone frame */
+  .phone{
+    width:320px; height:560px; background:var(--bg);
+    border:8px solid #222; border-radius:38px; overflow:hidden; position:relative;
+    box-shadow:0 12px 40px rgba(0,0,0,.5);
+  }
+  .navbar{height:46px; background:var(--surface); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; padding:0 14px; gap:8px;}
+  .navbar .back{color:var(--accent); font-family:'DM Mono',monospace; font-size:15px;}
+  .screen{padding:20px 18px; height:calc(100% - 46px); overflow:hidden; position:relative;}
+
+  .mono{font-family:'DM Mono',monospace;}
+  .serif{font-family:'DM Serif Display',serif;}
+
+  /* ---------- shimmer ---------- */
+  .sk{
+    background:var(--surface2); border-radius:6px; position:relative; overflow:hidden;
+  }
+  .sk::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+    transform:translateX(-100%);
+    animation:shimmer 1.4s infinite;
+  }
+  @keyframes shimmer{100%{transform:translateX(100%);}}
+
+  /* ---------- dot pulse ---------- */
+  .dots{display:flex; gap:8px; align-items:center;}
+  .dots span{width:8px; height:8px; border-radius:50%; background:var(--accent); opacity:.3;
+    animation:pulse 1.2s infinite ease-in-out;}
+  .dots span:nth-child(2){animation-delay:.2s;}
+  .dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes pulse{0%,80%,100%{opacity:.25; transform:scale(.85);}40%{opacity:1; transform:scale(1.15);}}
+
+  /* fade for stage text */
+  .stagemsg{transition:opacity .35s ease;}
+
+  /* ---------- shared result styling ---------- */
+  .kw-hero{font-family:'DM Mono',monospace; font-weight:500; font-size:30px; color:var(--text);}
+  .kw-hero.ai{color:var(--accent);}
+  .badge{font-family:'DM Mono',monospace; font-size:11px; padding:4px 9px; border-radius:6px;
+    border:1px solid; display:inline-block;}
+  .badge.cat{color:var(--accent); border-color:rgba(200,240,96,.28); background:rgba(200,240,96,.12);}
+  .badge.ai{color:var(--accentAI); border-color:rgba(240,160,96,.28); background:rgba(240,160,96,.12);}
+  .seclabel{font-family:-apple-system,sans-serif; font-size:12px; letter-spacing:1.2px; color:var(--textMuted); text-transform:uppercase;}
+  .etym-block{display:flex; background:var(--surface2); border-radius:8px; overflow:hidden;}
+  .etym-block .bar{width:2px; background:var(--accent);}
+  .etym-block .body{padding:12px; color:var(--textDim); font-size:14.5px; line-height:1.55;}
+  .naming{color:var(--textDim); font-size:14.5px; line-height:1.55;}
+
+  /* ============ Variant A: Skeleton ============ */
+  #skScreen .row{margin-bottom:18px;}
+  .sk-line{height:14px; margin-bottom:9px;}
+  .sk-block{padding-left:14px; border-left:2px solid var(--accent);}
+
+  /* ============ Variant B: Centered ============ */
+  #ctrScreen{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;}
+
+  .hidden{display:none !important;}
+  .legend{max-width:760px; margin:36px auto 0; color:var(--textDim); font-size:13px; line-height:1.7;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 22px;}
+  .legend b{color:var(--text);}
+  .legend code{font-family:'DM Mono',monospace; color:var(--accent); font-size:12px;}
+</style>
+</head>
+<body>
+  <h1>DevEtym · 검색 로딩 UI 시안</h1>
+  <div class="sub">다크모드 · 실제 Theme 토큰/폰트 적용 · AI 경로(~8초) 기준</div>
+
+  <div class="controls">
+    <button class="ctl" id="play">▶ 8초 타임라인 재생</button>
+    <button class="ctl secondary" id="reset">↺ 처음으로</button>
+  </div>
+  <div class="timeline" id="clock">대기 중 — 재생을 누르면 단계 전환을 볼 수 있어요</div>
+
+  <div class="stage">
+    <!-- ============ Variant A : Skeleton ============ -->
+    <div class="col">
+      <div class="col-title">A · 스켈레톤형</div>
+      <div class="col-desc">결과 자리(어원·작명 이유)를 회색 shimmer 박스로 미리 깔아 "곧 여기 채워진다"는 기대감으로 체감 단축</div>
+      <div class="phone">
+        <div class="navbar"><span class="back">‹ 검색</span></div>
+        <!-- loading -->
+        <div class="screen" id="skScreen">
+          <div class="row" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="kw-hero ai">mutex</span>
+            <span class="badge ai">✦ AI</span>
+          </div>
+          <div class="row" style="display:flex; gap:10px; align-items:center;">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span class="stagemsg mono" id="skMsg" style="color:var(--textDim); font-size:13.5px;">어원을 찾고 있어요</span>
+          </div>
+          <div class="row">
+            <div class="seclabel" style="margin-bottom:10px;">어원</div>
+            <div class="sk-block">
+              <div class="sk sk-line" style="width:92%;"></div>
+              <div class="sk sk-line" style="width:78%;"></div>
+              <div class="sk sk-line" style="width:85%; margin-bottom:0;"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="seclabel" style="margin-bottom:10px;">왜 이 이름인가</div>
+            <div class="sk sk-line" style="width:96%;"></div>
+            <div class="sk sk-line" style="width:88%;"></div>
+            <div class="sk sk-line" style="width:70%;"></div>
+          </div>
+          <div class="row" style="position:absolute; bottom:18px; left:18px; right:18px;">
+            <span class="mono" style="color:var(--textMuted); font-size:12px;" id="skJustify">✦ AI가 어원을 분석하고 있어요</span>
+          </div>
+        </div>
+        <!-- result -->
+        <div class="screen hidden" id="skResult"></div>
+      </div>
+    </div>
+
+    <!-- ============ Variant B : Centered ============ -->
+    <div class="col">
+      <div class="col-title">B · 중앙 집중형</div>
+      <div class="col-desc">화면 중앙에 용어명 + 진행 애니메이션 + 단계 메시지를 모아 포커스. 변경 폭이 작고 결과 레이아웃과 충돌 없음</div>
+      <div class="phone">
+        <div class="navbar"><span class="back">‹ 검색</span></div>
+        <!-- loading -->
+        <div class="screen" id="ctrScreen">
+          <span class="kw-hero ai" style="font-size:28px;">mutex</span>
+          <div class="dots" style="gap:10px;"><span></span><span></span><span></span></div>
+          <span class="stagemsg" id="ctrMsg" style="color:var(--text); font-size:16px;">어원을 찾고 있어요</span>
+          <span class="mono" id="ctrJustify" style="color:var(--textMuted); font-size:12.5px; text-align:center; line-height:1.6;">✦ AI가 어원을 분석하고 있어요<br>약 8초 정도 걸려요</span>
+        </div>
+        <!-- result -->
+        <div class="screen hidden" id="ctrResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <p><b>공통 적용 기법</b> — 어느 시안을 고르든 둘 다 들어갑니다:</p>
+    <p>① <b>단계별 메시지</b> 시간 분할: <code>어원을 찾고 있어요</code> → <code>어원을 정리하고 있어요</code> → <code>마무리하고 있어요</code><br>
+       ② <b>진행감 애니메이션</b> (dot pulse / shimmer) — 정적 스피너 대체<br>
+       ③ <b>최소 표시 시간 ~350ms</b> — 캐시 hit(즉시 반환) 시 화면 깜빡임 방지<br>
+       ④ <b>정당화 텍스트</b> — "AI가 어원을 분석 중" 으로 왜 기다리는지 설명</p>
+    <p style="margin-top:10px; color:var(--textMuted);">※ 번들 DB·캐시 히트는 즉시 반환되어 ①~② 단계까지 가기 전에 결과로 전환됩니다(최소 표시 시간만 적용). 위 타임라인은 느린 AI 경로 기준 시연입니다.</p>
+  </div>
+
+<script>
+  const stages = [
+    {t:0,    msg:'어원을 찾고 있어요'},
+    {t:2500, msg:'어원을 정리하고 있어요'},
+    {t:5000, msg:'마무리하고 있어요'}
+  ];
+  const TOTAL = 8000;
+
+  const skMsg = document.getElementById('skMsg');
+  const ctrMsg = document.getElementById('ctrMsg');
+  const clock = document.getElementById('clock');
+
+  const skScreen = document.getElementById('skScreen');
+  const ctrScreen = document.getElementById('ctrScreen');
+  const skResult = document.getElementById('skResult');
+  const ctrResult = document.getElementById('ctrResult');
+
+  const RESULT_HTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+      <span class="serif" style="font-size:28px; color:var(--text);">mutex</span>
+    </div>
+    <div style="display:flex; gap:6px; margin-bottom:14px;">
+      <span class="badge cat">동시성</span><span class="badge ai">✦ AI 생성</span>
+    </div>
+    <div style="color:var(--textDim); font-size:15px; line-height:1.5; margin-bottom:18px;">
+      여러 스레드가 공유 자원에 동시에 접근하지 못하도록 막는 잠금 장치예요.
+    </div>
+    <div class="seclabel" style="margin-bottom:10px;">어원</div>
+    <div class="etym-block" style="margin-bottom:18px;">
+      <div class="bar"></div>
+      <div class="body">Mutual Exclusion(상호 배제)의 줄임말이에요. 두 단어의 앞글자를 따 'mutex'가 됐어요.</div>
+    </div>
+    <div class="seclabel" style="margin-bottom:10px;">왜 이 이름인가</div>
+    <div class="naming">한 번에 하나의 스레드만 자원을 쓰도록 '상호 배제'하는 동작을 그대로 이름에 담았어요.</div>
+  `;
+
+  let raf=null, start=null;
+
+  function setMsg(text){
+    [skMsg, ctrMsg].forEach(el=>{
+      if(el.textContent===text) return;
+      el.style.opacity=0;
+      setTimeout(()=>{ el.textContent=text; el.style.opacity=1; }, 200);
+    });
+  }
+
+  function showLoading(){
+    skScreen.classList.remove('hidden'); skResult.classList.add('hidden');
+    ctrScreen.classList.remove('hidden'); ctrResult.classList.add('hidden');
+    skResult.innerHTML=''; ctrResult.innerHTML='';
+  }
+  function showResult(){
+    skResult.innerHTML=RESULT_HTML; ctrResult.innerHTML=RESULT_HTML;
+    skScreen.classList.add('hidden'); skResult.classList.remove('hidden');
+    ctrScreen.classList.add('hidden'); ctrResult.classList.remove('hidden');
+  }
+
+  function tick(now){
+    if(!start) start=now;
+    const e = now-start;
+    clock.textContent = `t = ${(e/1000).toFixed(1)}s  /  8.0s`;
+    let cur = stages[0].msg;
+    for(const s of stages){ if(e>=s.t) cur=s.msg; }
+    setMsg(cur);
+    if(e>=TOTAL){
+      clock.textContent='t = 8.0s — 결과 도착 ✓';
+      showResult();
+      raf=null; start=null; return;
+    }
+    raf=requestAnimationFrame(tick);
+  }
+
+  document.getElementById('play').onclick=()=>{
+    if(raf) cancelAnimationFrame(raf);
+    start=null; showLoading(); setMsg(stages[0].msg);
+    raf=requestAnimationFrame(tick);
+  };
+  document.getElementById('reset').onclick=()=>{
+    if(raf) cancelAnimationFrame(raf); raf=null; start=null;
+    showLoading(); setMsg(stages[0].msg);
+    clock.textContent='대기 중 — 재생을 누르면 단계 전환을 볼 수 있어요';
+  };
+</script>
+</body>
+</html>
