@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEtym 검색창/탭바 배치 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A; --surface:#111111; --surface2:#1A1A1A; --border:#363636;
+    --accent:#C8F060; --accent2:#60C8F0; --accentAI:#F0A060;
+    --text:#ECECEC; --textDim:#B4B4B4; --textMuted:#8A8A8A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:#161616; color:var(--text); font-family:'DM Sans',-apple-system,sans-serif; padding:32px 20px 60px;}
+  h1{font-family:'DM Serif Display',serif; font-weight:400; font-size:26px; text-align:center; margin-bottom:6px;}
+  .sub{text-align:center; color:var(--textMuted); font-size:14px; margin-bottom:24px;}
+  .controls{display:flex; gap:12px; justify-content:center; margin-bottom:28px; flex-wrap:wrap;}
+  button.ctl{font-family:'DM Mono',monospace; font-size:14px; cursor:pointer; background:var(--surface2); color:var(--accent); border:1px solid var(--accent); border-radius:10px; padding:10px 18px;}
+  button.ctl.off{color:var(--textDim); border-color:var(--border);}
+
+  .stage{display:flex; gap:48px; justify-content:center; flex-wrap:wrap;}
+  .col{display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .col-title{font-family:'DM Mono',monospace; font-size:14px; color:var(--accent2); letter-spacing:.5px; text-align:center;}
+  .col-desc{font-size:12.5px; color:var(--textMuted); max-width:300px; text-align:center; line-height:1.5; min-height:54px;}
+
+  /* iPhone 13 mini 비율 (375x812 → 좁고 길게) */
+  .phone{width:288px; height:600px; background:var(--bg); border:8px solid #222; border-radius:40px; overflow:hidden; position:relative; box-shadow:0 12px 40px rgba(0,0,0,.5); display:flex; flex-direction:column;}
+
+  .mono{font-family:'DM Mono',monospace;}
+  .serif{font-family:'DM Serif Display',serif;}
+
+  /* tab bar */
+  .tabbar{display:flex; justify-content:space-around; align-items:center; background:var(--surface); border-color:var(--border); padding:8px 0 10px; flex:0 0 auto;}
+  .tabbar.top{border-bottom:1px solid var(--border);}
+  .tabbar.bottom{border-top:1px solid var(--border); padding-bottom:16px;}
+  .tab{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9px; color:var(--textMuted); font-family:-apple-system,sans-serif;}
+  .tab.active{color:var(--accent);}
+  .tab .ic{font-size:17px; line-height:1;}
+
+  /* header */
+  .header{padding:16px 16px 4px;}
+  .header .t{font-family:'DM Serif Display',serif; font-size:20px; color:var(--text);}
+  .header .s{font-family:'DM Mono',monospace; font-size:11px; color:var(--textMuted); letter-spacing:.5px;}
+
+  /* search field */
+  .field{display:flex; align-items:center; gap:8px; margin:0 14px; padding:11px 13px; background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; color:var(--textMuted); font-family:'DM Mono',monospace; font-size:14px;}
+  .field.focused{border-color:var(--accent);}
+  .field .mag{opacity:.7;}
+
+  /* content body */
+  .body{flex:1 1 auto; overflow:hidden; padding:18px 16px; min-height:0;}
+  .seclabel{font-size:10px; letter-spacing:1.5px; color:var(--textMuted); text-transform:uppercase; margin-bottom:10px;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{font-family:'DM Mono',monospace; font-size:12px; color:var(--textDim); padding:5px 11px; border:1px solid var(--border); border-radius:999px; background:var(--surface2);}
+
+  /* autocomplete (펼침) */
+  .ac{display:flex; flex-direction:column;}
+  .ac .row{padding:9px 4px; border-bottom:1px solid var(--border);}
+  .ac .kw{font-family:'DM Mono',monospace; font-size:14px; color:var(--text); font-weight:500;}
+  .ac .sm{font-size:11px; color:var(--textDim); margin-top:2px;}
+  .ac-label{font-size:10px; letter-spacing:1.5px; color:var(--textMuted); text-transform:uppercase; margin-bottom:6px;}
+
+  /* fake keyboard */
+  .kbd{flex:0 0 auto; background:#2a2a2c; padding:6px 4px 10px; display:none;}
+  .kbd.show{display:block;}
+  .kbd .krow{display:flex; gap:4px; justify-content:center; margin:3px 0;}
+  .kbd .key{background:#5a5a5e; color:#fff; border-radius:5px; font-size:11px; padding:7px 0; width:24px; text-align:center; font-family:-apple-system,sans-serif;}
+  .kbd .key.wide{width:60px;}
+
+  .spacer{flex:1 1 auto;}
+  .pill{position:absolute; top:8px; left:50%; transform:translateX(-50%); width:90px; height:5px; border-radius:3px; background:#000; opacity:.5; z-index:5;}
+
+  .legend{max-width:780px; margin:34px auto 0; color:var(--textDim); font-size:13px; line-height:1.7; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 22px;}
+  .legend b{color:var(--text);}
+  .legend .warn{color:var(--accentAI);}
+</style>
+</head>
+<body>
+  <h1>DevEtym · 검색창 / 탭바 배치 시안</h1>
+  <div class="sub">iPhone 13 mini 비율 · 다크모드 · 실제 Theme 토큰</div>
+
+  <div class="controls">
+    <button class="ctl off" id="toggle">⌨ 입력 중 상태 보기 (자동완성 ↑ 펼침)</button>
+  </div>
+
+  <div class="stage">
+    <!-- ===== A: 하단 검색 + 하단 탭바 ===== -->
+    <div class="col">
+      <div class="col-title">A · 하단 검색 + 하단 탭바</div>
+      <div class="col-desc">탭바 위에 검색 필드를 얹음. 도달성은 좋지만 <b>바닥 크롬 2층</b> — mini에서 세로 공간 압박</div>
+      <div class="phone" id="phoneA">
+        <div class="pill"></div>
+        <div class="header"><div class="t">DevEtym</div><div class="s">// 개발 용어 어원 사전</div></div>
+        <div class="body" id="bodyA">
+          <div class="seclabel">최근 검색</div>
+          <div class="chips">
+            <span class="chip">mutex</span><span class="chip">deadlock</span><span class="chip">jpa</span>
+            <span class="chip">kernel</span><span class="chip">fork</span><span class="chip">daemon</span>
+          </div>
+        </div>
+        <div class="field" id="fieldA"><span class="mag">⌕</span><span id="ftextA">mutex, semaphore, daemon...</span></div>
+        <div style="height:8px; flex:0 0 auto;"></div>
+        <div class="tabbar bottom" id="tabA">
+          <div class="tab active"><span class="ic">⌕</span>검색</div>
+          <div class="tab"><span class="ic">⊚</span>북마크</div>
+          <div class="tab"><span class="ic">◷</span>히스토리</div>
+          <div class="tab"><span class="ic">⚙</span>설정</div>
+        </div>
+        <div class="kbd" id="kbdA"></div>
+      </div>
+    </div>
+
+    <!-- ===== B: 하단 검색 + 상단 탭바 ===== -->
+    <div class="col">
+      <div class="col-title">B · 하단 검색 + 상단 탭바</div>
+      <div class="col-desc">탭바를 위로 올려 바닥은 검색 1층만. 깔끔하지만 <b>iOS 관례(하단 탭) 이탈</b> — 안드로이드/세그먼트 어법</div>
+      <div class="phone" id="phoneB">
+        <div class="pill"></div>
+        <div style="height:14px; flex:0 0 auto;"></div>
+        <div class="tabbar top" id="tabB">
+          <div class="tab active"><span class="ic">⌕</span>검색</div>
+          <div class="tab"><span class="ic">⊚</span>북마크</div>
+          <div class="tab"><span class="ic">◷</span>히스토리</div>
+          <div class="tab"><span class="ic">⚙</span>설정</div>
+        </div>
+        <div class="header"><div class="t">DevEtym</div><div class="s">// 개발 용어 어원 사전</div></div>
+        <div class="body" id="bodyB">
+          <div class="seclabel">최근 검색</div>
+          <div class="chips">
+            <span class="chip">mutex</span><span class="chip">deadlock</span><span class="chip">jpa</span>
+            <span class="chip">kernel</span><span class="chip">fork</span><span class="chip">daemon</span>
+          </div>
+        </div>
+        <div class="field" id="fieldB"><span class="mag">⌕</span><span id="ftextB">mutex, semaphore, daemon...</span></div>
+        <div style="height:14px; flex:0 0 auto;"></div>
+        <div class="kbd" id="kbdB"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <p><b>탭바 상단 배치, 존재하나?</b> — 네. 단 <b>iOS 표준은 하단 탭바</b>(HIG)이고, 상단 탭은 보통 <b>Android/Material</b>이나 <b>상단 세그먼트 컨트롤</b> 어법입니다. iOS 사용자에겐 덜 익숙해 첫인상에서 살짝 이질적일 수 있어요.</p>
+    <p style="margin-top:10px;"><b>입력 중일 때(⌨ 토글):</b> 두 안 모두 검색 필드가 키보드 위로 떠오르고 <b>자동완성이 위로 펼쳐집니다</b>(메신저식). 이때 A는 탭바가 키보드에 가려져 차이가 사라지므로, <b>차이는 "입력 안 하는 평상시"에 드러납니다.</b></p>
+    <p style="margin-top:10px;" class="warn">⚠ A는 평상시 바닥에 [검색필드]+[탭바] 2층 → mini에서 결과/최근검색 영역이 눌림. B는 바닥이 검색 1층이라 시원하지만 탭 위치 관례를 바꿈.</p>
+  </div>
+
+<script>
+  // 가짜 키보드 생성
+  const rows = [['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],['⇧','ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ','⌫']];
+  function kbdHTML(){
+    let h='';
+    for(const r of rows){ h+='<div class="krow">'+r.map(k=>`<div class="key">${k}</div>`).join('')+'</div>'; }
+    h+='<div class="krow"><div class="key wide">123</div><div class="key" style="width:120px">space</div><div class="key wide">검색</div></div>';
+    return h;
+  }
+  document.getElementById('kbdA').innerHTML=kbdHTML();
+  document.getElementById('kbdB').innerHTML=kbdHTML();
+
+  const recentHTML = (id)=>`<div class="seclabel">최근 검색</div><div class="chips"><span class="chip">mutex</span><span class="chip">deadlock</span><span class="chip">jpa</span><span class="chip">kernel</span><span class="chip">fork</span><span class="chip">daemon</span></div>`;
+  const acHTML = `<div class="spacer"></div><div class="ac"><div class="ac-label">자동완성</div>
+    <div class="row"><div class="kw">mutex</div><div class="sm">동시 접근을 막는 잠금 장치</div></div>
+    <div class="row"><div class="kw">mutual exclusion</div><div class="sm">상호 배제</div></div>
+    <div class="row"><div class="kw">multicast</div><div class="sm">다대다 네트워크 전송</div></div></div>`;
+
+  let typing=false;
+  function render(){
+    const btn=document.getElementById('toggle');
+    btn.textContent = typing ? '⌨ 입력 중 — 평상시로 (×)' : '⌨ 입력 중 상태 보기 (자동완성 ↑ 펼침)';
+    btn.classList.toggle('off', !typing);
+
+    ['A','B'].forEach(s=>{
+      const body=document.getElementById('body'+s);
+      const field=document.getElementById('field'+s);
+      const ftext=document.getElementById('ftext'+s);
+      const kbd=document.getElementById('kbd'+s);
+      const tabBottom = (s==='A');
+      if(typing){
+        body.innerHTML = acHTML;            // 최근검색 → 자동완성(위로 펼침)
+        field.classList.add('focused');
+        ftext.textContent='mut';
+        ftext.style.color='var(--text)';
+        kbd.classList.add('show');
+        // A: 입력 중 탭바 숨김(키보드에 가려짐), B: 상단 탭바 유지
+        if(s==='A') document.getElementById('tabA').style.display='none';
+      } else {
+        body.innerHTML = recentHTML(s);
+        field.classList.remove('focused');
+        ftext.textContent='mutex, semaphore, daemon...';
+        ftext.style.color='var(--textMuted)';
+        kbd.classList.remove('show');
+        if(s==='A') document.getElementById('tabA').style.display='';
+      }
+    });
+  }
+  document.getElementById('toggle').onclick=()=>{ typing=!typing; render(); };
+  render();
+</script>
+</body>
+</html>
