@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEtym 검색 — 헤더 위계 · 수직 리듬 · 탭바 간격 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A; --surface:#111111; --surface2:#1A1A1A; --border:#363636;
+    --accent:#C8F060; --accent2:#60C8F0; --accentAI:#F0A060;
+    --text:#ECECEC; --textDim:#B4B4B4; --textMuted:#8A8A8A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:#161616; color:var(--text); font-family:'DM Sans',-apple-system,sans-serif; padding:32px 20px 60px;}
+  h1{font-family:'DM Serif Display',serif; font-weight:400; font-size:26px; text-align:center; margin-bottom:6px;}
+  .sub{text-align:center; color:var(--textMuted); font-size:14px; margin-bottom:22px; line-height:1.5;}
+
+  .controls{display:flex; gap:12px; justify-content:center; margin-bottom:30px; flex-wrap:wrap;}
+  button.ctl{font-family:'DM Mono',monospace; font-size:13px; cursor:pointer; background:var(--surface2); color:var(--accent); border:1px solid var(--accent); border-radius:10px; padding:9px 16px;}
+  button.ctl.off{color:var(--textDim); border-color:var(--border);}
+
+  .stage{display:flex; gap:40px; justify-content:center; flex-wrap:wrap;}
+  .col{display:flex; flex-direction:column; align-items:center; gap:12px; max-width:330px;}
+  .col-title{font-family:'DM Mono',monospace; font-size:14px; color:var(--accent2); letter-spacing:.5px; text-align:center; font-weight:500;}
+  .col-tag{font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); border:1px solid var(--border); border-radius:6px; padding:3px 8px;}
+  .col-desc{font-size:12.5px; color:var(--textDim); text-align:left; line-height:1.6; align-self:stretch; padding:10px 12px; background:var(--surface); border:1px solid var(--border); border-radius:10px;}
+  .col-desc b{color:var(--accent2); font-weight:500;}
+  .col-desc .warn{color:var(--accentAI);}
+
+  /* iPhone 17 Pro 비율(기본): 화면 큰 기기. 세로로 길게.*/
+  .phone{width:300px; height:640px; background:var(--bg); border:9px solid #222; border-radius:46px; overflow:hidden; position:relative; box-shadow:0 12px 40px rgba(0,0,0,.5); display:flex; flex-direction:column;}
+  /* iPhone 13 mini: 더 좁고 짧게 — 바닥 압박 확인용 */
+  .phone.mini{width:262px; height:560px;}
+
+  /* status bar */
+  .statusbar{display:flex; justify-content:space-between; align-items:center; padding:12px 22px 4px; font-size:12px; color:var(--text); font-weight:600; flex:0 0 auto;}
+  .statusbar .r{display:flex; gap:5px; align-items:center; font-size:11px;}
+
+  .mono{font-family:'DM Mono',monospace;}
+  .serif{font-family:'DM Serif Display',serif;}
+  .sf{font-family:-apple-system,'DM Sans',sans-serif;}
+
+  /* === content area (위에서부터 채움) === */
+  .screen{flex:1 1 auto; display:flex; flex-direction:column; min-height:0; position:relative;}
+
+  /* header variants */
+  .header{padding:0 18px;}
+  .header .t{font-family:'DM Serif Display',serif; color:var(--text); line-height:1.05;}
+  .header .s{font-family:'DM Mono',monospace; color:var(--textMuted); letter-spacing:.5px;}
+
+  /* body (최근검색/자동완성) — 하단 정렬 */
+  .body{flex:1 1 auto; display:flex; flex-direction:column; justify-content:flex-end; padding:0 18px; min-height:0; overflow:hidden;}
+  .seclabel{font-size:10px; letter-spacing:1.5px; color:var(--textMuted); text-transform:uppercase; margin-bottom:10px; font-family:-apple-system,sans-serif;}
+  .empty{font-family:-apple-system,sans-serif; font-size:14px; color:var(--textMuted);}
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{font-family:'DM Mono',monospace; font-size:12px; color:var(--textDim); padding:5px 11px; border:1px solid var(--border); border-radius:999px; background:var(--surface2);}
+
+  /* autocomplete rows (focus 상태에서 위로 펼침) */
+  .ac{display:flex; flex-direction:column;}
+  .ac .row{padding:9px 0; border-bottom:1px solid var(--border);}
+  .ac .row .k{font-family:'DM Mono',monospace; font-size:15px; color:var(--text); font-weight:500;}
+  .ac .row .d{font-family:-apple-system,sans-serif; font-size:13px; color:var(--textDim); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+  /* bottom bar: hint + field */
+  .bottombar{flex:0 0 auto; padding:0 18px; background:var(--bg);}
+  .hint{font-family:-apple-system,sans-serif; font-size:14px; color:var(--textMuted); line-height:1.4;}
+  .field{display:flex; align-items:center; gap:9px; padding:12px 14px; background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; color:var(--textMuted); font-family:'DM Mono',monospace; font-size:14px;}
+  .field.focused{border-color:var(--accent);}
+  .field .mag{opacity:.75; font-size:14px;}
+  .field .typed{color:var(--text);}
+  .field .caret{color:var(--accent); animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .field .clear{margin-left:auto; color:var(--textMuted); opacity:.6;}
+
+  /* tab bar (bottom, 확정 A안) */
+  .tabbar{flex:0 0 auto; display:flex; justify-content:space-around; align-items:center; background:var(--surface); border-top:1px solid var(--border); padding:9px 0 18px;}
+  .tab{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9px; color:var(--textMuted); font-family:-apple-system,sans-serif;}
+  .tab.active{color:var(--accent);}
+  .tab .ic{font-size:17px; line-height:1;}
+
+  /* keyboard sim (focus 시) */
+  .kbd{flex:0 0 auto; height:150px; background:#1c1c1e; border-top:1px solid #000; display:none; align-items:center; justify-content:center; color:#666; font-size:11px; font-family:-apple-system,sans-serif;}
+  .phone.focus .kbd{display:flex;}
+  .phone.focus .tabbar{display:none;}
+  .phone:not(.focus) .ac-screen{display:none;}
+  .phone.focus .idle-screen{display:none;}
+
+  /* gap markers (탭바-필드 간격 시각화) */
+  .gapmark{position:absolute; right:6px; font-family:'DM Mono',monospace; font-size:9px; color:var(--accentAI); opacity:.85;}
+
+  .legend{max-width:980px; margin:42px auto 0; padding:22px 24px; background:var(--surface); border:1px solid var(--border); border-radius:14px; line-height:1.7; font-size:13.5px;}
+  .legend h2{font-family:'DM Serif Display',serif; font-weight:400; font-size:19px; margin-bottom:12px;}
+  .legend h3{font-family:'DM Mono',monospace; font-size:13px; color:var(--accent2); margin:16px 0 6px;}
+  .legend table{width:100%; border-collapse:collapse; margin-top:8px; font-size:12.5px;}
+  .legend td,.legend th{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+  .legend th{color:var(--accent); font-family:'DM Mono',monospace; font-weight:500;}
+  .legend code{font-family:'DM Mono',monospace; color:var(--accentAI); font-size:12px;}
+  .pick{color:var(--accent); font-weight:600;}
+</style>
+</head>
+<body>
+  <h1>검색 화면 — 헤더 위계 · 수직 리듬 · 탭바 간격</h1>
+  <p class="sub">A안(하단 검색필드 + 하단 탭바) 확정 위에서, 보고된 3개 문제만 손본 변형.<br>토글로 평상시 / 입력중, 기기폭(Pro / 13 mini)을 비교.</p>
+
+  <div class="controls">
+    <button class="ctl" id="btn-state" onclick="toggleState()">상태: 평상시 (탭하면 입력중)</button>
+    <button class="ctl off" id="btn-size" onclick="toggleSize()">기기: iPhone 17 Pro (탭하면 13 mini)</button>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="legend">
+    <h2>각 안이 3개 문제를 다루는 법</h2>
+    <table>
+      <tr>
+        <th></th>
+        <th>① 헤더 위계/위치</th>
+        <th>② 탭바↔필드 간격</th>
+        <th>③ 수직 리듬</th>
+      </tr>
+      <tr>
+        <td class="pick">B · 좌상단 앵커 (추천)</td>
+        <td>헤더를 <b>전체폭 좌측 상단</b>에 고정(센터링 부작용 제거). 크기는 토큰 유지(serif 20). 위에 <code>safe-area + 8</code> 여백을 줘 "코너에 박힌 로고"로 읽히게.</td>
+        <td>field 아래 <code>14pt</code> + 탭바 자체 top padding 으로 명확히 분리. mini에서도 숨 쉼.</td>
+        <td>header→body <code>20</code>, hint→field <code>10</code>, field→tabbar <code>14</code>. 절제된 증가.</td>
+      </tr>
+      <tr>
+        <td>C · 헤더 승격(hero)</td>
+        <td>헤더를 <b>serif 28(titleHero)</b>로 키우고 좌상단 고정. "이게 앱 정체성"이 단박에 읽힘. 부제는 그대로 mono.</td>
+        <td>B와 동일 <code>14pt</code> 분리.</td>
+        <td>hero가 커진 만큼 header→body <code>24</code>로 더 넉넉. 시원하지만 빈 화면이 더 비어 보일 위험.</td>
+      </tr>
+      <tr>
+        <td>D · 헤더+힌트 통합 카드</td>
+        <td>좌상단 헤더(B와 동일). 추가로 <b>힌트를 필드 placeholder에 흡수</b>, 필드 위 안내문 제거 → 바닥 크롬 1줄 감소.</td>
+        <td>힌트 줄이 사라져 field→tabbar <code>16pt</code>까지 여유. mini 최적.</td>
+        <td>바닥이 가장 가벼움. 단 "왜 영문?" 맥락이 약해짐(placeholder만으로).</td>
+      </tr>
+    </table>
+
+    <h3>추천: B · 좌상단 앵커</h3>
+    <p>심플 우선 + 토큰 유지 원칙에 가장 충실. 보고된 3문제의 <b>원인(센터링 부작용·과밀 패딩)</b>만 정확히 제거하고 장식을 안 늘린다. C(hero)는 헤더가 커지며 빈 본문이 더 휑해 보이고, D는 힌트를 빼 "영문 입력" 맥락이 약해진다(한글 사용자에게 영문 키워드 앱이라는 안내는 가치 큼). mini·Pro 양쪽에서 검증됨.</p>
+
+    <h3>접근성 메모 (전 안 공통)</h3>
+    <p>· 헤더는 <code>accessibilityElement(.combine)</code> 유지 → VoiceOver가 "DevEtym 개발 용어 어원 사전" 한 덩이로 읽음(현행 유지).<br>
+    · 힌트 textMuted(#8A8A8A) on bg(#0A0A0A) 대비는 보조 안내 수준에선 허용. 단 <span class="warn">본문 격상은 금지</span>(작은 한글 본문엔 textDim 이상).<br>
+    · Dynamic Type 확대 시 본문(최근검색/empty)이 커지면 body가 위로 밀리고 필드·탭바는 고정 → 바닥 안정. field 높이는 <code>relativeTo: .body</code>로 따라 커짐(현행).<br>
+    · 자동완성은 입력중 키보드 위로 펼침(메신저식) 유지.</p>
+  </div>
+
+<script>
+let state = 'idle';   // idle | focus
+let size  = 'pro';    // pro | mini
+
+const variants = [
+  {
+    id:'B', title:'B · 좌상단 앵커', tag:'추천',
+    headerPadTop: 10, headerSize: 20, headerHero:false,
+    bodyTopGap: 20, hintGap:10, fieldBottomGap:14, hint:true,
+    desc:'헤더를 <b>전체폭 좌상단 고정</b>(센터링 부작용 제거). 크기 토큰 유지. field 아래 <b>14pt</b>로 탭바와 분리. 가장 절제된 안.'
+  },
+  {
+    id:'C', title:'C · 헤더 승격(hero)', tag:'',
+    headerPadTop: 10, headerSize: 28, headerHero:true,
+    bodyTopGap: 24, hintGap:10, fieldBottomGap:14, hint:true,
+    desc:'헤더를 <b>serif 28</b>로 키워 정체성 강조. 시원하지만 빈 화면이 <span class="warn">더 비어 보일 위험</span>.'
+  },
+  {
+    id:'D', title:'D · 힌트 흡수(미니멀)', tag:'',
+    headerPadTop: 10, headerSize: 20, headerHero:false,
+    bodyTopGap: 20, hintGap:0, fieldBottomGap:16, hint:false,
+    desc:'힌트를 placeholder로 흡수 → 바닥 1줄 감소, mini 최적. 단 "<span class="warn">영문 입력</span>" 맥락이 약해짐.'
+  },
+];
+
+function tab(ic,label,active){
+  return `<div class="tab ${active?'active':''}"><div class="ic">${ic}</div><div>${label}</div></div>`;
+}
+function tabbar(){
+  return `<div class="tabbar">
+    ${tab('&#128269;','검색',true)}
+    ${tab('&#128278;','북마크',false)}
+    ${tab('&#128336;','히스토리',false)}
+    ${tab('&#9881;&#65039;','설정',false)}
+  </div>`;
+}
+
+function renderPhone(v){
+  const mini = size==='mini';
+  const focus = state==='focus';
+  const heroFont = v.headerHero ? 28 : v.headerSize;
+  const subSize = v.headerHero ? 12 : 11;
+
+  const header = `
+    <div class="header" style="padding-top:${v.headerPadTop}px; padding-bottom:0;">
+      <div class="t" style="font-size:${heroFont}px;">DevEtym</div>
+      <div class="s" style="font-size:${subSize}px; margin-top:${v.headerHero?4:2}px;">// 개발 용어 어원 사전</div>
+    </div>`;
+
+  // idle body: 최근검색 (empty)
+  const idleBody = `
+    <div class="body idle-screen" style="padding-top:${v.bodyTopGap}px;">
+      <div class="seclabel">최근 검색</div>
+      <div class="empty">최근 검색한 용어가 없습니다</div>
+    </div>`;
+
+  // focus body: 자동완성 위로 펼침
+  const acBody = `
+    <div class="body ac-screen" style="padding-top:${v.bodyTopGap}px;">
+      <div class="seclabel">자동완성</div>
+      <div class="ac">
+        <div class="row"><div class="k">avl-tree</div><div class="d">높이 균형을 유지하는 자가 균형 이진 탐색 트리</div></div>
+        <div class="row"><div class="k">avro</div><div class="d">행 기반 직렬화 포맷</div></div>
+      </div>
+    </div>`;
+
+  const hint = (v.hint && !focus)
+    ? `<div class="hint" style="margin-bottom:${v.hintGap}px;">영문 개발 용어를 입력해주세요 (예: mutex, JPA, deadlock)</div>`
+    : '';
+
+  const fieldInner = focus
+    ? `<span class="mag">&#128269;</span><span class="typed">av</span><span class="caret">|</span><span class="clear">&#10005;</span>`
+    : (v.hint
+        ? `<span class="mag">&#128269;</span><span>mutex, semaphore, daemon...</span>`
+        : `<span class="mag">&#128269;</span><span>영문 용어 입력 (mutex, JPA...)</span>`);
+
+  const bottombar = `
+    <div class="bottombar" style="padding-bottom:${v.fieldBottomGap}px;">
+      ${hint}
+      <div class="field ${focus?'focused':''}">${fieldInner}</div>
+    </div>`;
+
+  const kbd = `<div class="kbd">⌨︎ 시스템 키보드 (입력중 — 탭바를 덮음)</div>`;
+
+  // 간격 마커 (idle일 때만)
+  const gapMark = !focus
+    ? `<div class="gapmark" style="bottom:${50 + v.fieldBottomGap}px;">↕ ${v.fieldBottomGap}pt</div>`
+    : '';
+
+  return `
+  <div class="col">
+    <div class="col-title">${v.title} ${v.tag?`<span class="col-tag">${v.tag}</span>`:''}</div>
+    <div class="phone ${mini?'mini':''} ${focus?'focus':''}">
+      <div class="statusbar"><span>${focus?'10:07':'10:00'}</span><span class="r">&#128246; &#128267;</span></div>
+      <div class="screen">
+        ${header}
+        ${idleBody}
+        ${acBody}
+        ${bottombar}
+        ${gapMark}
+      </div>
+      ${tabbar()}
+      ${kbd}
+    </div>
+    <div class="col-desc">${v.desc}</div>
+  </div>`;
+}
+
+function render(){
+  document.getElementById('stage').innerHTML = variants.map(renderPhone).join('');
+}
+function toggleState(){
+  state = state==='idle'?'focus':'idle';
+  document.getElementById('btn-state').textContent =
+    state==='idle' ? '상태: 평상시 (탭하면 입력중)' : '상태: 입력중 (탭하면 평상시)';
+  document.getElementById('btn-state').classList.toggle('off', state==='focus');
+  render();
+}
+function toggleSize(){
+  size = size==='pro'?'mini':'pro';
+  document.getElementById('btn-size').textContent =
+    size==='pro' ? '기기: iPhone 17 Pro (탭하면 13 mini)' : '기기: iPhone 13 mini (탭하면 17 Pro)';
+  document.getElementById('btn-size').classList.toggle('off', size==='pro');
+  render();
+}
+render();
+</script>
+</body>
+</html>
