@@ -31,16 +31,17 @@ extension View {
             .tracking(-0.05)
     }
 
-    /// 일반 본문 (SF body 17, lineSpacing 6) — Detail namingReason, Onboarding 서브
+    /// 일반 본문 (SF callout 16, lineSpacing 8) — Detail namingReason, Onboarding 서브
     func typoBody() -> some View {
         self.font(Theme.Typography.body)
-            .lineSpacing(6)
+            .lineSpacing(8)
             .tracking(-0.1)
     }
 
-    /// Detail summary (SF body 17)
+    /// Detail summary (SF callout 16, lineSpacing 6)
     func typoBodySub() -> some View {
         self.font(Theme.Typography.bodySub)
+            .lineSpacing(6)
             .tracking(-0.1)
     }
 
@@ -50,10 +51,10 @@ extension View {
             .tracking(-0.1)
     }
 
-    /// Detail etymology 강조 블록 본문 (SF body 17, lineSpacing 7)
+    /// Detail etymology 강조 블록 본문 (SF callout 16, lineSpacing 8)
     func typoBodyBlock() -> some View {
         self.font(Theme.Typography.bodyBlock)
-            .lineSpacing(7)
+            .lineSpacing(8)
             .tracking(-0.1)
     }
 
