@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEtym 상세 화면 — 수직 리듬 & 반응형 타이포 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A; --surface:#111111; --surface2:#1A1A1A; --border:#363636;
+    --accent:#C8F060; --accent2:#60C8F0; --accentAI:#F0A060;
+    --text:#ECECEC; --textDim:#B4B4B4; --textMuted:#8A8A8A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:#161616; color:var(--text);
+    font-family:'DM Sans',-apple-system,'Apple SD Gothic Neo',sans-serif;
+    padding:32px 16px 80px; min-height:100vh;
+  }
+  h1{font-family:'DM Serif Display',serif; font-weight:400; font-size:26px; text-align:center; margin-bottom:6px;}
+  .sub{text-align:center; color:var(--textMuted); font-size:13.5px; margin-bottom:6px; line-height:1.55;}
+  .sub b{color:var(--accent2);}
+  .legend{max-width:760px; margin:0 auto 30px; color:var(--textDim); font-size:13px; line-height:1.7;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px;}
+  .legend h3{color:var(--text); font-size:14px; margin-bottom:8px; font-family:'DM Mono',monospace; letter-spacing:.5px;}
+  .legend code{font-family:'DM Mono',monospace; color:var(--accent); font-size:12.5px;}
+  .legend .warn{color:var(--accentAI);}
+
+  .stage{display:flex; gap:28px; justify-content:center; flex-wrap:wrap; align-items:flex-start;}
+  .col{display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .col-title{font-family:'DM Mono',monospace; font-size:13.5px; color:var(--accent2); letter-spacing:.5px; text-align:center;}
+  .col-desc{font-size:12px; color:var(--textMuted); max-width:330px; text-align:center; line-height:1.55; min-height:52px;}
+  .col-desc .tag{display:inline-block; font-family:'DM Mono',monospace; font-size:11px; color:var(--accent);
+    border:1px solid var(--border); border-radius:5px; padding:1px 6px; margin-bottom:4px;}
+  .col-desc .cost{color:var(--accentAI);}
+
+  /* phone frame — mini(375) vs pro(402) 폭 차이를 실제 비율로 */
+  .phone{ background:var(--bg); border:8px solid #222; border-radius:40px; overflow:hidden;
+    position:relative; box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  .phone.mini{ width:281px; height:560px;}      /* 375pt 폭 * 0.75 스케일 */
+  .phone.pro{  width:301px; height:560px;}       /* 402pt 폭 * 0.75 스케일 */
+  .deviceTag{font-family:'DM Mono',monospace; font-size:11px; color:var(--textMuted); margin-top:2px;}
+
+  .navbar{height:42px; background:var(--surface); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; padding:0 12px;}
+  .navbar .back{color:var(--accent); font-family:'DM Mono',monospace; font-size:14px;}
+  .screen{height:calc(100% - 42px); overflow-y:auto; position:relative;}
+  .screen::-webkit-scrollbar{width:0;}
+
+  .mono{font-family:'DM Mono',monospace;}
+  .serif{font-family:'DM Serif Display',serif;}
+
+  /* ---- content blocks (공통) ---- */
+  .content{display:flex; flex-direction:column;}
+  .kw{font-family:'DM Serif Display',serif; color:var(--text); font-size:24px; letter-spacing:-.5px;}
+  .badges{display:flex; gap:6px; margin-top:7px;}
+  .badge{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.8px; color:var(--accent);
+    background:rgba(200,240,96,.12); border:1px solid rgba(200,240,96,.28); border-radius:6px; padding:3px 7px;}
+  .badge.ai{color:var(--accentAI); background:rgba(240,160,96,.12); border-color:rgba(240,160,96,.28); letter-spacing:.2px;}
+  .summary{color:var(--textDim); font-size:15.5px;}
+  .divider{height:1px; background:var(--border); }
+  .seclabel{font-family:'DM Sans',sans-serif; color:var(--textMuted); font-size:11px; letter-spacing:1.2px;}
+  .bodytext{color:var(--textDim); font-size:15.5px;}
+  .etymblock{display:flex; background:var(--surface2); border-radius:8px; overflow:hidden;}
+  .etymbar{width:2px; background:var(--accent); flex:none;}
+  .etymbody{color:var(--textDim); font-size:15.5px; padding:11px;}
+  .actions{display:flex; gap:8px; margin-top:6px;}
+  .act{flex:1; text-align:center; font-size:13px; color:var(--accent); background:var(--surface2);
+    border:1px solid rgba(200,240,96,.3); border-radius:10px; padding:9px 0; font-family:'DM Sans',sans-serif;}
+  .act.share{color:var(--textDim); border-color:var(--border);}
+
+  /* =========================================================
+     A · CURRENT (현재) — spacing 18 통짜, summary lineSpacing 0
+     ========================================================= */
+  .vA .content{padding:16px; gap:18px;}
+  .vA .summary{margin-top:4px; line-height:1.25;}        /* lineSpacing≈0 */
+  .vA .bodytext{line-height:1.45;}                        /* lineSpacing 6 */
+  .vA .etymbody{line-height:1.5;}                         /* lineSpacing 7 */
+  .vA .seclabel{}                                         /* 위아래 동일 간격 → 그룹 경계 없음 */
+
+  /* =========================================================
+     B · RHYTHM (수직 리듬 개선) — 섹션 묶음 + 라벨 결속 + 줄간격 통일
+     ========================================================= */
+  .vB .content{padding:16px; gap:0;}
+  .vB .header{display:flex; flex-direction:column; gap:7px;}
+  .vB .summary{margin-top:6px; line-height:1.55;}         /* lineSpacing 부여 */
+  .vB .divider{margin:18px 0;}
+  .vB .section{display:flex; flex-direction:column;}
+  .vB .section + .section{margin-top:26px;}               /* 섹션 사이 = 큰 호흡 */
+  .vB .seclabel{margin-bottom:9px;}                       /* 라벨↔본문 = 작은 호흡 (결속) */
+  .vB .bodytext{line-height:1.65;}                        /* lineSpacing ↑ */
+  .vB .etymbody{line-height:1.7;}
+  .vB .actions{margin-top:26px;}
+
+  /* =========================================================
+     C · RHYTHM + RESPONSIVE MEASURE (리듬 + 폭반응 여백/줄간격)
+     기기 폭에 따라 좌우 padding과 lineSpacing을 살짝 조정 — 폰트 pt는 고정
+     ========================================================= */
+  .vC .content{gap:0;}
+  .vC.mini .content{padding:14px 14px;}                   /* mini: 여백 좁게 → 한 줄 더 길게 */
+  .vC.pro  .content{padding:16px 22px;}                   /* pro: 여백 넓게 → measure 안정 */
+  .vC .header{display:flex; flex-direction:column; gap:7px;}
+  .vC .summary{margin-top:6px;}
+  .vC .divider{margin:18px 0;}
+  .vC .section{display:flex; flex-direction:column;}
+  .vC .section + .section{margin-top:26px;}
+  .vC .seclabel{margin-bottom:9px;}
+  .vC.mini .bodytext{line-height:1.7;}                    /* 좁은 폭 = 줄 더 떨어뜨려 답답함 완화 */
+  .vC.pro  .bodytext{line-height:1.6;}
+  .vC.mini .etymbody{line-height:1.72;}
+  .vC.pro  .etymbody{line-height:1.62;}
+  .vC .actions{margin-top:26px;}
+
+  .badge-note{font-family:'DM Mono',monospace; font-size:10.5px; color:var(--textMuted); margin-top:8px; text-align:center;}
+</style>
+</head>
+<body>
+  <h1>상세 화면 — 수직 리듬 &amp; 반응형 타이포</h1>
+  <p class="sub">불만 ① <b>본문이 빽빽하다</b> &nbsp;·&nbsp; 불만 ② <b>미니에선 크고 Pro에선 작게 느껴진다</b><br>같은 더미 텍스트로 A(현재) / B(리듬개선) / C(리듬+폭반응 여백) 비교 · 다크모드 토큰 적용</p>
+
+  <div class="legend">
+    <h3>읽는 법</h3>
+    줄간격 차이를 한눈에 보려고 <b>본문을 일부러 길게</b> 넣었습니다(실제 용어는 더 짧음). 폰트 pt는 세 안 모두 동일 — 바뀌는 건 <code>line-height</code>(=SwiftUI <code>lineSpacing</code>), 섹션 간 간격, 라벨↔본문 결속, 그리고 C는 기기 폭별 좌우 여백입니다.<br>
+    <span class="warn">핵심:</span> A는 섹션 라벨이 위/아래 본문과 같은 18 간격이라 "이 라벨이 누구 것인지" 경계가 안 보입니다. 줄간격만 올리는 게 아니라 <b>위계(그룹 경계)</b>를 먼저 잡아야 "빽빽함"이 풀립니다.
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="legend" style="margin-top:34px;">
+    <h3>각 안의 트레이드오프 · 접근성</h3>
+    <b style="color:var(--text)">A · 현재</b> — summary <code>lineSpacing 0</code>, 섹션 spacing 통짜 18. <span class="cost" style="color:var(--accentAI)">비용: 위계 평평 → 라벨이 떠 보이고 단락이 붙어 답답.</span><br><br>
+    <b style="color:var(--text)">B · 리듬 개선 (추천)</b> — 섹션 사이 26 / 라벨↔본문 9로 <b>비대칭</b> 적용(게슈탈트 근접성), 본문 lineSpacing 6→8, summary에 lineSpacing 부여. <span style="color:var(--accent2)">이득: 같은 화면 정보량은 거의 그대로인데 "구획"이 생겨 스캔이 쉬움.</span> 비용: 세로가 약간 길어져 mini에서 스크롤 소폭 증가(허용 범위).<br><br>
+    <b style="color:var(--text)">C · B + 폭반응 여백</b> — B 위에 기기 폭별로 좌우 padding·lineSpacing 미세 조정(<span class="warn">폰트 pt는 안 건드림</span>). <span style="color:var(--accent2)">이득: "미니에서 커 보임"의 진짜 변수(여백·measure)를 직접 손봄.</span> <span class="cost">비용: 분기 로직 추가 = 유지비. 효과는 미묘해서 B 대비 체감이 작을 수 있음.</span><br><br>
+    <span class="warn">기기별 폰트 스케일링은 넣지 않았습니다.</span> iOS 표준은 사용자가 제어하는 Dynamic Type이고, 기기 폭으로 pt를 바꾸면 Dynamic Type 설정과 충돌하거나 접근성이 깨집니다. "미니에서 커 보임"은 폰트가 커서가 아니라 <b>좁은 폭 + 좌우 여백 + 줄간격</b>이 만든 착시 → 해법도 거기에 둡니다.<br>
+    접근성 공통: 본문은 모두 <code>Font.system(.body)</code> 유지(Dynamic Type 추종). lineSpacing은 pt가 아니라 비율감으로 작동해 큰 글자에서도 안전. <code>textMuted</code>는 섹션 라벨(11~12pt)까지만 — 본문엔 <code>textDim</code> 유지(다크 대비 확보).
+  </div>
+
+<script>
+  const dummySummary = "운영체제에서 동시에 여러 스레드가 같은 자원에 접근하지 못하도록 막는 잠금 장치다.";
+  const dummyEtym = "Mutual Exclusion(상호 배제)의 앞 글자를 따 mutex가 됐다. 한 번에 하나의 스레드만 임계 구역에 들어가게 한다는 개념을, 이름 자체가 그대로 담고 있는 셈이다.";
+  const dummyNaming = "여러 스레드가 동시에 같은 데이터를 건드리면 값이 깨진다. 이를 막으려면 '한 명만 들어가는 문'이 필요했고, 그 잠금을 상호 배제라고 불렀다. 줄임말 mutex가 코드에서 짧게 쓰기 좋아 표준 용어로 굳어졌다.";
+
+  function blocks(){
+    return `
+      <div class="header">
+        <div class="kw">mutex</div>
+        <div class="badges"><span class="badge">DB</span><span class="badge ai">✦ AI 생성</span></div>
+        <div class="summary">${dummySummary}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="section">
+        <div class="seclabel">어원</div>
+        <div class="etymblock"><div class="etymbar"></div><div class="etymbody">${dummyEtym}</div></div>
+      </div>
+      <div class="section">
+        <div class="seclabel">왜 이 이름인가</div>
+        <div class="bodytext">${dummyNaming}</div>
+      </div>
+      <div class="actions"><div class="act">🔖 북마크</div><div class="act share">⬆ 공유</div></div>
+    `;
+  }
+  // A는 .section 래퍼 없이 평평하게(현재 구조 재현)
+  function blocksFlat(){
+    return `
+      <div class="header" style="display:flex;flex-direction:column;gap:8px;">
+        <div class="kw">mutex</div>
+        <div class="badges"><span class="badge">DB</span><span class="badge ai">✦ AI 생성</span></div>
+        <div class="summary">${dummySummary}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="seclabel">어원</div>
+      <div class="etymblock"><div class="etymbar"></div><div class="etymbody">${dummyEtym}</div></div>
+      <div class="seclabel">왜 이 이름인가</div>
+      <div class="bodytext">${dummyNaming}</div>
+      <div class="actions"><div class="act">🔖 북마크</div><div class="act share">⬆ 공유</div></div>
+    `;
+  }
+
+  function phone(variant, device, label){
+    const flat = variant==='vA';
+    return `
+      <div class="col">
+        <div class="col-title">${label.title}</div>
+        <div class="col-desc"><span class="tag">${label.tag}</span><br>${label.desc}</div>
+        <div class="phone ${device} ${variant}">
+          <div class="navbar"><span class="back">‹ 검색</span></div>
+          <div class="screen"><div class="content">${flat?blocksFlat():blocks()}</div></div>
+        </div>
+        <div class="deviceTag">${device==='mini'?'iPhone 13 mini · 375pt':'iPhone 17 Pro · 402pt'}</div>
+      </div>`;
+  }
+
+  const stage = document.getElementById('stage');
+  stage.innerHTML =
+    phone('vA','mini',{title:'A · 현재', tag:'AS-IS', desc:'섹션 spacing 18 통짜 · summary 줄간격 0. 라벨이 위/아래에 똑같이 붙어 그룹 경계가 안 보임.'}) +
+    phone('vB','mini',{title:'B · 리듬 개선', tag:'추천', desc:'섹션 사이 26 / 라벨↔본문 9 (비대칭). 본문 줄간격 ↑. 같은 mini에서도 호흡이 생김.'}) +
+    phone('vC','mini',{title:'C · 리듬 + 폭반응', tag:'mini', desc:'B + mini는 좌우 여백 좁히고 줄간격 더 띄움. measure를 직접 조정.'}) +
+    phone('vC','pro', {title:'C · 리듬 + 폭반응', tag:'pro',  desc:'같은 C안의 Pro 폭. 여백 넓히고 줄간격 살짝 조여 "작아 보임" 완화.'});
+</script>
+</body>
+</html>

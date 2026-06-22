@@ -98,22 +98,37 @@ struct DetailView: View {
     private func foundView(entry: TermEntry, source: String) -> some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                // 섹션 간 26 간격으로 그룹을 분리하고, 라벨↔본문은 9로 묶어
+                // "이 라벨이 누구 것인지" 수직 위계를 드러낸다.
+                VStack(alignment: .leading, spacing: 26) {
                     headerBlock(entry: entry, source: source)
                     Divider().background(Theme.Palette.border)
-                    sectionLabel("어원")
-                    etymologyBlock(entry.etymology)
-                    sectionLabel("왜 이 이름인가")
-                    Text(entry.namingReason)
-                        .typoBody()
-                        .foregroundStyle(Theme.Palette.textDim)
-                        .fixedSize(horizontal: false, vertical: true)
+                    section("어원") {
+                        etymologyBlock(entry.etymology)
+                    }
+                    section("왜 이 이름인가") {
+                        Text(entry.namingReason)
+                            .typoBody()
+                            .foregroundStyle(Theme.Palette.textDim)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     actionRow(entry: entry)
                 }
                 .padding(18)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             reportButton(entry: entry)
+        }
+    }
+
+    /// 섹션 라벨 + 본문을 한 그룹으로 묶음 (라벨↔본문 9 — 본문 쪽에 붙임)
+    private func section<Content: View>(
+        _ label: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 9) {
+            sectionLabel(label)
+            content()
         }
     }
 
@@ -232,7 +247,6 @@ struct DetailView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .accessibilityLabel("\(entry.keyword) 공유")
         }
-        .padding(.top, 8)
     }
 
     private func shareText(entry: TermEntry) -> String {
