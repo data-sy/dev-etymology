@@ -58,5 +58,5 @@
 - ① [Anthropic Workspaces/spend](https://platform.claude.com/docs/en/manage-claude/workspaces) · [Rate limits](https://platform.claude.com/docs/en/api/rate-limits)
 
 ---
-**사용자 확정란:** 플랫폼 = ____________  / 기기당 일일 한도 시작값 = ____회  / 확정일 = ________
-확정 후 → H2b 실행. ROADMAP Next 항목에 결정 반영.
+**사용자 확정란:** 플랫폼 = **Cloudflare Workers + KV**  / 기기당 일일 한도 시작값 = **10**회  / 확정일 = **2026-06-22**
+확정 후 → H2b 실행. ROADMAP Next 항목에 결정 반영. (출시 후 실제 로그 보며 일일 한도 조정 전제.)
