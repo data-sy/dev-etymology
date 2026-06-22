@@ -1,7 +1,17 @@
 # 핸드오프 H2b — 백엔드 프록시 구현 + 온디바이스 키 제거
 
 작성 세션: 오케스트레이션 세션 2026-06-21. 실행: 별도 세션(백엔드 repo + 앱 변경).
-**선행: H2a로 플랫폼이 확정돼야 시작.** 정본 상태는 `ROADMAP.md` Next "[Ops/Security] API 키 ... 백엔드 프록시".
+정본 상태는 `ROADMAP.md` Next "[Ops/Security] API 키 ... 백엔드 프록시".
+
+## ✅ 착수 준비 상태 (2026-06-22 갱신)
+
+- **선행 게이트 H2a 통과** — 플랫폼 **확정: Cloudflare Workers + KV**, 기기당 **일일 한도 시작값 10회**(출시 후 로그 보며 조정). 근거: `h2a-backend-proxy-tradeoffs.md` 확정란.
+- **새 세션 권장.** 도메인이 iOS UI와 완전히 달라(Worker JS + KV + wrangler 배포) 깨끗한 컨텍스트가 유리.
+- **인터랙티브 선행 셋업 (사람/계정 필요 — 코딩 전에 확인):**
+  1. Cloudflare 계정 + `wrangler` CLI 설치·`wrangler login`.
+  2. KV 네임스페이스 생성(③ 기기당 카운터 저장소).
+  3. **서버용 Anthropic API 키 필요** — 기존 db-expand 키는 노출되어 폐기됨(ROADMAP Later "[Ops/Security] db-expand API 키 재발급" 참조). 새 키 발급 후 **Worker 시크릿**(`wrangler secret put`)으로만 주입, repo/코드에 금지.
+  4. **① Console 월 spend 하드캡**은 호스팅과 무관하게 *오늘이라도* 켤 수 있는 최후 안전선 — 먼저 안내·설정 권장.
 
 ## 문제 / 목적 (출시 하드 게이트)
 
