@@ -13,7 +13,7 @@ enum AnalyticsErrorType: String {
     case timeout
     case invalidResponse = "invalid_response"
     case networkError = "network_error"
-    case invalidAPIKey = "invalid_api_key"
+    case dailyLimitExceeded = "daily_limit_exceeded"
 }
 
 /// 사용자 동의 여부에 따라 Firebase Analytics 이벤트를 기록하는 서비스

@@ -15,26 +15,23 @@ extension URLSession: HTTPClient {}
 @MainActor
 final class ClaudeAPIService: ClaudeAPIServiceProtocol {
     private let httpClient: HTTPClient
-    private let apiKeyProvider: () -> String?
-    private let endpoint = URL(string: "https://api.anthropic.com/v1/messages")!
+    private let deviceIdProvider: () -> String
+    private let endpoint: URL
 
     nonisolated init(
         httpClient: HTTPClient = URLSession.shared,
-        apiKeyProvider: @escaping @Sendable () -> String? = {
-            Bundle.main.object(forInfoDictionaryKey: "CLAUDE_API_KEY") as? String
-        }
+        deviceIdProvider: @escaping @Sendable () -> String = { DeviceIdentifier.current() },
+        proxyBaseURL: String = Constants.proxyBaseURL
     ) {
         self.httpClient = httpClient
-        self.apiKeyProvider = apiKeyProvider
+        self.deviceIdProvider = deviceIdProvider
+        // 잘못된 URL 문자열이어도 크래시하지 않도록 fallback (실서비스 URL은 Constants에서 검증)
+        self.endpoint = URL(string: proxyBaseURL) ?? URL(string: "https://invalid.invalid")!
     }
 
     func generate(keyword: String) async throws -> TermEntry {
-        guard let apiKey = apiKeyProvider()?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !apiKey.isEmpty else {
-            throw ClaudeAPIError.invalidAPIKey
-        }
-
-        let request = try makeRequest(apiKey: apiKey, keyword: keyword)
+        // 키는 앱에 없다. 익명 기기ID만 실어 프록시로 보낸다(서버가 키 주입 + 한도 강제).
+        let request = try makeRequest(keyword: keyword)
 
         let data: Data
         let response: URLResponse
@@ -46,7 +43,14 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
             throw ClaudeAPIError.networkError(error)
         }
 
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+        guard let http = response as? HTTPURLResponse else {
+            throw ClaudeAPIError.invalidResponse
+        }
+        // 프록시가 기기당 일일 한도 초과를 429로 알린다 → 사용자 안내로 분기
+        if http.statusCode == 429 {
+            throw ClaudeAPIError.dailyLimitExceeded
+        }
+        guard (200..<300).contains(http.statusCode) else {
             throw ClaudeAPIError.invalidResponse
         }
 
@@ -55,12 +59,12 @@ final class ClaudeAPIService: ClaudeAPIServiceProtocol {
 
     // MARK: - 요청 생성
 
-    private func makeRequest(apiKey: String, keyword: String) throws -> URLRequest {
+    private func makeRequest(keyword: String) throws -> URLRequest {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.timeoutInterval = Constants.apiTimeout
-        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        // 익명 기기ID — 프록시의 기기당 일일 호출 한도 카운터 키
+        request.setValue(deviceIdProvider(), forHTTPHeaderField: "X-Device-Id")
         request.setValue("application/json", forHTTPHeaderField: "content-type")
 
         let body: [String: Any] = [

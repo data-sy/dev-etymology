@@ -44,15 +44,7 @@ API 키 — Anthropic 콘솔 발급 키를 셸 환경변수로:
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-DevEtym repo가 `DevEtym/Config.xcconfig`로 키를 이미 관리하고 있다면 한 줄로 추출 가능 (이 디렉토리, 즉 `Scripts/prompt-probe/`에서 실행 가정):
-
-```bash
-export ANTHROPIC_API_KEY=$(awk '/^CLAUDE_API_KEY/ {print $3}' ../../DevEtym/Config.xcconfig)
-echo ${ANTHROPIC_API_KEY:0:7}   # sk-ant- 로 시작하는지 확인
-```
-
-> `CLAUDE_API_KEY = <값>` 형식이라 공백 split만으로 `$3`이 값. `-F`·`gsub` 같은 구분자·escape 처리 불필요.
-> 위 한 줄을 복사할 때 줄바꿈이 끼면 zsh가 multi-line 입력 모드에 들어가니, 줄바꿈 없는 한 줄 그대로 붙여넣을 것.
+> ⚠️ 과거에는 `DevEtym/Config.xcconfig`에서 키를 awk로 추출했으나, **백엔드 프록시 전환(H2b) 이후 앱은 키를 보관하지 않는다**(`Config.xcconfig` 비어 있음). 이 dev 툴은 위처럼 **직접 환경변수로** 키를 넣어 쓴다. 프록시 서버용 키(Console 발급)와 같은 키를 재사용해도 되지만, 셸 히스토리에 남지 않도록 주의할 것.
 
 ### 2. Sanity check 먼저 (API 호출 없음)
 

@@ -122,13 +122,13 @@ final class TermServiceTests: XCTestCase {
     }
 
     func test_fetch_apiError_throwsError() async {
-        apiMock.result = .failure(ClaudeAPIError.invalidAPIKey)
+        apiMock.result = .failure(ClaudeAPIError.dailyLimitExceeded)
 
         do {
             _ = try await service.fetch(keyword: "goroutine")
             XCTFail("에러 throw 기대")
         } catch let error as ClaudeAPIError {
-            XCTAssertEqual(error, .invalidAPIKey)
+            XCTAssertEqual(error, .dailyLimitExceeded)
         } catch {
             XCTFail("예상치 못한 에러: \(error)")
         }
@@ -170,7 +170,7 @@ final class TermServiceTests: XCTestCase {
         _ = try? await service.fetch(keyword: "mutx")
         XCTAssertTrue(fetchAllHistory().isEmpty)
 
-        apiMock.result = .failure(ClaudeAPIError.invalidAPIKey)
+        apiMock.result = .failure(ClaudeAPIError.dailyLimitExceeded)
         _ = try? await service.fetch(keyword: "whatever")
         XCTAssertTrue(fetchAllHistory().isEmpty)
     }
@@ -410,12 +410,12 @@ final class TermServiceTests: XCTestCase {
         XCTAssertTrue(analyticsMock.recordedSearches.isEmpty)
     }
 
-    func test_fetch_invalidAPIKey_logsErrorAndRethrows() async {
-        apiMock.result = .failure(ClaudeAPIError.invalidAPIKey)
+    func test_fetch_dailyLimitExceeded_logsErrorAndRethrows() async {
+        apiMock.result = .failure(ClaudeAPIError.dailyLimitExceeded)
         _ = try? await service.fetch(keyword: "goroutine")
         XCTAssertEqual(
             analyticsMock.recordedErrors,
-            [RecordedError(keyword: "goroutine", errorType: .invalidAPIKey)]
+            [RecordedError(keyword: "goroutine", errorType: .dailyLimitExceeded)]
         )
     }
 

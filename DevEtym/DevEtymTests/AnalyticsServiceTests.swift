@@ -109,6 +109,6 @@ final class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(AnalyticsErrorType.timeout.rawValue, "timeout")
         XCTAssertEqual(AnalyticsErrorType.invalidResponse.rawValue, "invalid_response")
         XCTAssertEqual(AnalyticsErrorType.networkError.rawValue, "network_error")
-        XCTAssertEqual(AnalyticsErrorType.invalidAPIKey.rawValue, "invalid_api_key")
+        XCTAssertEqual(AnalyticsErrorType.dailyLimitExceeded.rawValue, "daily_limit_exceeded")
     }
 }

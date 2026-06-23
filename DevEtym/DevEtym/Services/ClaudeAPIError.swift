@@ -3,7 +3,8 @@ import Foundation
 /// Claude API 호출 중 발생할 수 있는 에러 케이스
 /// - Service 레이어가 throw하고, ViewModel이 분기 처리에 사용
 enum ClaudeAPIError: Error, Equatable {
-    case invalidAPIKey
+    /// 프록시가 기기당 일일 호출 한도 초과를 알림 (HTTP 429)
+    case dailyLimitExceeded
     case timeout
     case networkError(Error)
     case invalidResponse
@@ -12,7 +13,7 @@ enum ClaudeAPIError: Error, Equatable {
 
     static func == (lhs: ClaudeAPIError, rhs: ClaudeAPIError) -> Bool {
         switch (lhs, rhs) {
-        case (.invalidAPIKey, .invalidAPIKey),
+        case (.dailyLimitExceeded, .dailyLimitExceeded),
              (.timeout, .timeout),
              (.invalidResponse, .invalidResponse),
              (.notDevTerm, .notDevTerm):

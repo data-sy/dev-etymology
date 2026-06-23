@@ -70,8 +70,8 @@ final class TermService: TermServiceProtocol {
             case .networkError:
                 analyticsService.logError(keyword: normalized, errorType: .networkError)
                 throw apiError
-            case .invalidAPIKey:
-                analyticsService.logError(keyword: normalized, errorType: .invalidAPIKey)
+            case .dailyLimitExceeded:
+                analyticsService.logError(keyword: normalized, errorType: .dailyLimitExceeded)
                 throw apiError
             }
         } catch {
