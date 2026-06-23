@@ -25,16 +25,15 @@ Search `mutex` and learn it comes from Latin *mutuus* (mutual) + *exclusio* (exc
 
 **Prerequisites**
 - Xcode 16+
-- Anthropic API key from [console.anthropic.com](https://console.anthropic.com)
 
 **Steps**
-1. Copy `DevEtym/Config.sample.xcconfig` to `DevEtym/Config.xcconfig`
-2. Fill in `CLAUDE_API_KEY` with your Anthropic key
-3. Open `DevEtym/DevEtym.xcodeproj` in Xcode
-4. Pick a simulator or device running iOS 18+
-5. `⌘R`
+1. Copy `DevEtym/Config.sample.xcconfig` to `DevEtym/Config.xcconfig` (빈 설정 — 키 불필요)
+2. Open `DevEtym/DevEtym.xcodeproj` in Xcode
+3. Pick a simulator or device running iOS 18+
+4. `⌘R`
 
-`Config.xcconfig` is gitignored so the key never reaches the repo.
+앱은 Anthropic API 키를 갖지 않는다. 모든 Claude 호출은 백엔드 프록시(`devetym-proxy`, 별도 repo)를
+경유하며 키는 프록시 서버 시크릿에만 존재한다. 프록시 URL은 `Constants.proxyBaseURL` 에 있다.
 
 ## Project Structure
 

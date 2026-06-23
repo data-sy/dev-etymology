@@ -269,19 +269,20 @@ protocol ClaudeAPIServiceProtocol {
 }
 ```
 
-- 엔드포인트: POST https://api.anthropic.com/v1/messages
+- 엔드포인트: POST `Constants.proxyBaseURL` (백엔드 프록시 `devetym-proxy` 경유 — Anthropic 직접 호출 아님)
 - 모델: Constants.claudeModel
-- API 키: Info.plist의 CLAUDE_API_KEY (Bundle.main에서 읽기)
+- API 키: **앱에 없음.** 키는 프록시 서버 시크릿에만 존재한다.
+- 기기 식별: `X-Device-Id` 헤더(`DeviceIdentifier.current()` — 익명 UUID)로 프록시가 기기당 일일 한도 강제
 - 타임아웃: Constants.apiTimeout
 
-**API 키 검증:**
-- Bundle.main에서 CLAUDE_API_KEY 읽기 실패 또는 빈 문자열 → .invalidAPIKey throw
-- 이 검증은 generate() 호출 시 매번 수행
+**일일 호출 한도:**
+- 프록시가 기기당 일일 한도(시작값 10회) 초과 시 HTTP 429 반환 → 앱은 `.dailyLimitExceeded` throw
+- 한도는 서버(KV)에서만 강제 (클라 카운터는 디컴파일로 우회되므로 비용 방어 불가)
 
 **에러 타입:**
 ```swift
 enum ClaudeAPIError: Error {
-    case invalidAPIKey
+    case dailyLimitExceeded
     case timeout
     case networkError(Error)
     case invalidResponse

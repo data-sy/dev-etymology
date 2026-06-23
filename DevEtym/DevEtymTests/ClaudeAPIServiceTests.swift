@@ -31,16 +31,24 @@ final class ClaudeAPIServiceTests: XCTestCase {
     }
 
     private func okResponse() -> HTTPURLResponse {
+        response(status: 200)
+    }
+
+    private func response(status: Int) -> HTTPURLResponse {
         HTTPURLResponse(
-            url: URL(string: "https://api.anthropic.com/v1/messages")!,
-            statusCode: 200,
+            url: URL(string: "https://proxy.test")!,
+            statusCode: status,
             httpVersion: nil,
             headerFields: nil
         )!
     }
 
-    private func makeService(stub: StubHTTPClient, apiKey: String? = "test-key") -> ClaudeAPIService {
-        ClaudeAPIService(httpClient: stub, apiKeyProvider: { apiKey })
+    private func makeService(stub: StubHTTPClient, deviceId: String = "test-device-id-1234") -> ClaudeAPIService {
+        ClaudeAPIService(
+            httpClient: stub,
+            deviceIdProvider: { deviceId },
+            proxyBaseURL: "https://proxy.test"
+        )
     }
 
     private func validTermInput() -> [String: Any] {
@@ -166,32 +174,56 @@ final class ClaudeAPIServiceTests: XCTestCase {
         }
     }
 
-    func test_generate_missingAPIKey_throwsInvalidAPIKey() async {
+    func test_generate_dailyLimitExceeded_throwsDailyLimitExceeded() async {
         let stub = StubHTTPClient()
-        let service = makeService(stub: stub, apiKey: "")
+        // 프록시가 기기당 일일 한도 초과 시 429 반환
+        let body = try! JSONSerialization.data(
+            withJSONObject: ["error": "daily_limit_exceeded", "limit": 10]
+        )
+        stub.responseFactory = { _ in (body, self.response(status: 429)) }
 
         do {
-            _ = try await service.generate(keyword: "mutex")
+            _ = try await makeService(stub: stub).generate(keyword: "mutex")
             XCTFail("에러가 throw되어야 함")
         } catch let error as ClaudeAPIError {
-            XCTAssertEqual(error, .invalidAPIKey)
+            XCTAssertEqual(error, .dailyLimitExceeded)
         } catch {
             XCTFail("예상치 못한 에러: \(error)")
         }
     }
 
-    func test_generate_nilAPIKey_throwsInvalidAPIKey() async {
+    func test_generate_serverError_throwsInvalidResponse() async {
         let stub = StubHTTPClient()
-        let service = makeService(stub: stub, apiKey: nil)
+        stub.responseFactory = { _ in (Data(), self.response(status: 500)) }
 
         do {
-            _ = try await service.generate(keyword: "mutex")
+            _ = try await makeService(stub: stub).generate(keyword: "mutex")
             XCTFail("에러가 throw되어야 함")
         } catch let error as ClaudeAPIError {
-            XCTAssertEqual(error, .invalidAPIKey)
+            XCTAssertEqual(error, .invalidResponse)
         } catch {
             XCTFail("예상치 못한 에러: \(error)")
         }
+    }
+
+    // MARK: - 프록시 전환: 키 부재 + 기기ID 헤더
+
+    func test_generate_request_sendsDeviceIdHeader_andNoApiKey() async throws {
+        let stub = StubHTTPClient()
+        var captured: URLRequest?
+        let data = toolUseEnvelope(name: "return_term_entry", input: validTermInput())
+        stub.responseFactory = { request in
+            captured = request
+            return (data, self.okResponse())
+        }
+
+        _ = try await makeService(stub: stub, deviceId: "device-abc-123").generate(keyword: "mutex")
+
+        XCTAssertEqual(captured?.value(forHTTPHeaderField: "X-Device-Id"), "device-abc-123")
+        // 키는 앱에 존재하지 않아야 함 — x-api-key 헤더 미전송
+        XCTAssertNil(captured?.value(forHTTPHeaderField: "x-api-key"))
+        // 프록시 URL로 전송 (Anthropic 직접 호출 아님)
+        XCTAssertEqual(captured?.url?.absoluteString, "https://proxy.test")
     }
 
     // MARK: - 요청 body 검증

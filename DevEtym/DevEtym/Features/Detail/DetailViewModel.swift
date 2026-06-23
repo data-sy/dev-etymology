@@ -140,8 +140,8 @@ final class DetailViewModel: ObservableObject {
     private static func message(for error: Error) -> String {
         if let apiError = error as? ClaudeAPIError {
             switch apiError {
-            case .invalidAPIKey:
-                return "API 키 설정이 필요합니다"
+            case .dailyLimitExceeded:
+                return "오늘 AI 검색 한도를 모두 사용했어요. 내일 다시 시도해주세요"
             case .timeout:
                 return "요청 시간이 초과되었습니다. 다시 시도해주세요"
             case .networkError(let underlying):
