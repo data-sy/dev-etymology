@@ -6,8 +6,7 @@ import Foundation
 ///   출시 점검 시 `grep "TODO(" DevEtym` 으로 한 번에 체크할 수 있다.
 /// - 내부 로직 상수(타임아웃·리밋·UserDefaults 키 등)는 Constants.swift에 남긴다.
 enum AppConfig {
-    // TODO(이메일): 출시 전 실제 고객 지원 이메일로 교체 (현재는 플레이스홀더)
-    static let supportEmail = "devetym@gmail.com"
+    static let supportEmail = "oddmuffinstudio@gmail.com"
 
     /// 개인정보 처리방침 공개 URL (GitHub Pages)
     static let privacyPolicyURL = "https://data-sy.github.io/dev-etymology/privacy-policy/"

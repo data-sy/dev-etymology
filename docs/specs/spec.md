@@ -1,7 +1,7 @@
 # spec.md — DevEtym 구현 명세서 (Claude Code 전용)
 
 > 이 문서는 Claude Code가 참조하는 구현 명세입니다
-> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 `docs/handoff/h3-prelaunch-manual.md`를 참조하세요
+> Xcode 프로젝트 설정, 인프라, 배포 등 인간 작업은 `docs/launch-prep.md`를 참조하세요
 > CLAUDE.md의 코딩 규칙을 반드시 준수하세요
 
 ---
@@ -136,7 +136,7 @@ struct AIErrorResponse: Codable {
 **Utils/Constants.swift**
 ```swift
 enum Constants {
-    static let reportEmail = "devetym@gmail.com"
+    // 지원/제보 이메일은 AppConfig.supportEmail로 이전 (외부 접점은 AppConfig가 정본)
     // Anthropic API 공식 모델 ID — 변경 시 https://docs.anthropic.com 확인
     static let claudeModel = "claude-sonnet-4-6"
     static let apiTimeout: TimeInterval = 30
