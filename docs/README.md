@@ -4,6 +4,7 @@ DevEtym의 내부(비공개) 문서. 공개 발행물은 `site/`에 있고, 작�
 
 | 위치 | 내용 |
 |---|---|
+| [`product/`](product/) | 제품 기획 — `prd.md`(원본 PRD v1.0, *왜*의 정본) |
 | [`specs/`](specs/) | 앱 구현 명세 (`spec.md` — 모델·서비스·뷰·테스트) |
 | [`design/`](design/) | 디자인 자료 — 와이어프레임·목업(HTML 시안), 아이콘(`icon/`), 타이포·후속 노트 |
 | [`ai-quality/`](ai-quality/) | AI 응답 품질 — 시스템 프롬프트 라운드·probe 분석 |
@@ -11,6 +12,7 @@ DevEtym의 내부(비공개) 문서. 공개 발행물은 `site/`에 있고, 작�
 | [`adr/`](adr/) | 돌이킬 수 없는 의사결정 기록 |
 | [`handoff/`](handoff/) | 진행/예정 작업의 **일회용** 인수인계 — 해당 작업 완료 시 삭제 |
 | [`launch-prep.md`](launch-prep.md) | 출시(v1.0) 준비 허브 — 외부접점·메타데이터·서명·QA 체크리스트(상태 정본은 ROADMAP) |
+| [`launch-prep/`](launch-prep/) | 출시 준비 보조 자료 — App Store 메타데이터 생성/리뷰 프롬프트(`appstore-metadata-prompt.md`·`-review-prompt.md`)와 초안(`-draft.md`) |
 | [`e2e-checklist.md`](e2e-checklist.md) | 출시 전 E2E 점검 체크리스트 (launch-prep F 게이트) |
 
 문서·폴더 배치 원칙(findability·무상태·일회용 핸드오프)은 저장소 밖 범용 문서 `ia-conventions.md`를 따른다.

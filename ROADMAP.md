@@ -38,6 +38,10 @@ _(번들 DB 확장 완료 → Done 이관. 현재 Now에 활성 작업 없음 �
   - 렌더링은 공짜: SwiftUI `Text`가 `\n` 줄바꿈을 그대로 표시(어원/작명이유에 `.fixedSize` 이미 적용). 핵심은 *어디서 끊나*
   - 주의: 현재 번들 데이터의 "첫째/세 번째" 등은 전부 **문장 속 산문**(예: `primarius(첫째의)`, `세 번째 수준으로`)이라 마커 앞 무조건 줄바꿈하면 문장이 잘림 → 휴리스틱은 마커가 문두/구두점 뒤일 때만 끊도록 제한 필요
   - 옵션: (a) AI 출력에 한해 안전한 줄바꿈 휴리스틱 (b) 프롬프트에서 나열 시 줄바꿈/리스트로 출력하도록 지시 — DB 재생성과 묶임
+- **[Docs] DevEtym README에 「기술 하이라이트」 섹션 추가** — MMT README 형식 참고. 각 항목에 해당 코드 파일 링크 연결
+  - tool_use 구조화 출력(스키마 강제) · prompt caching · extended thinking 적용 근거
+  - 120콜(2³×15키워드) factorial 실험: 교차한 3요인(closing·selfcheck·alias_strict) 명시 + probe-analysis-v2 핵심 결과 수치
+  - Claude API 직접 연동 상세: `/v1/messages` 직접 호출, `tool_choice` any→auto로 thinking 제약 우회, 계약 테스트 330줄
 - (아이디어 추가 시 여기로)
 
 ---

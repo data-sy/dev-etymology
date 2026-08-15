@@ -90,7 +90,15 @@
       "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/05-sf-switch.png)",
       "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl shutdown all)",
       "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/06-search-with-tap-hint.png)",
-      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/07-baseline-17.png)"
+      "Bash(DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl io 367055D8-373E-4A02-B97F-87B8FC40F825 screenshot /tmp/devetym-ui/07-baseline-17.png)",
+      "Bash(xcode-select -p)",
+      "Read(//Applications/**)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -version)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/usr/bin/xcrun simctl *)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/usr/bin/simctl list *)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -list -project /Users/owner/dev-etymology/DevEtym/DevEtym.xcodeproj)",
+      "Bash(/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build *)",
+      "Bash(grep -c \"ANTHROPIC_API_KEY=\\\\\\\\\\\\$\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\(awk\" .claude/settings.local.json)"
     ]
   }
 }

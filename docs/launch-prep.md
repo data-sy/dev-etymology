@@ -12,7 +12,7 @@ DevEtym v1.0 출시에 필요한 작업 허브. 외부 접점·메타데이터·
 - **[사람/AI]** Firebase DebugView 이벤트 수신 확인 — `-FIRDebugEnabled` 빌드로 실검색 → `search`·오류 이벤트 도달 확인.
 
 ## B. App Store Connect 메타데이터
-- **[사람→AI]** 앱 이름·부제·설명·키워드·카테고리·프로모션 텍스트 (카피는 AI 초안 가능, 최종 결정 사람).
+- **[사람→AI]** 앱 이름·부제·설명·키워드·카테고리·프로모션 텍스트 (카피는 AI 초안 가능, 최종 결정 사람). 생성 프롬프트: [`launch-prep/appstore-metadata-prompt.md`](launch-prep/appstore-metadata-prompt.md). **초안 산출물(글자수 실측·심사 체크리스트 포함): [`launch-prep/appstore-metadata-draft.md`](launch-prep/appstore-metadata-draft.md)** — 이름/부제/키워드 최종 조합·검색 키워드 Analytics 전송 여부는 사람 확인. 초안 압박 테스트·열린 결정 닫기: [`launch-prep/appstore-metadata-review-prompt.md`](launch-prep/appstore-metadata-review-prompt.md).
 - **[사람]** 스크린샷(필수 사이즈) · 앱 아이콘 최종 · 지원/마케팅 URL.
 - **[사람]** 연령 등급 설문 · **개인정보 라벨**(수집 항목: Firebase Analytics 이벤트, 익명 기기ID).
 
